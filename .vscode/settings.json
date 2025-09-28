@@ -1,0 +1,9 @@
+{
+	"editor.defaultFormatter": "biomejs.biome",
+	"prettier.enable": false,
+	"oxc.enable": false,
+	"editor.formatOnSave": true,
+	"editor.codeActionsOnSave": {
+		"source.fixAll.biome": "explicit"
+	}
+}
