@@ -1,41 +1,80 @@
 import type { ClientEvents } from 'discord.js';
 import z from 'zod';
-import type { StructurePredicate } from '../util/loaders';
+import type { StructurePredicate } from '../util/loaders.js';
 
 /**
  * Defines the structure of an Event
  */
 export type DiscordEvent<T extends keyof ClientEvents = keyof ClientEvents> = {
-	/**
-	 * The name of the event to listen to
-	 */
-	name: T;
-	/**
-	 * Whether the event should be listened to only once
-	 *
-	 * @default false
-	 */
-	once?: boolean;
-	/**
-	 * The function to execute when the event is triggered
-	 *
-	 * @param args - The arguments passed by the event
-	 */
-	execute: (...args: ClientEvents[T]) => Promise<void> | void;
+  /**
+   * The name of the event to listen to
+   */
+  name: T;
+  /**
+   * Whether the event should be listened to only once
+   *
+   * @default false
+   */
+  once?: boolean;
+  /**
+   * The function to execute when the event is triggered
+   *
+   * @param args - The arguments passed by the event
+   */
+  execute: (...args: ClientEvents[T]) => Promise<void> | void;
+
+  __isEvent__: true;
 };
 
 /**
  * Defines the schema for an event
  */
 export const schema = z.object({
-	name: z.string(),
-	once: z.boolean().optional().default(false),
-	execute: z.function(),
+  name: z.string(),
+  once: z.boolean().optional().default(false),
+  execute: z.function(),
+  __isEvent__: z.literal(true),
 });
 
 /**
  * Defines the predicate to check if an object is a valid Event type.
  */
-export const predicate: StructurePredicate<DiscordEvent> = (
-	obj: unknown,
-): obj is DiscordEvent => schema.safeParse(obj).success;
+export const predicate: StructurePredicate<DiscordEvent> = (obj: unknown): obj is DiscordEvent =>
+  schema.safeParse(obj).success;
+
+/**
+ *
+ * Creates an event object
+ *
+ * @param data - The event data
+ * @param execute - The function to execute when the event is triggered
+ * @returns
+ */
+export const createEvent = <T extends keyof ClientEvents = keyof ClientEvents>(
+  data: {
+    name: T;
+    once?: boolean;
+  },
+  execute: (...args: ClientEvents[T]) => Promise<void> | void
+) => {
+  return { ...data, execute, __isEvent__: true } satisfies DiscordEvent<T>;
+};
+
+/**
+ *
+ * Creates multiple events
+ *
+ * @param events - An array of event data and execute functions
+ * @returns
+ */
+export const createEvents = <T extends keyof ClientEvents = keyof ClientEvents>(
+  events: Array<{
+    data: {
+      name: T;
+      once?: boolean;
+    };
+    execute: (...args: ClientEvents[T]) => Promise<void> | void;
+  }>
+): DiscordEvent<T>[] => {
+  return events.map(({ data, execute }) => createEvent(data, execute));
+};

@@ -1,4 +1,4 @@
-import './loadEnvFile';
+import './loadEnvFile.js';
 
 function requireEnv(key: string): string {
 	const value = process.env[key];
