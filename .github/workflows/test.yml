@@ -39,7 +39,7 @@ jobs:
         run: npm run build:ci
         env:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-          APPLICATION_ID: ${{ secrets.APPLICATION_ID }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
 
       - name: Run tests
         run: npm test
