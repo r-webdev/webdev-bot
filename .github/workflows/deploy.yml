@@ -1,8 +1,10 @@
 name: Deploy
 
 on:
-  push:
-    branches: [ "main" ]
+  workflow_dispatch: # Manual trigger only
+  # Uncomment below when VPS is ready:
+  # push:
+  #   branches: [ "main" ]
 
 jobs:
   build-test-and-deploy:
