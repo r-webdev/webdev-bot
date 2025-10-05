@@ -1,9 +1,9 @@
 import { Events } from 'discord.js';
 import ts from 'typescript';
 import { MINUTE } from '../constants/time.js';
+import { createEvent } from '../util/events.js';
 import { codeBlockRegex } from '../util/message.js';
 import { rateLimit } from '../util/rate-limit.js';
-import { createEvent } from './index.js';
 
 const { canRun, reset } = rateLimit(5 * MINUTE);
 
@@ -64,7 +64,6 @@ export const hasVarEvent = createEvent(
         }
       }
     }
-
     return;
   }
 );

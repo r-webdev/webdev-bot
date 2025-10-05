@@ -1,6 +1,6 @@
 import { Events } from 'discord.js';
-import { commands } from '../util/loaders.js';
-import { createEvent } from './index.js';
+import { commands } from '../commands/index.js';
+import { createEvent } from '../util/events.js';
 
 export const interactionCreateEvent = createEvent(
   {

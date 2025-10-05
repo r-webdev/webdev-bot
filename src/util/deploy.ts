@@ -1,7 +1,7 @@
 import { API } from '@discordjs/core/http-only';
 import { REST, type RESTPutAPIApplicationCommandsResult } from 'discord.js';
+import { commands } from '../commands/index.js';
 import { config } from '../env.js';
-import { commands } from './loaders.js';
 
 export async function deployCommands(): Promise<RESTPutAPIApplicationCommandsResult> {
   const commandData = [...commands.values()].map((command) => command.data);

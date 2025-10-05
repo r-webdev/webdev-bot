@@ -1,5 +1,5 @@
 import { Events } from 'discord.js';
-import { createEvent } from './index.js';
+import { createEvent } from '../util/events.js';
 
 export const readyEvent = createEvent(
   {
