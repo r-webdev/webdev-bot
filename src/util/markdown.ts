@@ -35,10 +35,12 @@ export const parseMarkdown = async <T extends Record<string, unknown>>(
 /** Load markdown files from a directory and parse them
  *
  * @param path - The path to the directory containing markdown files
+ * @param name - Optional specific file name to load (must include .md extension)
  * @returns An array of parsed markdown files with frontmatter and content
  */
 export const loadMarkdownOptions = async <T extends Record<string, unknown>>(
-  path: PathLike
+  path: PathLike,
+  name?: string
 ): Promise<
   Array<{
     frontmatter: Partial<T>;
@@ -46,7 +48,9 @@ export const loadMarkdownOptions = async <T extends Record<string, unknown>>(
   }>
 > => {
   const files = await readdir(path);
-  const markdownFiles = files.filter((file) => file.endsWith('.md'));
+  const markdownFiles = files.filter(
+    (file) => file.endsWith('.md') && (name ? file === name : true)
+  );
 
   const results: Array<{ frontmatter: Partial<T>; content: string }> = [];
 
