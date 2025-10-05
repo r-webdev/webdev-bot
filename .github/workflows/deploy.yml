@@ -1,0 +1,115 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-test-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: 'pnpm'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Build
+        run: pnpm run build
+        env:
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          APPLICATION_ID: ${{ secrets.APPLICATION_ID }}
+
+      - name: Run tests
+        run: pnpm run test
+
+      - name: Package artifact
+        run: |
+          tar -czf release.tar.gz dist package.json pnpm-lock.yaml .nvmrc
+
+      - name: Create .env file from secrets
+        env:
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          APPLICATION_ID: ${{ secrets.APPLICATION_ID }}
+        run: |
+          set -euo pipefail
+          printf "DISCORD_TOKEN=%s\n" "$DISCORD_TOKEN" > .env
+          printf "APPLICATION_ID=%s\n" "$APPLICATION_ID" >> .env
+          printf "NODE_ENV=production\n" >> .env
+
+      - name: Copy artifact to VPS
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 -p ${SSH_PORT:-22} $SSH_USER@$SSH_HOST "mkdir -p ~/apps/webdev-bot/releases"
+          scp -i ~/.ssh/id_ed25519 -P ${SSH_PORT:-22} -o StrictHostKeyChecking=no release.tar.gz $SSH_USER@$SSH_HOST:~/apps/webdev-bot/releases/release.tar.gz
+
+      - name: Upload .env to VPS
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          APP_DIR: ${{ secrets.APP_DIR }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 -p ${SSH_PORT:-22} $SSH_USER@$SSH_HOST "mkdir -p ${APP_DIR:-\"~/apps/webdev-bot\"}/shared && chmod 700 ${APP_DIR:-\"~/apps/webdev-bot\"}/shared"
+          scp -i ~/.ssh/id_ed25519 -P ${SSH_PORT:-22} -o StrictHostKeyChecking=no .env $SSH_USER@$SSH_HOST:${APP_DIR:-"~/apps/webdev-bot"}/shared/.env
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 -p ${SSH_PORT:-22} $SSH_USER@$SSH_HOST "chmod 600 ${APP_DIR:-\"~/apps/webdev-bot\"}/shared/.env"
+
+      - name: Deploy on VPS
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          APP_DIR: ${{ secrets.APP_DIR }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 -p ${SSH_PORT:-22} $SSH_USER@$SSH_HOST << 'EOF'
+            set -euo pipefail
+            APP_DIR=${APP_DIR:-"~/apps/webdev-bot"}
+            mkdir -p "$APP_DIR/current" "$APP_DIR/releases" "$APP_DIR/shared"
+            cd "$APP_DIR"
+            rm -rf current/*
+            tar -xzf releases/release.tar.gz -C current
+            cd current
+            # Load env from shared/.env for the PM2 process
+            set -a
+            if [ -f "$APP_DIR/shared/.env" ]; then . "$APP_DIR/shared/.env"; fi
+            set +a
+            if command -v pnpm >/dev/null 2>&1; then
+              pnpm install --prod --frozen-lockfile || true
+            else
+              if command -v corepack >/dev/null 2>&1; then corepack enable; fi
+              npm i -g pnpm@10 || true
+              pnpm install --prod --frozen-lockfile || true
+            fi
+            pm2 describe webdev-bot >/dev/null 2>&1 && pm2 restart webdev-bot || pm2 start "node dist/index.js" --name webdev-bot
+            pm2 save || true
+          EOF
+
