@@ -1,6 +1,9 @@
 import { ActivityType, Client, GatewayIntentBits } from 'discord.js';
+import { commands } from './commands/index.js';
 import { config } from './env.js';
-import { commands, events, registerCommands, registerEvents } from './util/loaders.js';
+import { events } from './events/index.js';
+import { registerCommands } from './util/commands.js';
+import { registerEvents } from './util/events.js';
 
 // Create a new client instance
 const client = new Client({
