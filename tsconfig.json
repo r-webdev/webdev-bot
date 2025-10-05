@@ -1,21 +1,35 @@
+// {
+// 	"compilerOptions": {
+// 		"target": "ES2022",
+// 		"lib": ["ES2022"],
+// 		"module": "ESNext",
+// 		"moduleResolution": "node",
+// 		"allowSyntheticDefaultImports": true,
+// 		"esModuleInterop": true,
+// 		"strict": true,
+// 		"skipLibCheck": true,
+// 		"forceConsistentCasingInFileNames": true,
+// 		"resolveJsonModule": true,
+// 		"declaration": false,
+// 		"outDir": "dist",
+// 		// "rootDir": "./",
+// 		"noEmit": true,
+// 		"erasableSyntaxOnly": true
+// 	},
+// 	"include": ["*.ts", "src/**/*"],
+// 	"exclude": ["node_modules", "dist"]
+// }
+
 {
 	"compilerOptions": {
-		"target": "ES2022",
-		"lib": ["ES2022"],
-		"module": "ESNext",
-		"moduleResolution": "node",
-		"allowSyntheticDefaultImports": true,
-		"esModuleInterop": true,
-		"strict": true,
-		"skipLibCheck": true,
-		"forceConsistentCasingInFileNames": true,
-		"resolveJsonModule": true,
 		"declaration": false,
-		"outDir": "./dist",
-		"rootDir": "./",
-		"noEmit": true,
-		"erasableSyntaxOnly": true
+		"declarationMap": false,
+		"module": "nodenext",
+		"moduleResolution": "nodenext",
+		"target": "esnext",
+		"outDir": "dist",
+		"skipLibCheck": true,
+		"strict": true
 	},
-	"include": ["*.ts", "src/**/*"],
-	"exclude": ["node_modules", "dist"]
+	"include": ["src/**/*"]
 }

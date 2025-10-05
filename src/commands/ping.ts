@@ -1,11 +1,12 @@
-import type { Command } from '.';
+import { createCommand } from './index.js';
 
-export default {
-	data: {
-		name: 'ping',
-		description: 'Replies with Pong!',
-	},
-	async execute(interaction) {
-		await interaction.reply('Pong!');
-	},
-} satisfies Command;
+export default createCommand(
+  {
+    name: 'ping',
+    description: 'Replies with Pong!',
+  },
+  async (interaction) => {
+    const user = interaction.user;
+    await interaction.reply(`<@${user.id}> Pong!`);
+  }
+);
