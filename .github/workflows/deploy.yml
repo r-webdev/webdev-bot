@@ -15,31 +15,31 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-          cache: 'pnpm'
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
+          cache: 'npm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci --no-audit --no-fund
+          else
+            npm install --no-audit --no-fund
+          fi
 
       - name: Lint
-        run: pnpm run lint
+        run: npm run lint
 
       - name: Build
-        run: pnpm run build
+        run: npm run build
         env:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
           APPLICATION_ID: ${{ secrets.APPLICATION_ID }}
 
       - name: Run tests
-        run: pnpm run test
+        run: npm test
 
       - name: Package artifact
         run: |
-          tar -czf release.tar.gz dist package.json pnpm-lock.yaml .nvmrc
+          tar -czf release.tar.gz dist package.json package-lock.json .nvmrc || tar -czf release.tar.gz dist package.json .nvmrc
 
       - name: Create .env file from secrets
         env:
@@ -102,12 +102,10 @@ jobs:
             set -a
             if [ -f "$APP_DIR/shared/.env" ]; then . "$APP_DIR/shared/.env"; fi
             set +a
-            if command -v pnpm >/dev/null 2>&1; then
-              pnpm install --prod --frozen-lockfile || true
+            if [ -f package-lock.json ]; then
+              npm ci --omit=dev --no-audit --no-fund || true
             else
-              if command -v corepack >/dev/null 2>&1; then corepack enable; fi
-              npm i -g pnpm@10 || true
-              pnpm install --prod --frozen-lockfile || true
+              npm install --omit=dev --no-audit --no-fund || true
             fi
             pm2 describe webdev-bot >/dev/null 2>&1 && pm2 restart webdev-bot || pm2 start "node dist/index.js" --name webdev-bot
             pm2 save || true
