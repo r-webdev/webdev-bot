@@ -1,10 +1,8 @@
 import type {
-  Client,
   EmbedBuilder,
   MessageCreateOptions,
   SendableChannels,
   TextBasedChannel,
-  TextChannel,
 } from 'discord.js';
 
 export type SimpleLogContent = {

@@ -1,6 +1,5 @@
-import { type PathLike, readFileSync } from 'node:fs';
+import type { PathLike } from 'node:fs';
 import { readdir, readFile } from 'node:fs/promises';
-import z, { ZodType } from 'zod';
 
 /**
  * A simple markdown parser that extracts frontmatter and content
