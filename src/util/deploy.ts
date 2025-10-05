@@ -1,22 +1,3 @@
-// import { URL } from 'node:url';
-// import { API } from '@discordjs/core/http-only';
-// import { REST } from 'discord.js';
-// import { config } from '../env.js';
-// import { getCommands } from './loaders.js';
-
-// const commands = await getCommands(new URL('../commands/', import.meta.url));
-// const commandData = [...commands.values()].map((command) => command.data);
-
-// const rest = new REST({ version: '10' }).setToken(config.discord.token);
-// const api = new API(rest);
-
-// const result = await api.applicationCommands.bulkOverwriteGlobalCommands(
-//   config.discord.clientId,
-//   commandData
-// );
-
-// console.log(`Successfully registered ${result.length} commands.`);
-
 // deploy.ts
 import { URL } from 'node:url';
 import { API } from '@discordjs/core/http-only';
