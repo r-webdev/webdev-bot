@@ -5,6 +5,14 @@ on:
   # Uncomment below when VPS is ready:
   # push:
   #   branches: [ "main" ]
+  #   paths-ignore:
+  #     - 'docs/**'
+  #     - '.gitignore'
+  #     - 'LICENSE'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   build-test-and-deploy:
