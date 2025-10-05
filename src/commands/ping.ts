@@ -1,4 +1,4 @@
-import { createCommand } from './index.js';
+import { createCommand } from '../util/commands.js';
 
 export const pingCommand = createCommand(
   {

@@ -1,5 +1,5 @@
 import { ApplicationCommandOptionType } from 'discord.js';
-import { createCommands } from '../index.js';
+import { createCommands } from '../../util/commands.js';
 import { type DocProvider, docProviders, executeDocCommand } from './providers.js';
 
 export const docsCommands = createCommands(
