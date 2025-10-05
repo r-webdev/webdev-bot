@@ -33,7 +33,7 @@ const [response] = await loadMarkdownOptions<{ name: string }>(
 
 const { canRun, reset } = rateLimit(10 * MINUTE);
 
-export default createEvent(
+export const justAskEvent = createEvent(
   {
     name: Events.MessageCreate,
   },

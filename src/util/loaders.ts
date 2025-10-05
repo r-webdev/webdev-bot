@@ -1,8 +1,14 @@
-import type { PathLike } from 'node:fs';
-import { readdir, stat } from 'node:fs/promises';
 import type { Client } from 'discord.js';
+import { docsCommands } from '../commands/docs/index.js';
+import { guidesCommand } from '../commands/guides/index.js';
 import { type Command, predicate as commandPredicate } from '../commands/index.js';
+import { pingCommand } from '../commands/ping.js';
+import { tipsCommands } from '../commands/tips/index.js';
+import { hasVarEvent } from '../events/has-var.js';
 import { type DiscordEvent, predicate as eventPredicate } from '../events/index.js';
+import { interactionCreateEvent } from '../events/interaction-create.js';
+import { justAskEvent } from '../events/just-ask.js';
+import { readyEvent } from '../events/ready.js';
 
 /**
  * A predicate to check if the structure is valid
@@ -10,105 +16,12 @@ import { type DiscordEvent, predicate as eventPredicate } from '../events/index.
 export type StructurePredicate<T> = (structure: unknown) => structure is T;
 
 /**
- * Loads all structures in the provided directory
- *
- * @param dir - The directory to load the structures from
- * @param predicate - The predicate to check if the structure is valid
- * @param recursive- Whether to load structures recursively
- * @returns
- */
-export const loadStructures = async <T>(
-  dir: PathLike,
-  predicate: StructurePredicate<T>,
-  recursive = true
-): Promise<T[]> => {
-  const statDir = await stat(dir);
-
-  if (!statDir.isDirectory()) {
-    throw new Error(`The path ${dir} is not a directory`);
-  }
-
-  // Get all files in the directory
-  const files = await readdir(dir);
-
-  // Create an empty array to store the structures
-  const structures: T[] = [];
-
-  // Loop through all files in the directory
-  for (const file of files) {
-    const fileUrl = new URL(`${dir}/${file}`, import.meta.url);
-
-    // Get the stats of the file
-    const fileStat = await stat(fileUrl);
-
-    // If the file is a directory and recursive is true, load the structures in the directory
-    if (fileStat.isDirectory() && recursive) {
-      structures.push(...(await loadStructures(fileUrl, predicate, recursive)));
-      continue;
-    }
-
-    // If the file is index.js or the file does not end with .js, skip it
-    if (
-      // file === 'index.js' ||
-      // file === 'index.ts' ||
-      !file.endsWith('.js') &&
-      !file.endsWith('.ts')
-    ) {
-      continue;
-    }
-
-    // Import the structure from the file
-    const { default: structure } = await import(fileUrl.href);
-
-    // If the structure is an array, loop through all structures in the array and check if they are valid
-    // If the structure is not an array, check if it is valid
-    if (Array.isArray(structure)) {
-      for (const str of structure) {
-        if (predicate(str)) {
-          structures.push(str);
-        }
-      }
-    } else if (predicate(structure)) {
-      structures.push(structure);
-    }
-  }
-  return structures;
-};
-
-/**
- * Gets all the commands in the provided directory
- *
- * @param dir - The directory to load the commands from
- * @param recursive - Whether to load commands recursively
- * @returns A map of command names to commands
- */
-export const getCommands = async (
-  dir: PathLike,
-  recursive = true
-): Promise<Map<string, Command>> => {
-  const commands = await loadStructures<Command>(dir, commandPredicate, recursive);
-
-  return new Map(commands.map((command) => [command.data.name, command]));
-};
-
-/**
- * Gets all the events in the provided directory
- *
- * @param dir - The directory to load the events from
- * @param recursive - Whether to load events recursively
- * @returns An array of events
- */
-export const getEvents = async (dir: PathLike, recursive = true): Promise<DiscordEvent[]> => {
-  return loadStructures(dir, eventPredicate, recursive);
-};
-
-/**
- * Loads commands to the Discord API
+ * Register commands to the Discord API
  *
  * @param client - The Discord client
  * @param commands - A map of command names to commands
  */
-export const loadCommands = async (
+export const registerCommands = async (
   client: Client,
   commands: Map<string, Command>
 ): Promise<void> => {
@@ -128,12 +41,12 @@ export const loadCommands = async (
 };
 
 /**
- *	Loads events to the Discord client
+ *	Register events to the Discord client
  *
  * @param client - The Discord client
  * @param events - An array of events
  */
-export const loadEvents = async (client: Client, events: DiscordEvent[]): Promise<void> => {
+export const registerEvents = async (client: Client, events: DiscordEvent[]): Promise<void> => {
   // Loop through all events
   for (const event of events) {
     console.log(`Loading event: ${event.name}`);
@@ -148,3 +61,26 @@ export const loadEvents = async (client: Client, events: DiscordEvent[]): Promis
     });
   }
 };
+
+/**
+ *
+ * @returns An array of events
+ */
+const loadEvents = (): DiscordEvent[] => {
+  const events = [hasVarEvent, readyEvent, justAskEvent, interactionCreateEvent].filter(
+    eventPredicate
+  );
+  return events as DiscordEvent[];
+};
+
+/**
+ *
+ * @returns A map of command names to commands
+ */
+const loadCommands = (): Map<string, Command> => {
+  const commands = [pingCommand, tipsCommands, guidesCommand, docsCommands].flat();
+  return new Map(commands.filter(commandPredicate).map((command) => [command.data.name, command]));
+};
+
+export const commands = loadCommands();
+export const events = loadEvents();

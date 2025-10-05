@@ -18,7 +18,7 @@ const loadChoices = async (): Promise<void> => {
 
 await loadChoices();
 
-export default createCommand(
+export const guidesCommand = createCommand(
   {
     name: 'guides',
     description: 'Get a guide on a specific subject',

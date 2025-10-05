@@ -1,6 +1,6 @@
 import { ActivityType, Client, GatewayIntentBits } from 'discord.js';
 import { config } from './env.js';
-import { getCommands, getEvents, loadCommands, loadEvents } from './util/loaders.js';
+import { commands, events, registerCommands, registerEvents } from './util/loaders.js';
 
 // Create a new client instance
 const client = new Client({
@@ -22,13 +22,8 @@ const client = new Client({
   },
 });
 
-// Load events and commands
-const events = await getEvents(new URL('events/', import.meta.url));
-const commands = await getCommands(new URL('commands/', import.meta.url));
-
-// use path utils etc to get the paths
-
-await loadEvents(client, events);
-await loadCommands(client, commands);
+// Register events and commands
+await registerEvents(client, events);
+await registerCommands(client, commands);
 
 void client.login(config.discord.token);

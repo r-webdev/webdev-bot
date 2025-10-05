@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType } from 'discord.js';
 import { createCommands } from '../index.js';
 import { type DocProvider, docProviders, executeDocCommand } from './providers.js';
 
-export default createCommands(
+export const docsCommands = createCommands(
   Object.entries(docProviders).map(([providerKey, providerConfig]) => ({
     data: {
       name: providerKey,

@@ -92,4 +92,4 @@ const contextMenuCommands = Array.from(subjectChoices).map(([key, value]) =>
   )
 );
 
-export default [slashCommand, ...contextMenuCommands];
+export const tipsCommands = [slashCommand, ...contextMenuCommands];

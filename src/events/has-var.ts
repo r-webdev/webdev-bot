@@ -37,7 +37,7 @@ const hasVarDeclaration = (code: string, language: string): boolean => {
   }
 };
 
-export default createEvent(
+export const hasVarEvent = createEvent(
   {
     name: Events.MessageCreate,
     once: false,

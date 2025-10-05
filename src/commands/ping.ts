@@ -1,6 +1,6 @@
 import { createCommand } from './index.js';
 
-export default createCommand(
+export const pingCommand = createCommand(
   {
     name: 'ping',
     description: 'Replies with Pong!',

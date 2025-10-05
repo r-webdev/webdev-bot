@@ -1,10 +1,8 @@
 import { Events } from 'discord.js';
-import { getCommands } from '../util/loaders.js';
+import { commands } from '../util/loaders.js';
 import { createEvent } from './index.js';
 
-const commands = await getCommands(new URL('../commands/', import.meta.url));
-
-export default createEvent(
+export const interactionCreateEvent = createEvent(
   {
     name: Events.InteractionCreate,
   },
