@@ -4,7 +4,8 @@
 	"description": "Web Dev & Web Design discord bot",
 	"type": "module",
 	"scripts": {
-		"build": "pnpm run build:ts && pnpm run build:copy",
+		"build:ci": "tsup && node scripts/copy-assets.js",
+		"build:dev": "pnpm run build:ts && pnpm run build:copy",
 		"build:ts": "tsup",
 		"build:copy": "node scripts/copy-assets.js",
 		"start": "node dist/index.js",
@@ -14,7 +15,8 @@
 		"lint:fix": "biome lint --fix .",
 		"format": "biome format --write .",
 		"check": "biome check .",
-		"check:fix": "biome check --write ."
+		"check:fix": "biome check --write .",
+		"test": "node --test"
 	},
 	"keywords": [],
 	"author": "",
