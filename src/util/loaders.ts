@@ -108,7 +108,10 @@ export const getEvents = async (dir: PathLike, recursive = true): Promise<Discor
  * @param client - The Discord client
  * @param commands - A map of command names to commands
  */
-export const loadCommands = async (client: Client, commands: Map<string, Command>) => {
+export const loadCommands = async (
+  client: Client,
+  commands: Map<string, Command>
+): Promise<void> => {
   // Convert the commands map to an array of command data
   const commandArray = Array.from(commands.values()).map((cmd) => cmd.data);
 
@@ -130,7 +133,7 @@ export const loadCommands = async (client: Client, commands: Map<string, Command
  * @param client - The Discord client
  * @param events - An array of events
  */
-export const loadEvents = async (client: Client, events: DiscordEvent[]) => {
+export const loadEvents = async (client: Client, events: DiscordEvent[]): Promise<void> => {
   // Loop through all events
   for (const event of events) {
     console.log(`Loading event: ${event.name}`);

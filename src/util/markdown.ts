@@ -7,7 +7,12 @@ import { readdir, readFile } from 'node:fs/promises';
  * @param string - The markdown string to parse
  * @returns
  */
-export const parseMarkdown = async <T extends Record<string, unknown>>(string: string) => {
+export const parseMarkdown = async <T extends Record<string, unknown>>(
+  string: string
+): Promise<{
+  frontmatter: Partial<T>;
+  content: string;
+}> => {
   const frontmatterRegex = /^---\n([\s\S]+?)\n---/;
   const match = string.match(frontmatterRegex);
   let frontmatter: Partial<T> = {};
@@ -32,7 +37,14 @@ export const parseMarkdown = async <T extends Record<string, unknown>>(string: s
  * @param path - The path to the directory containing markdown files
  * @returns An array of parsed markdown files with frontmatter and content
  */
-export const loadMarkdownOptions = async <T extends Record<string, unknown>>(path: PathLike) => {
+export const loadMarkdownOptions = async <T extends Record<string, unknown>>(
+  path: PathLike
+): Promise<
+  Array<{
+    frontmatter: Partial<T>;
+    content: string;
+  }>
+> => {
   const files = await readdir(path);
   const markdownFiles = files.filter((file) => file.endsWith('.md'));
 

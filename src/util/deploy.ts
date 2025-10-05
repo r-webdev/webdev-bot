@@ -1,11 +1,11 @@
 // deploy.ts
 import { URL } from 'node:url';
 import { API } from '@discordjs/core/http-only';
-import { REST } from 'discord.js';
+import { REST, type RESTPutAPIApplicationCommandsResult } from 'discord.js';
 import { config } from '../env.js';
 import { getCommands } from './loaders.js';
 
-export async function deployCommands() {
+export async function deployCommands(): Promise<RESTPutAPIApplicationCommandsResult> {
   const commands = await getCommands(new URL('../commands/', import.meta.url));
   const commandData = [...commands.values()].map((command) => command.data);
 

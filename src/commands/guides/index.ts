@@ -6,7 +6,7 @@ import { createCommand } from '../index.js';
 const subjectsDir = new URL('./subjects/', import.meta.url);
 const subjectChoices = new Map<string, string>();
 
-const loadChoices = async () => {
+const loadChoices = async (): Promise<void> => {
   const choices = await loadMarkdownOptions<{ name: string }>(subjectsDir);
 
   for (const { frontmatter, content } of choices) {

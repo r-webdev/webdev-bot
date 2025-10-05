@@ -220,14 +220,14 @@ export const getDirectUrl = <T extends DocProvider>(
   return direct.replace(TERM, term);
 };
 
-export const getIconUrl = (provider: DocProvider) => docProviders[provider].icon;
+export const getIconUrl = (provider: DocProvider): string => docProviders[provider].icon;
 
-export const getColor = (provider: DocProvider) => docProviders[provider].color;
+export const getColor = (provider: DocProvider): number => docProviders[provider].color;
 
 export const executeDocCommand = async <T extends DocProvider>(
   provider: T,
   interaction: CommandInteraction
-) => {
+): Promise<void> => {
   if (!interaction.isChatInputCommand()) return;
 
   const query = interaction.options.getString('query', true).trim();
