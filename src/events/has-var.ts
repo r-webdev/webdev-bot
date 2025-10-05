@@ -1,11 +1,11 @@
 import { Events } from 'discord.js';
 import ts from 'typescript';
-import { SECOND } from '../constants/time.js';
+import { MINUTE } from '../constants/time.js';
 import { codeBlockRegex } from '../util/message.js';
 import { rateLimit } from '../util/rate-limit.js';
 import { createEvent } from './index.js';
 
-const { canRun, reset } = rateLimit(5 * SECOND);
+const { canRun, reset } = rateLimit(5 * MINUTE);
 
 const hasVarDeclaration = (code: string, language: string): boolean => {
   if (!['js', 'javascript', 'ts', 'typescript'].includes(language.toLowerCase())) {
@@ -18,13 +18,6 @@ const hasVarDeclaration = (code: string, language: string): boolean => {
     let foundVar = false;
 
     const checkNode = (node: ts.Node) => {
-      // if (node.kind === ts.SyntaxKind.VariableStatement) {
-      //   const varStatement = node as ts.VariableStatement;
-
-      //   if (varStatement.declarationList.flags === ts.NodeFlags.None) {
-      //     foundVar = true;
-      //   }
-      // }
       if (ts.isVariableStatement(node)) {
         const declList = node.declarationList;
         const isVar =
