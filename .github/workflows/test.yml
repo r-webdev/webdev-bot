@@ -28,7 +28,7 @@ jobs:
         run: npm run lint
 
       - name: Build
-        run: npm run build
+        run: npm run build:ci
         env:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
           APPLICATION_ID: ${{ secrets.APPLICATION_ID }}
