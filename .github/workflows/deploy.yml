@@ -41,7 +41,7 @@ jobs:
         run: npm run build:ci
         env:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-          APPLICATION_ID: ${{ secrets.APPLICATION_ID }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
 
       - name: Run tests
         run: npm test
@@ -53,11 +53,11 @@ jobs:
       - name: Create .env file from secrets
         env:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-          APPLICATION_ID: ${{ secrets.APPLICATION_ID }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
         run: |
           set -euo pipefail
           printf "DISCORD_TOKEN=%s\n" "$DISCORD_TOKEN" > .env
-          printf "APPLICATION_ID=%s\n" "$APPLICATION_ID" >> .env
+          printf "CLIENT_ID=%s\n" "$CLIENT_ID" >> .env
           printf "NODE_ENV=production\n" >> .env
 
       - name: Copy artifact to VPS
