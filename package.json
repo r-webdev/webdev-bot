@@ -16,6 +16,7 @@
     "format": "biome format --write .",
     "check": "biome check .",
     "check:fix": "biome check --write .",
+    "typecheck": "tsc --noEmit",
     "test": "node --test",
     "prepare": "husky",
     "pre-commit": "lint-staged"
@@ -35,8 +36,7 @@
     "lint-staged": "^16.2.1",
     "tsup": "^8.5.0",
     "tsx": "^4.20.6",
-    "typescript": "^5.9.2",
-    "zod": "^4.1.11"
+    "typescript": "^5.9.2"
   },
   "lint-staged": {
     "*.{ts,js}": [
