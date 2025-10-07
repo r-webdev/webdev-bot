@@ -1,0 +1,13 @@
+diff --git a/package.json b/package.json
+index ab2c3c3cf87d40fd6d0f4c1735a528059f719e7e..d020595138c719be06e1c663a91b9607bdcbb9c4 100644
+--- a/package.json
++++ b/package.json
+@@ -12,6 +12,8 @@
+   "main": "index.js",
+   "exports": {
+     ".": "./index.js",
++    "./types": "./types.d.ts",
++    "./types.quicktype": "./types.quicktype.d.ts",
+     "./data.json": "./data.json",
+     "./data.schema.json": "./data.schema.json"
+   },
