@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, MessageFlags } from 'discord.js';
 import { logToChannel } from '../../util/channel-logging.js';
+import { createCommand } from '../../util/commands.js';
 import { loadMarkdownOptions } from '../../util/markdown.js';
-import { createCommand } from '../index.js';
 
 const subjectsDir = new URL('./subjects/', import.meta.url);
 const subjectChoices = new Map<string, string>();
@@ -18,7 +18,7 @@ const loadChoices = async (): Promise<void> => {
 
 await loadChoices();
 
-export default createCommand(
+export const guidesCommand = createCommand(
   {
     name: 'guides',
     description: 'Get a guide on a specific subject',

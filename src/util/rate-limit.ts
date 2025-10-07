@@ -22,8 +22,7 @@ export const rateLimit = (ms: number) => {
    */
   const canRun = () => {
     const now = Date.now();
-    if (now - last >= ms) {
-      last = now;
+    if (last === 0 || now - last >= ms) {
       return true;
     }
     return false;

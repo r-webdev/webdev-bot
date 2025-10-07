@@ -1,9 +1,9 @@
 import { Events } from 'discord.js';
 import ts from 'typescript';
 import { MINUTE } from '../constants/time.js';
+import { createEvent } from '../util/events.js';
 import { codeBlockRegex } from '../util/message.js';
 import { rateLimit } from '../util/rate-limit.js';
-import { createEvent } from './index.js';
 
 const { canRun, reset } = rateLimit(5 * MINUTE);
 
@@ -37,7 +37,7 @@ const hasVarDeclaration = (code: string, language: string): boolean => {
   }
 };
 
-export default createEvent(
+export const hasVarEvent = createEvent(
   {
     name: Events.MessageCreate,
     once: false,
@@ -64,7 +64,6 @@ export default createEvent(
         }
       }
     }
-
     return;
   }
 );

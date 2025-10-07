@@ -1,8 +1,8 @@
 import { Events } from 'discord.js';
 import { MINUTE } from '../constants/time.js';
+import { createEvent } from '../util/events.js';
 import { loadMarkdownOptions } from '../util/markdown.js';
 import { rateLimit } from '../util/rate-limit.js';
-import { createEvent } from './index.js';
 
 // Subject patterns (who)
 const reSubject = `(?:(?:any|some|no|every)(?:one|body)|people|folks|peeps|who)`;
@@ -33,7 +33,7 @@ const [response] = await loadMarkdownOptions<{ name: string }>(
 
 const { canRun, reset } = rateLimit(10 * MINUTE);
 
-export default createEvent(
+export const justAskEvent = createEvent(
   {
     name: Events.MessageCreate,
   },

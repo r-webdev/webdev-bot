@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, MessageFlags } from 'discord.js';
 import { logToChannel } from '../../util/channel-logging.js';
+import { createCommand } from '../../util/commands.js';
 import { loadMarkdownOptions } from '../../util/markdown.js';
-import { createCommand } from '../index.js';
 
 const subjectsDir = new URL('./subjects/', import.meta.url);
 const subjectChoices = new Map<string, string>();
@@ -92,4 +92,4 @@ const contextMenuCommands = Array.from(subjectChoices).map(([key, value]) =>
   )
 );
 
-export default [slashCommand, ...contextMenuCommands];
+export const tipsCommands = [slashCommand, ...contextMenuCommands];

@@ -1,7 +1,7 @@
 import { Events } from 'discord.js';
-import { createEvent } from './index.js';
+import { createEvent } from '../util/events.js';
 
-export default createEvent(
+export const readyEvent = createEvent(
   {
     name: Events.ClientReady,
     once: true,
