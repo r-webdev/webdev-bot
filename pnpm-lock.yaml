@@ -4,11 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-patchedDependencies:
-  web-features@3.3.0:
-    hash: 9e31634375f7275a9f9f1a072864cc91eec6eda1d068e935fe6773d4463df310
-    path: patches/web-features@3.3.0.patch
-
 importers:
 
   .:
@@ -21,7 +16,7 @@ importers:
         version: 14.22.1
       web-features:
         specifier: ^3.3.0
-        version: 3.3.0(patch_hash=9e31634375f7275a9f9f1a072864cc91eec6eda1d068e935fe6773d4463df310)
+        version: 3.3.0
     devDependencies:
       '@biomejs/biome':
         specifier: 2.2.4
@@ -1770,7 +1765,7 @@ snapshots:
 
   undici@6.21.3: {}
 
-  web-features@3.3.0(patch_hash=9e31634375f7275a9f9f1a072864cc91eec6eda1d068e935fe6773d4463df310): {}
+  web-features@3.3.0: {}
 
   webidl-conversions@4.0.2: {}
 

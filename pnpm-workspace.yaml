@@ -1,2 +1,0 @@
-patchedDependencies:
-  web-features@3.3.0: patches/web-features@3.3.0.patch
