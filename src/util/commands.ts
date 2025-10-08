@@ -1,24 +1,12 @@
-import type {
-  Client,
-  CommandInteraction,
-  RESTPostAPIApplicationCommandsJSONBody,
-} from 'discord.js';
+import type { Client } from 'discord.js';
 import type { Command } from '../commands/types.js';
 
-export const createCommand = (
-  data: RESTPostAPIApplicationCommandsJSONBody,
-  execute: (interaction: CommandInteraction) => Promise<void> | void
-): Command => {
-  return { data, execute } satisfies Command;
+export const createCommand = (command: Command): Command => {
+  return command;
 };
 
-export const createCommands = (
-  commands: Array<{
-    data: RESTPostAPIApplicationCommandsJSONBody;
-    execute: (interaction: CommandInteraction) => Promise<void> | void;
-  }>
-): Command[] => {
-  return commands.map(({ data, execute }) => createCommand(data, execute));
+export const createCommands = (commands: Array<Command>): Command[] => {
+  return commands.map(createCommand);
 };
 
 export const registerCommands = async (
