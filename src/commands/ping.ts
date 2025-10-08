@@ -1,12 +1,12 @@
 import { createCommand } from '../util/commands.js';
 
-export const pingCommand = createCommand(
-  {
+export const pingCommand = createCommand({
+  data: {
     name: 'ping',
     description: 'Replies with Pong!',
   },
-  async (interaction) => {
+  execute: async (interaction) => {
     const user = interaction.user;
     await interaction.reply(`<@${user.id}> Pong!`);
-  }
-);
+  },
+});
