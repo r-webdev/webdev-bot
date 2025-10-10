@@ -12,16 +12,15 @@ import { clampText } from '../../util/text.js';
 import type { ProviderConfig } from './types.js';
 import { createBaseConfig, getSearchUrl, SEARCH_TERM, TERM } from './utils.js';
 
-type SearchResult = {
-  documents: Array<{
-    mdn_url: string;
-    title: string;
-    slug: string;
-    summary: string;
-  }>;
+type SearchItem = {
+  mdn_url: string;
+  title: string;
+  slug: string;
+  summary: string;
 };
-
-type SearchItem = SearchResult['documents'][number];
+type SearchResult = {
+  documents: SearchItem[];
+};
 
 const baseConfig = createBaseConfig({
   color: 0x83_d0_f2,

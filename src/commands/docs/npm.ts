@@ -13,23 +13,23 @@ import { clampText } from '../../util/text.js';
 import type { ProviderConfig } from './types.js';
 import { createBaseConfig, getSearchUrl, SEARCH_TERM, TERM } from './utils.js';
 
-type SearchResult = {
-  objects: Array<{
-    package: {
-      name: string;
-      version: string;
-      description: string;
-      license: string;
-      links: {
-        npm: string;
-        homepage?: string;
-        repository?: string;
-      };
-    };
-  }>;
+type SearchItem = {
+  name: string;
+  version: string;
+  description: string;
+  license: string;
+  links: {
+    npm: string;
+    homepage?: string;
+    repository?: string;
+  };
 };
 
-type Item = SearchResult['objects'][number]['package'];
+type SearchResult = {
+  objects: Array<{
+    package: SearchItem;
+  }>;
+};
 
 const baseConfig = createBaseConfig({
   color: 0xfb_3e_44,
@@ -38,7 +38,7 @@ const baseConfig = createBaseConfig({
   commandDescription: 'Search NPM for JavaScript packages',
 });
 
-export const npmProvider: ProviderConfig<Item> = {
+export const npmProvider: ProviderConfig<SearchItem> = {
   ...baseConfig,
   getFilteredData: async (query: string) => {
     const response = await fetch(
