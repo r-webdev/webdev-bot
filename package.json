@@ -4,7 +4,7 @@
   "description": "Web Dev & Web Design discord bot",
   "type": "module",
   "scripts": {
-    "build:ci": "npm run build:tc && npm run build:copy",
+    "build:ci": "npm run build:ts && npm run build:copy",
     "build:dev": "pnpm run build:ts && pnpm run build:copy",
     "build:ts": "tsup",
     "build:copy": "node scripts/copy-assets.js",
