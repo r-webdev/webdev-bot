@@ -1,8 +1,8 @@
 import { ApplicationCommandOptionType } from 'discord.js';
 import { createCommands } from '../../util/commands.js';
-import { baselineProvider } from './providers/baseline.js';
-import { mdnProvider } from './providers/mdn.js';
-import { npmProvider } from './providers/npm.js';
+import { baselineProvider } from './baseline.js';
+import { mdnProvider } from './mdn.js';
+import { npmProvider } from './npm.js';
 import type { ProviderConfig } from './types.js';
 import { executeDocCommand } from './utils.js';
 

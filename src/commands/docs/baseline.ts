@@ -8,9 +8,9 @@ import {
   StringSelectMenuBuilder,
 } from 'discord.js';
 import { features as data } from 'web-features';
-import { fuzzySearch } from '../../../util/fuzzy-search.js';
-import type { ProviderConfig } from '../types.js';
-import { createBaseConfig } from '../utils.js';
+import { fuzzySearch } from '../../util/fuzzy-search.js';
+import type { ProviderConfig } from './types.js';
+import { createBaseConfig } from './utils.js';
 
 export type FeatureData = {
   name: string;

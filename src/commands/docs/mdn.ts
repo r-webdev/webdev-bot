@@ -7,10 +7,10 @@ import {
   type MessageActionRowComponentBuilder,
   StringSelectMenuBuilder,
 } from 'discord.js';
-import { CHAIN_EMOJI } from '../../../constants/emoji.js';
-import { clampText } from '../../../util/text.js';
-import type { ProviderConfig } from '../types.js';
-import { createBaseConfig, getSearchUrl, SEARCH_TERM, TERM } from '../utils.js';
+import { CHAIN_EMOJI } from '../../constants/emoji.js';
+import { clampText } from '../../util/text.js';
+import type { ProviderConfig } from './types.js';
+import { createBaseConfig, getSearchUrl, SEARCH_TERM, TERM } from './utils.js';
 
 type SearchResult = {
   documents: Array<{
