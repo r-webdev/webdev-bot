@@ -1,13 +1,15 @@
 import { type CommandInteraction, MessageFlags } from 'discord.js';
 import { logToChannel } from '../../util/channel-logging.js';
+import type { FeatureData } from './baseline.js';
 import type { ProviderConfig } from './types.js';
 
 export const SEARCH_TERM = '%SEARCH%';
 export const TERM = '%TERM%';
 
 // Utility functions
-export const getSearchUrl = (url: string, search: string) =>
-  url.replace(SEARCH_TERM, encodeURIComponent(search));
+export const getSearchUrl = (url: string, search: string) => {
+  return url.replace(SEARCH_TERM, encodeURIComponent(search));
+};
 
 export const createBaseConfig = (options: {
   color: number;
@@ -25,7 +27,9 @@ export const executeDocCommand = async (
   config: ProviderConfig,
   interaction: CommandInteraction
 ): Promise<void> => {
-  if (!interaction.isChatInputCommand()) return;
+  if (!interaction.isChatInputCommand()) {
+    return;
+  }
 
   const query = interaction.options.getString('query', true).trim();
 
@@ -87,4 +91,16 @@ export const executeDocCommand = async (
       flags: MessageFlags.Ephemeral,
     });
   }
+};
+
+export const NON_BASELINE_FEATURES = ['numeric-seperators', 'single-color-gradients'];
+export const getBaselineFeatures = (
+  originalFeatures: Record<string, unknown>,
+  nonFeatureKeys: string[] = NON_BASELINE_FEATURES
+): Record<string, FeatureData> => {
+  const features = { ...originalFeatures };
+  for (const nonFeature of nonFeatureKeys) {
+    delete features[nonFeature];
+  }
+  return features as Record<string, FeatureData>;
 };
