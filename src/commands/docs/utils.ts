@@ -16,12 +16,7 @@ export const createBaseConfig = (options: {
   icon: string;
   commandDescription: string;
   directUrl?: string;
-}) => ({
-  color: options.color,
-  icon: options.icon,
-  commandDescription: options.commandDescription,
-  directUrl: options.directUrl,
-});
+}): Pick<ProviderConfig, 'color' | 'icon' | 'commandDescription' | 'directUrl'> => options;
 
 export const executeDocCommand = async (
   config: ProviderConfig,
