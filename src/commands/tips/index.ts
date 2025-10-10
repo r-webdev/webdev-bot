@@ -42,7 +42,9 @@ const slashCommand = createCommand({
     ],
   },
   execute: async (interaction) => {
-    if (!interaction.isChatInputCommand()) return;
+    if (!interaction.isChatInputCommand()) {
+      return;
+    }
 
     const subject = interaction.options.getString('subject', true);
     const user = interaction.options.getUser('user');
@@ -77,7 +79,9 @@ const contextMenuCommands = Array.from(subjectChoices).map(([key, value]) =>
       name: `Tip: ${key}`,
     },
     execute: async (interaction) => {
-      if (!interaction.isMessageContextMenuCommand()) return;
+      if (!interaction.isMessageContextMenuCommand()) {
+        return;
+      }
       const message = interaction.targetMessage;
 
       await interaction.reply({ content: 'Fetching tip...', flags: MessageFlags.Ephemeral });

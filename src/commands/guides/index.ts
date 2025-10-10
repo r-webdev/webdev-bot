@@ -44,7 +44,9 @@ export const guidesCommand = createCommand({
     ],
   },
   execute: async (interaction) => {
-    if (!interaction.isChatInputCommand()) return;
+    if (!interaction.isChatInputCommand()) {
+      return;
+    }
     const subject = interaction.options.getString('subject', true);
     const user = interaction.options.getUser('user');
     if (!subjectChoices.has(subject)) {
