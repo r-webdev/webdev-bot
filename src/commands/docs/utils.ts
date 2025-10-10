@@ -27,6 +27,17 @@ export const executeDocCommand = async (
   config: ProviderConfig,
   interaction: CommandInteraction
 ): Promise<void> => {
+  if (interaction.replied || interaction.deferred) {
+    return;
+  }
+
+  try {
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+  } catch (error) {
+    console.error(`deferReply FAILED:`, error);
+    return;
+  }
+
   if (!interaction.isChatInputCommand()) {
     return;
   }
@@ -37,20 +48,16 @@ export const executeDocCommand = async (
     const items = await config.getFilteredData(query);
 
     if (items.length === 0) {
-      await interaction.reply({
-        content: `No results found for "${query}"`,
-        flags: MessageFlags.Ephemeral,
-      });
+      await interaction.editReply({ content: `No results found for "${query}"` });
       return;
     }
 
     const collection = config.createCollection(items);
     const { selectRow, buttonRow } = config.createActionBuilders(collection);
 
-    const choiceInteraction = await interaction.reply({
+    const choiceInteraction = await interaction.editReply({
       content: config.getSelectionMessage(query),
       components: [selectRow, buttonRow],
-      flags: MessageFlags.Ephemeral,
     });
 
     const collector = choiceInteraction.createMessageComponentCollector({
@@ -85,11 +92,8 @@ export const executeDocCommand = async (
       }
     });
   } catch (error) {
-    console.error('Error executing doc command:', error);
-    await interaction.reply({
-      content: `Error: ${error}`,
-      flags: MessageFlags.Ephemeral,
-    });
+    console.error(`executeDocCommand FAILED:`, error);
+    await interaction.editReply({ content: `Error: ${error}` });
   }
 };
 
