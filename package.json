@@ -4,7 +4,7 @@
   "description": "Web Dev & Web Design discord bot",
   "type": "module",
   "scripts": {
-    "build:ci": "tsup && node scripts/copy-assets.js",
+    "build:ci": "npm run build:tc && npm run build:copy",
     "build:dev": "pnpm run build:ts && pnpm run build:copy",
     "build:ts": "tsup",
     "build:copy": "node scripts/copy-assets.js",
@@ -18,7 +18,7 @@
     "check:fix": "biome check --write .",
     "typecheck": "tsc --noEmit",
     "test": "pnpm run build:dev && node --test dist/**/*.test.js",
-    "test:ci": "npm run build:ci && node --test dist/**/*.test.js",
+    "test:ci": "node --test dist/**/*.test.js",
     "prepare": "husky",
     "pre-commit": "lint-staged"
   },
