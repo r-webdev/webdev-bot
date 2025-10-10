@@ -17,7 +17,7 @@
     "check": "biome check .",
     "check:fix": "biome check --write .",
     "typecheck": "tsc --noEmit",
-    "test": "node --test",
+    "test": "pnpm run build:dev && node --test dist/**/*.test.js",
     "prepare": "husky",
     "pre-commit": "lint-staged"
   },
