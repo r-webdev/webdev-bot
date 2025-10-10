@@ -10,20 +10,24 @@ import {
 import { features as data } from 'web-features';
 import { fuzzySearch } from '../../util/fuzzy-search.js';
 import type { ProviderConfig } from './types.js';
-import { createBaseConfig } from './utils.js';
+import { createBaseConfig, getBaselineFeatures } from './utils.js';
 
 export type FeatureData = {
   name: string;
+  kind: 'feature';
   description: string;
   status: {
     baseline: 'high' | 'low' | false;
     support: Record<string, string>;
   };
 };
+type FeatureItem = FeatureData & { key: string };
 
-const features = Object.fromEntries(
-  Object.entries(data).filter(([, feature]) => feature.kind === 'feature')
-) as Record<string, FeatureData>;
+// Prepare baseline features by excluding non-feature entries and converting to array
+const features: FeatureItem[] = Object.entries(getBaselineFeatures(data)).map(([key, feature]) => ({
+  ...feature,
+  key,
+}));
 
 const baselines = {
   high: {
@@ -42,25 +46,23 @@ const baselines = {
   },
 };
 
-type Item = FeatureData;
-
 const baseConfig = createBaseConfig({
   color: 0x4e_8c_2f,
   icon: '',
   commandDescription: 'Get baseline support information for web platform features',
 });
 
-export const baselineProvider: ProviderConfig<Item> = {
+export const baselineProvider: ProviderConfig<FeatureItem> = {
   ...baseConfig,
   getFilteredData: (query: string) => {
     return fuzzySearch({
-      items: Object.entries(features),
+      items: features,
       query,
-      findIn: [([key]) => key],
+      findIn: [(feature) => feature.name],
       limit: 20,
-    }).map(([, feature]) => feature);
+    });
   },
-  createCollection: (items) => new Collection(items.map((item) => [item.name, item])),
+  createCollection: (items) => new Collection(items.map((item) => [item.key, item])),
   createActionBuilders: (data) => {
     const selectRow = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
       new StringSelectMenuBuilder()
@@ -75,7 +77,7 @@ export const baselineProvider: ProviderConfig<Item> = {
               feature.description.length > 100
                 ? `${feature.description.slice(0, 97)}...`
                 : feature.description,
-            value: feature.name,
+            value: feature.key,
           }))
         )
     );
