@@ -1,6 +1,16 @@
 import { ApplicationCommandOptionType } from 'discord.js';
 import { createCommands } from '../../util/commands.js';
-import { type DocProvider, docProviders, executeDocCommand } from './providers.js';
+import { baselineProvider } from './baseline.js';
+import { mdnProvider } from './mdn.js';
+import { npmProvider } from './npm.js';
+import type { ProviderConfig } from './types.js';
+import { executeDocCommand } from './utils.js';
+
+const docProviders = {
+  mdn: mdnProvider,
+  npm: npmProvider,
+  baseline: baselineProvider,
+};
 
 export const docsCommands = createCommands(
   Object.entries(docProviders).map(([providerKey, providerConfig]) => ({
@@ -22,6 +32,7 @@ export const docsCommands = createCommands(
         },
       ],
     },
-    execute: async (interaction) => executeDocCommand(providerKey as DocProvider, interaction),
+    execute: async (interaction) =>
+      executeDocCommand(providerConfig as ProviderConfig, interaction),
   }))
 );

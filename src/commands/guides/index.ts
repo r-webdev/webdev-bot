@@ -4,6 +4,7 @@ import { createCommand } from '../../util/commands.js';
 import { loadMarkdownOptions } from '../../util/markdown.js';
 
 const subjectsDir = new URL('./subjects/', import.meta.url);
+
 const subjectChoices = new Map<string, string>();
 
 const loadChoices = async (): Promise<void> => {
@@ -18,8 +19,8 @@ const loadChoices = async (): Promise<void> => {
 
 await loadChoices();
 
-export const guidesCommand = createCommand(
-  {
+export const guidesCommand = createCommand({
+  data: {
     name: 'guides',
     description: 'Get a guide on a specific subject',
     type: ApplicationCommandType.ChatInput,
@@ -42,8 +43,10 @@ export const guidesCommand = createCommand(
       },
     ],
   },
-  async (interaction) => {
-    if (!interaction.isChatInputCommand()) return;
+  execute: async (interaction) => {
+    if (!interaction.isChatInputCommand()) {
+      return;
+    }
     const subject = interaction.options.getString('subject', true);
     const user = interaction.options.getUser('user');
     if (!subjectChoices.has(subject)) {
@@ -69,5 +72,5 @@ export const guidesCommand = createCommand(
     await interaction.reply({ content: 'Guide sent!', flags: MessageFlags.Ephemeral });
 
     return;
-  }
-);
+  },
+});

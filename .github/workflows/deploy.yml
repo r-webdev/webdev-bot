@@ -44,7 +44,7 @@ jobs:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
 
       - name: Run tests
-        run: npm test
+        run: npm run test:ci
 
       - name: Package artifact
         run: |

@@ -4,6 +4,7 @@ import { createCommand } from '../../util/commands.js';
 import { loadMarkdownOptions } from '../../util/markdown.js';
 
 const subjectsDir = new URL('./subjects/', import.meta.url);
+
 const subjectChoices = new Map<string, string>();
 
 const loadChoices = async (): Promise<void> => {
@@ -18,8 +19,8 @@ const loadChoices = async (): Promise<void> => {
 
 await loadChoices();
 
-const slashCommand = createCommand(
-  {
+const slashCommand = createCommand({
+  data: {
     name: 'tips',
     description: 'Provide a helpful tip on a given subject',
     options: [
@@ -40,8 +41,10 @@ const slashCommand = createCommand(
       },
     ],
   },
-  async (interaction) => {
-    if (!interaction.isChatInputCommand()) return;
+  execute: async (interaction) => {
+    if (!interaction.isChatInputCommand()) {
+      return;
+    }
 
     const subject = interaction.options.getString('subject', true);
     const user = interaction.options.getUser('user');
@@ -66,17 +69,19 @@ const slashCommand = createCommand(
     });
 
     await interaction.reply({ content: 'Tip sent!', ephemeral: true });
-  }
-);
+  },
+});
 
 const contextMenuCommands = Array.from(subjectChoices).map(([key, value]) =>
-  createCommand(
-    {
+  createCommand({
+    data: {
       type: ApplicationCommandType.Message,
       name: `Tip: ${key}`,
     },
-    async (interaction) => {
-      if (!interaction.isMessageContextMenuCommand()) return;
+    execute: async (interaction) => {
+      if (!interaction.isMessageContextMenuCommand()) {
+        return;
+      }
       const message = interaction.targetMessage;
 
       await interaction.reply({ content: 'Fetching tip...', flags: MessageFlags.Ephemeral });
@@ -88,8 +93,8 @@ const contextMenuCommands = Array.from(subjectChoices).map(([key, value]) =>
       await interaction.editReply({ content: 'Tip sent!' });
 
       return;
-    }
-  )
+    },
+  })
 );
 
 export const tipsCommands = [slashCommand, ...contextMenuCommands];

@@ -4,7 +4,7 @@
   "description": "Web Dev & Web Design discord bot",
   "type": "module",
   "scripts": {
-    "build:ci": "tsup && node scripts/copy-assets.js",
+    "build:ci": "npm run build:ts && npm run build:copy",
     "build:dev": "pnpm run build:ts && pnpm run build:copy",
     "build:ts": "tsup",
     "build:copy": "node scripts/copy-assets.js",
@@ -17,7 +17,8 @@
     "check": "biome check .",
     "check:fix": "biome check --write .",
     "typecheck": "tsc --noEmit",
-    "test": "node --test",
+    "test": "pnpm run build:dev && node --test dist/**/*.test.js",
+    "test:ci": "node --test dist/**/*.test.js",
     "prepare": "husky",
     "pre-commit": "lint-staged"
   },
@@ -27,7 +28,8 @@
   "packageManager": "pnpm@10.17.1",
   "dependencies": {
     "@discordjs/core": "^2.2.2",
-    "discord.js": "^14.22.1"
+    "discord.js": "^14.22.1",
+    "web-features": "^3.3.0"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.4",

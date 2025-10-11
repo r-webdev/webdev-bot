@@ -43,9 +43,9 @@ export const hasVarEvent = createEvent(
     once: false,
   },
   async (message) => {
-    if (message.author.bot) return;
-
-    if (!canRun()) return;
+    if (message.author.bot || !canRun()) {
+      return;
+    }
 
     const codeBlocks = Array.from(message.content.match(codeBlockRegex) || []);
 

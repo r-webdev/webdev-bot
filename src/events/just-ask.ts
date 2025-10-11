@@ -38,10 +38,14 @@ export const justAskEvent = createEvent(
     name: Events.MessageCreate,
   },
   async (message) => {
-    if (!canRun()) return;
-    if (message.author.bot) return;
+    if (!canRun() || message.author.bot) {
+      return;
+    }
 
-    if (message.content.split(' ').length > 10) return;
+    // Ignore long messages, likely user provided more context
+    if (message.content.split(' ').length > 10) {
+      return;
+    }
 
     if (isAskingToAsk(message.content)) {
       await message.reply({
