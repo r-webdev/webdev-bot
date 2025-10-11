@@ -1,5 +1,5 @@
 ---
-name: Tailwind Setup Issues
+name: Tailwind with Vite
 ---
 
 We've heard you have issues with setting up Tailwind in Vite. Have you followed all the steps described in the docs?
