@@ -56,7 +56,7 @@ export const executeDocCommand = async (
     });
 
     const collector = choiceInteraction.createMessageComponentCollector({
-      filter: (i) => i.user.id === interaction.user.id,
+      filter: (componentInteraction) => componentInteraction.user.id === interaction.user.id,
     });
 
     collector.once('collect', async (i) => {
