@@ -59,9 +59,9 @@ export const executeDocCommand = async (
       filter: (componentInteraction) => componentInteraction.user.id === interaction.user.id,
     });
 
-    collector.once('collect', async (i) => {
-      if (i.isStringSelectMenu()) {
-        const selectedSet = new Set(i.values);
+    collector.once('collect', async (componentInteraction) => {
+      if (componentInteraction.isStringSelectMenu()) {
+        const selectedSet = new Set(componentInteraction.values);
         const selectedItems = collection.filter((_, key) => selectedSet.has(key));
         const selectedTitles = selectedItems.map(config.getDisplayTitle);
 
@@ -82,7 +82,7 @@ export const executeDocCommand = async (
               : undefined,
           },
         });
-      } else if (i.isButton()) {
+      } else if (componentInteraction.isButton()) {
         await choiceInteraction.delete();
       }
     });
