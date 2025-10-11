@@ -1,0 +1,16 @@
+---
+alwaysApply: true
+description: Disallow accessing .env* files; use env.ts as the single source of truth for environment configuration
+---
+
+# Environment access policy
+
+- Do not open, read, or reference any files matching:
+  - `.env`
+  - `.env.*`
+  - `.env*`
+- Treat `src/env.ts` as the only allowed source of environment configuration. Use it whenever environment info is required.
+- If a needed value appears only in a `.env*` file, stop and ask to add it to `src/env.ts` instead of reading the `.env*` file.
+
+Reference: [env.ts](mdc:src/env.ts)
+
