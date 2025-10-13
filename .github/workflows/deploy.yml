@@ -59,8 +59,9 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            echo "DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}" > /home/${{ secrets.VPS_USER }}/discord-bot/.env
-            echo "CLIENT_ID=${{ secrets.CLIENT_ID }}" >> /home/${{ secrets.VPS_USER }}/discord-bot/.env
+            echo "DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}" > /home/${{ secrets.VPS_USER }}/discord-bot/.env.local
+            echo "CLIENT_ID=${{ secrets.CLIENT_ID }}" >> /home/${{ secrets.VPS_USER }}/discord-bot/.env.local
+            echo "NODE_ENV=production" >> /home/${{ secrets.VPS_USER }}/discord-bot/.env.local
 
       - name: Extract and restart bot on VPS
         uses: appleboy/ssh-action@v1.0.3
@@ -71,4 +72,4 @@ jobs:
           script: |
             cd /home/${{ secrets.VPS_USER }}/discord-bot/
             tar xzf bot-build.tar.gz
-            pm2 restart bot || pm2 start ./dist/index.js --name bot
+            pm2 restart bot || pm2 start ./dist/index.js --name bot --node-args="--env-file=.env.local"

@@ -1,13 +1,16 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, MessageFlags } from 'discord.js';
 import { logToChannel } from '../../util/channel-logging.js';
 import { createCommand } from '../../util/commands.js';
-import { loadMarkdownOptions } from '../../util/markdown.js';
-
-const subjectsDir = new URL('./subjects/', import.meta.url);
+import { loadMarkdownOptions, resolveAssetPath } from '../../util/markdown.js';
 
 const subjectChoices = new Map<string, string>();
 
 const loadChoices = async (): Promise<void> => {
+  const subjectsDir = resolveAssetPath(
+    './subjects/',
+    './commands/guides/subjects/',
+    import.meta.url
+  );
   const choices = await loadMarkdownOptions<{ name: string }>(subjectsDir);
 
   for (const { frontmatter, content } of choices) {

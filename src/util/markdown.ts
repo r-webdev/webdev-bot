@@ -1,5 +1,20 @@
 import type { PathLike } from 'node:fs';
 import { readdir, readFile } from 'node:fs/promises';
+import { config } from '../env.js';
+
+/**
+ * Resolves a path that works in both dev (src/) and prod (dist/) environments
+ *
+ * @param devPath - Path relative to the calling file in dev (e.g., './subjects/')
+ * @param prodPath - Path relative to dist/index.js in prod (e.g., './commands/tips/subjects/')
+ * @param baseUrl - import.meta.url from the calling file
+ * @returns URL that works in both environments
+ */
+export const resolveAssetPath = (devPath: string, prodPath: string, baseUrl: string): URL => {
+  const isProduction = config.ENV === 'production';
+  const path = isProduction ? prodPath : devPath;
+  return new URL(path, baseUrl);
+};
 
 /**
  * A simple markdown parser that extracts frontmatter and content

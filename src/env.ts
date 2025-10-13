@@ -16,6 +16,7 @@ export const config = {
     token: requireEnv('DISCORD_TOKEN'),
     clientId: requireEnv('CLIENT_ID'),
   },
+  ENV: process.env.NODE_ENV,
   // Add more config sections as needed:
   // database: {
   //   url: requireEnv('DATABASE_URL'),

@@ -1,7 +1,7 @@
 import { Events } from 'discord.js';
 import { MINUTE } from '../constants/time.js';
 import { createEvent } from '../util/events.js';
-import { loadMarkdownOptions } from '../util/markdown.js';
+import { loadMarkdownOptions, resolveAssetPath } from '../util/markdown.js';
 import { rateLimit } from '../util/rate-limit.js';
 
 // Subject patterns (who)
@@ -26,10 +26,12 @@ const askToAskPattern = new RegExp(
 
 const isAskingToAsk = (text: string) => askToAskPattern.test(text);
 
-const [response] = await loadMarkdownOptions<{ name: string }>(
-  new URL('../commands/tips/subjects/', import.meta.url),
-  'justask.md'
+const justAskDir = resolveAssetPath(
+  '../commands/tips/subjects/',
+  './commands/tips/subjects/',
+  import.meta.url
 );
+const [response] = await loadMarkdownOptions<{ name: string }>(justAskDir, 'justask.md');
 
 const { canRun, reset } = rateLimit(10 * MINUTE);
 
