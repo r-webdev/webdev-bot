@@ -24,7 +24,12 @@ jobs:
           node-version-file: .nvmrc
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci --no-audit --no-fund
+          else
+            npm install --no-audit --no-fund
+          fi
 
       - name: Lint
         run: npm run lint
