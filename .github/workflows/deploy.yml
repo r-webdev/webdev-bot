@@ -1,4 +1,4 @@
-name: Deploy
+name: Build, Test and Deploy Discord Bot to VPS
 
 on:
   workflow_dispatch: # Manual trigger only
@@ -10,18 +10,15 @@ on:
   #     - '.gitignore'
   #     - 'LICENSE'
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false
-
 jobs:
-  build-test-and-deploy:
+  build-test-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
@@ -37,91 +34,41 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Build
+      - name: Build bot
         run: npm run build:ci
-        env:
-          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
-          GUIDES_CHANNEL_ID: ${{ secrets.GUIDES_CHANNEL_ID }}
-          GUIDES_TRACKER_PATH: ~/apps/webdev-bot/shared/guides-tracker.json
 
       - name: Run tests
         run: npm run test:ci
 
-      - name: Package artifact
-        run: |
-          tar -czf release.tar.gz dist package.json package-lock.json .nvmrc || tar -czf release.tar.gz dist package.json .nvmrc
+      - name: Package build output
+        run: tar czf bot-build.tar.gz ./dist
 
-      - name: Create .env file from secrets
-        env:
-          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
-          GUIDES_CHANNEL_ID: ${{ secrets.GUIDES_CHANNEL_ID }}
-        run: |
-          set -euo pipefail
-          printf "DISCORD_TOKEN=%s\n" "$DISCORD_TOKEN" > .env
-          printf "CLIENT_ID=%s\n" "$CLIENT_ID" >> .env
-          printf "NODE_ENV=production\n" >> .env
-          printf "GUIDES_CHANNEL_ID=%s\n" "$GUIDES_CHANNEL_ID" >> .env
-          printf "GUIDES_TRACKER_PATH=~/apps/webdev-bot/shared/guides-tracker.json\n" >> .env
+      - name: Copy build artifact to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: "bot-build.tar.gz"
+          target: "/home/${{ secrets.VPS_USER }}/discord-bot/"
 
-      - name: Copy artifact to VPS
-        env:
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_PORT: ${{ secrets.SSH_PORT }}
-          SSH_KEY: ${{ secrets.SSH_KEY }}
-        run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_KEY" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 -p ${SSH_PORT:-22} $SSH_USER@$SSH_HOST "mkdir -p ~/apps/webdev-bot/releases"
-          scp -i ~/.ssh/id_ed25519 -P ${SSH_PORT:-22} -o StrictHostKeyChecking=no release.tar.gz $SSH_USER@$SSH_HOST:~/apps/webdev-bot/releases/release.tar.gz
+      - name: Create .env file on VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            echo "DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}" > /home/${{ secrets.VPS_USER }}/discord-bot/.env
+            echo "CLIENT_ID=${{ secrets.CLIENT_ID }}" >> /home/${{ secrets.VPS_USER }}/discord-bot/.env
 
-      - name: Upload .env to VPS
-        env:
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_PORT: ${{ secrets.SSH_PORT }}
-          SSH_KEY: ${{ secrets.SSH_KEY }}
-          APP_DIR: ${{ secrets.APP_DIR }}
-        run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_KEY" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 -p ${SSH_PORT:-22} $SSH_USER@$SSH_HOST "mkdir -p ${APP_DIR:-\"~/apps/webdev-bot\"}/shared && chmod 700 ${APP_DIR:-\"~/apps/webdev-bot\"}/shared"
-          scp -i ~/.ssh/id_ed25519 -P ${SSH_PORT:-22} -o StrictHostKeyChecking=no .env $SSH_USER@$SSH_HOST:${APP_DIR:-"~/apps/webdev-bot"}/shared/.env
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 -p ${SSH_PORT:-22} $SSH_USER@$SSH_HOST "chmod 600 ${APP_DIR:-\"~/apps/webdev-bot\"}/shared/.env"
-
-      - name: Deploy on VPS
-        env:
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_PORT: ${{ secrets.SSH_PORT }}
-          SSH_KEY: ${{ secrets.SSH_KEY }}
-          APP_DIR: ${{ secrets.APP_DIR }}
-        run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_KEY" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 -p ${SSH_PORT:-22} $SSH_USER@$SSH_HOST << 'EOF'
-            set -euo pipefail
-            APP_DIR=${APP_DIR:-"~/apps/webdev-bot"}
-            mkdir -p "$APP_DIR/current" "$APP_DIR/releases" "$APP_DIR/shared"
-            cd "$APP_DIR"
-            rm -rf current/*
-            tar -xzf releases/release.tar.gz -C current
-            cd current
-            # Load env from shared/.env for the PM2 process
-            set -a
-            if [ -f "$APP_DIR/shared/.env" ]; then . "$APP_DIR/shared/.env"; fi
-            set +a
-            if [ -f package-lock.json ]; then
-              npm ci --omit=dev --no-audit --no-fund || true
-            else
-              npm install --omit=dev --no-audit --no-fund || true
-            fi
-            pm2 describe webdev-bot >/dev/null 2>&1 && pm2 restart webdev-bot || pm2 start "node dist/index.js" --name webdev-bot
-            pm2 save || true
-          EOF
-
+      - name: Extract and restart bot on VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd /home/${{ secrets.VPS_USER }}/discord-bot/
+            tar xzf bot-build.tar.gz
+            pm2 restart bot || pm2 start ./dist/index.js --name bot
