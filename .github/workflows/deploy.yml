@@ -38,7 +38,7 @@ jobs:
         run: npm run build:ci
 
       - name: Run tests
-        run: npm test:ci
+        run: npm run test:ci
 
       - name: Package build output
         run: tar czf bot-build.tar.gz ./dist
