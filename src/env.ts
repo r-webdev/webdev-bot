@@ -16,6 +16,15 @@ export const config = {
     token: requireEnv('DISCORD_TOKEN'),
     clientId: requireEnv('CLIENT_ID'),
   },
+  repel: {
+    repelLogChannelId: requireEnv('REPEL_LOG_CHANNEL_ID'),
+    repelRoleId: requireEnv('REPEL_ROLE_ID'),
+  },
+  fetchAndSyncMessages: requireEnv('FETCH_AND_SYNC_MESSAGES') === 'true',
+  serverId: requireEnv('SERVER_ID'),
+  moderatorsRoleIds: requireEnv('MODERATORS_ROLE_IDS')
+    ? requireEnv('MODERATORS_ROLE_IDS').split(',')
+    : [],
   // Add more config sections as needed:
   // database: {
   //   url: requireEnv('DATABASE_URL'),
