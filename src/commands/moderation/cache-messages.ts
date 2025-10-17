@@ -1,4 +1,4 @@
-import { PermissionFlagsBits, PermissionsBitField } from 'discord.js';
+import { ApplicationCommandOptionType, PermissionFlagsBits, PermissionsBitField } from 'discord.js';
 import { fetchAndCachePublicChannelsMessages } from '../../util/cache.js';
 import { createCommand } from '../../util/commands.js';
 
@@ -9,10 +9,18 @@ export default createCommand({
     default_member_permissions: new PermissionsBitField(
       PermissionFlagsBits.ManageMessages
     ).toJSON(),
+    options: [
+      {
+        name: 'force',
+        description: 'Force re-caching even if messages are already cached',
+        type: ApplicationCommandOptionType.Boolean,
+        required: false,
+      },
+    ],
   },
   execute: async (interaction) => {
     await interaction.deferReply();
-    if (!interaction.guild) {
+    if (!interaction.guild || !interaction.isChatInputCommand()) {
       await interaction.editReply('This command can only be used in a guild.');
       return;
     }
@@ -23,10 +31,14 @@ export default createCommand({
     }
 
     const guild = interaction.guild;
+    const force = interaction.options.getBoolean('force') ?? false;
 
     await interaction.editReply('Caching messages in all public text channels...');
 
-    const { cachedChannels, totalChannels } = await fetchAndCachePublicChannelsMessages(guild);
+    const { cachedChannels, totalChannels } = await fetchAndCachePublicChannelsMessages(
+      guild,
+      force
+    );
 
     await interaction.editReply(
       `Cached messages in ${cachedChannels} out of ${totalChannels} text channels.`
