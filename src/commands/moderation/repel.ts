@@ -144,7 +144,8 @@ const handleDeleteMessages = async ({
   lookBack: number;
 }) => {
   let deleted = 0;
-  await Promise.all(
+  const failedChannels: string[] = [];
+  await Promise.allSettled(
     channels.map(async (channel) => {
       try {
         const messages = channel.messages.cache;
@@ -162,10 +163,17 @@ const handleDeleteMessages = async ({
         }
         await channel.bulkDelete(targetMessages, true);
         deleted += targetMessages.length;
-      } catch {}
+      } catch (error) {
+        console.error(`Error deleting messages in channel ${channel.name}:`, error);
+        failedChannels.push(channel.id);
+        throw error;
+      }
     })
   );
-  return deleted;
+  if (failedChannels.length > 0) {
+    console.error(`Failed to delete messages in ${failedChannels.length} channel(s).`);
+  }
+  return { deleted, failedChannels };
 };
 
 const logRepelAction = async ({
@@ -175,6 +183,7 @@ const logRepelAction = async ({
   duration,
   deleteCount,
   reason,
+  failedChannels,
 }: {
   interaction: ChatInputCommandInteraction;
   member: GuildMember;
@@ -182,6 +191,7 @@ const logRepelAction = async ({
   reason: string;
   duration?: number;
   deleteCount: number;
+  failedChannels: string[];
 }) => {
   const channelInfo =
     interaction.channel?.type === ChannelType.GuildVoice
@@ -235,6 +245,15 @@ const logRepelAction = async ({
     .setColor('Orange')
     .setTimestamp();
 
+  const failedChannelsEmbed =
+    failedChannels.length > 0
+      ? new EmbedBuilder()
+          .setTitle('Failed to delete messages in the following channels:')
+          .setDescription(failedChannels.map((id) => `<#${id}>`).join('\n'))
+          .setColor('Red')
+          .setTimestamp()
+      : null;
+
   const modMessage = interaction.options.getString(RepelOptions.MESSAGE_FOR_MODS) ?? false;
   const mentionText = modMessage
     ? `${config.moderatorsRoleIds.map((id) => `<@&${id}>`)} - ${modMessage}`
@@ -242,11 +261,17 @@ const logRepelAction = async ({
   const channel = interaction.client.channels.cache.get(
     config.repel.repelLogChannelId
   ) as TextChannel;
+
+  const embed =
+    failedChannelsEmbed !== null
+      ? [commandEmbed, resultEmbed, failedChannelsEmbed]
+      : [commandEmbed, resultEmbed];
+
   await logToChannel({
     channel,
     content: {
       type: 'embed',
-      embed: [commandEmbed, resultEmbed],
+      embed,
       content: mentionText,
     },
   });
@@ -380,7 +405,7 @@ export const repelCommand = createCommand({
 
       const channels = getTextChannels(interaction);
 
-      const deleted = await handleDeleteMessages({
+      const { deleted, failedChannels } = await handleDeleteMessages({
         channels,
         target: target,
         lookBack: lookBack ?? DEFAULT_LOOK_BACK,
@@ -393,6 +418,7 @@ export const repelCommand = createCommand({
         reason,
         duration: timeout,
         deleteCount: deleted,
+        failedChannels,
       });
 
       await interaction.editReply({
