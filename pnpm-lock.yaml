@@ -15,7 +15,7 @@ importers:
         specifier: ^14.22.1
         version: 14.22.1
       typescript:
-        specifier: ^5.9.2
+        specifier: ^5.9.3
         version: 5.9.3
       web-features:
         specifier: ^3.3.0
