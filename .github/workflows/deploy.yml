@@ -34,11 +34,14 @@ jobs:
           git checkout main
           git pull origin main
 
+          # Read NODE_VERSION from .nvmrc
+          export NODE_VERSION=$(cat .nvmrc | sed 's/v//')
+          echo "Using Node version: $NODE_VERSION"
+
           # Create .env.local file with secrets
           cat > .env.local << EOF
           DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}
           CLIENT_ID=${{ secrets.CLIENT_ID }}
-          NODE_VERSION=${{ env.NODE_VERSION }}
           EOF
 
           # Stop any existing containers
