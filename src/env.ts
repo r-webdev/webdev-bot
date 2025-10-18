@@ -1,5 +1,9 @@
 import './loadEnvFile.js';
 
+function optionalEnv(key: string): string | undefined {
+  return process.env[key];
+}
+
 function requireEnv(key: string): string {
   const value = process.env[key];
   if (!value) {
@@ -15,6 +19,10 @@ export const config = {
   discord: {
     token: requireEnv('DISCORD_TOKEN'),
     clientId: requireEnv('CLIENT_ID'),
+  },
+  guides: {
+    channelId: requireEnv('GUIDES_CHANNEL_ID'),
+    trackerPath: optionalEnv('GUIDES_TRACKER_PATH'),
   },
   // Add more config sections as needed:
   // database: {
