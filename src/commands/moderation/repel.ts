@@ -99,7 +99,8 @@ const getTargetFromInteraction = async (
   }
   try {
     target = await interaction.guild.members.fetch(targetFromOption.id);
-  } catch {
+  } catch (error) {
+    console.error('Error fetching target as guild member:', error);
     target = targetFromOption;
   }
   return target;
@@ -118,13 +119,15 @@ const handleTimeout = async ({
   try {
     await target.timeout(duration * HOUR, 'Repel command executed');
     return duration;
-  } catch {
+  } catch (error) {
+    console.error('Error applying timeout to user:', error);
     return 0;
   }
 };
 
 const getTextChannels = (interaction: ChatInputCommandInteraction) => {
   if (!interaction.inGuild() || !interaction.guild) {
+    console.error('Interaction is not in a guild');
     return [];
   }
   const channels = getPublicChannels(interaction.guild).map((c) => c);
