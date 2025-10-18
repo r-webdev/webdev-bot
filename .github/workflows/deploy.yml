@@ -80,6 +80,12 @@ jobs:
             type=sha,prefix={{branch}}-
             type=ref,event=branch
             type=raw,value=latest,enable={{is_default_branch}}
+      
+      - name: Log Step outputs
+        run: |
+          echo "Node version: ${{ steps.setup-node.outputs.node-version }}"
+          echo "Tags: ${{ steps.meta.outputs.tags }}"
+          echo "Labels: ${{ steps.meta.outputs.labels }}"
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
