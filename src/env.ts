@@ -20,7 +20,7 @@ export const config = {
     repelLogChannelId: requireEnv('REPEL_LOG_CHANNEL_ID'),
     repelRoleId: requireEnv('REPEL_ROLE_ID'),
   },
-  fetchAndSyncMessages: requireEnv('FETCH_AND_SYNC_MESSAGES') === 'true',
+  fetchAndSyncMessages: true,
   serverId: requireEnv('SERVER_ID'),
   moderatorsRoleIds: requireEnv('MODERATORS_ROLE_IDS')
     ? requireEnv('MODERATORS_ROLE_IDS').split(',')
