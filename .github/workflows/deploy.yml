@@ -13,6 +13,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Read Node version
+      run: |
+        NODE_VERSION=$(cat .nvmrc | sed 's/v//')
+        echo "NODE_VERSION=$NODE_VERSION" >> $GITHUB_ENV
+
     - name: Deploy to VPS
       uses: appleboy/ssh-action@v1.0.3
       with:
@@ -33,7 +38,7 @@ jobs:
           cat > .env.local << EOF
           DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}
           CLIENT_ID=${{ secrets.CLIENT_ID }}
-          NODE_VERSION=$(cat .nvmrc | tr -d 'v')
+          NODE_VERSION=${{ env.NODE_VERSION }}
           EOF
 
           # Stop any existing containers
