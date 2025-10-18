@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # Production service - optimized runtime
+  bot-prod:
+    build:
+      context: .
+      target: production
+      args:
+        NODE_VERSION: ${NODE_VERSION}
+    container_name: webdev-bot-prod
+    restart: unless-stopped
+    env_file:
+      - .env.local
+    profiles:
+      - prod
+
+  # Development service - hot reload enabled
+  bot-dev:
+    build:
+      context: .
+      target: development
+      args:
+        NODE_VERSION: ${NODE_VERSION}
+    container_name: webdev-bot-dev
+    restart: unless-stopped
+    env_file:
+      - .env.local
+    volumes:
+      # Mount source code for hot reload
+      - ./src:/app/src:ro
+      # Mount config files
+      - ./tsconfig.json:/app/tsconfig.json:ro
+      - ./biome.json:/app/biome.json:ro
+      # Mount package files (in case dependencies change)
+      - ./package.json:/app/package.json:ro
+      - ./pnpm-lock.yaml:/app/pnpm-lock.yaml:ro
+    profiles:
+      - dev
+
