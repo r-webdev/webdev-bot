@@ -19,6 +19,7 @@ export const config = {
   discord: {
     token: requireEnv('DISCORD_TOKEN'),
     clientId: requireEnv('CLIENT_ID'),
+    serverId: requireEnv('SERVER_ID'),
   },
   guides: {
     channelId: requireEnv('GUIDES_CHANNEL_ID'),
