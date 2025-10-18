@@ -13,7 +13,7 @@ FROM base AS deps
 
 COPY package.json pnpm-lock.yaml ./
 
-RUN pnpm install --prod --frozen-lockfile
+RUN pnpm install --frozen-lockfile --production
 
 # Dev dependencies stage - Install all dependencies
 FROM base AS deps-dev
