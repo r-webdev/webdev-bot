@@ -35,13 +35,15 @@ export default createCommand({
 
     await interaction.editReply('Caching messages in all public text channels...');
 
-    const { cachedChannels, totalChannels } = await fetchAndCachePublicChannelsMessages(
-      guild,
-      force
-    );
+    const { cachedChannels, totalChannels, failedChannels } =
+      await fetchAndCachePublicChannelsMessages(guild, force);
+
+    const failedMessage = failedChannels.length
+      ? `\nFailed to cache messages in the following channels: ${failedChannels.map((id) => `<#${id}>`).join(', ')}`
+      : '';
 
     await interaction.editReply(
-      `Cached messages in ${cachedChannels} out of ${totalChannels} text channels.`
+      `Cached messages in ${cachedChannels} out of ${totalChannels} text channels.${failedMessage}`
     );
   },
 });
