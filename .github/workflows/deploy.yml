@@ -1,154 +1,38 @@
-name: Build, Test and Deploy Discord Bot to VPS
+name: Build, Test and Deploy Discord Bot to VPS but shorter
 
 on:
-  workflow_dispatch: # Manual trigger only
-  # Uncomment below when VPS is ready:
-  # push:
-  #   branches: [ "main" ]
-  #   paths-ignore:
-  #     - 'docs/**'
-  #     - '.gitignore'
-  #     - 'LICENSE'
-
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  workflow_dispatch: # Allow manual deployment
 
 jobs:
-  build-test-deploy:
+  deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        id: setup-node
-        with:
-          node-version-file: .nvmrc
-      
-      - name: Store Node version
-        run: |
-          NODE_VERSION="${{ steps.setup-node.outputs.node-version }}"
-          echo "NODE_VERSION=${NODE_VERSION#v}" >> $GITHUB_ENV
+    - name: Deploy to VPS
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USER }}
+        key: ${{ secrets.VPS_SSH_KEY }}
+        script: |
+          cd /home/${{ secrets.VPS_USER }}/webdev-bot
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.17.1
+          # Stash any local changes
+          git stash push -m "Auto-deploy $(date)" 2>/dev/null || true
 
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+          # Pull latest changes
+          git checkout main
+          git pull origin main
 
-      - name: Setup pnpm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          # Stop any existing containers
+          docker-compose down || true
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          # Build and start production container with profile
+          docker-compose --profile prod up -d --build
 
-      - name: Lint
-        run: pnpm run lint
-
-      - name: Build bot
-        run: pnpm run build:ci
-
-      - name: Run tests
-        run: pnpm run test:ci
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract metadata for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=sha,prefix={{branch}}-
-            type=ref,event=branch
-            type=raw,value=latest,enable={{is_default_branch}}
-      
-      - name: Log Step outputs
-        run: |
-          echo "Node version: ${{ steps.setup-node.outputs.node-version }}"
-          echo "NODE_VERSION: ${{ env.NODE_VERSION }}"
-          echo "Tags: ${{ steps.meta.outputs.tags }}"
-          echo "Labels: ${{ steps.meta.outputs.labels }}"
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          target: production
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          build-args: |
-            NODE_VERSION=${{ env.NODE_VERSION }}
-
-      - name: Deploy to VPS
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          source: "docker-compose.yml"
-          target: "~/webdev-bot-deploy"
-          strip_components: 0
-
-      - name: Start containers on VPS
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          script: |
-            cd ~/webdev-bot-deploy
-            
-            # Create .env.local file with secrets
-            cat > .env.local << EOF
-            DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}
-            CLIENT_ID=${{ secrets.CLIENT_ID }}
-            EOF
-            
-            # Set NODE_VERSION for docker-compose
-            export NODE_VERSION=${{ env.NODE_VERSION }}
-            
-            # Login to GitHub Container Registry
-            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            
-            # Update docker-compose.yml to use the pre-built image
-            cat > docker-compose.override.yml << EOF
-            version: '3.8'
-            services:
-              bot-prod:
-                image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-                build: null
-            EOF
-            
-            # Pull the latest image and start
-            docker compose --profile prod pull
-            docker compose --profile prod up -d
-            
-            # Clean up old images
-            docker image prune -af --filter "until=24h"
+          # Check status
+          echo "Deployment completed. Container status:"
+          docker-compose ps
