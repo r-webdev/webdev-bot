@@ -33,7 +33,6 @@
   "license": "MIT",
   "packageManager": "pnpm@10.17.1",
   "dependencies": {
-    "@discordjs/core": "^2.2.2",
     "discord.js": "^14.22.1",
     "web-features": "^3.3.0"
   },

@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@discordjs/core':
-        specifier: ^2.2.2
-        version: 2.2.2
       discord.js:
         specifier: ^14.22.1
         version: 14.22.1
@@ -38,7 +35,7 @@ importers:
         version: 4.20.6
       typescript:
         specifier: ^5.9.2
-        version: 5.9.2
+        version: 5.9.3
 
 packages:
 
@@ -107,10 +104,6 @@ packages:
     resolution: {integrity: sha512-LiSusze9Tc7qF03sLCujF5iZp7K+vRNEDBZ86FT9aQAv3vxMLihUvKvpsCWiQ2DJq1tVckopKm1rxomgNUc9hg==}
     engines: {node: '>=18'}
 
-  '@discordjs/core@2.2.2':
-    resolution: {integrity: sha512-J2YBG9AclyALcamdEyT+so6bhW+Ys6TslXIaNLw0lN0lkGKUaaqXwUccQBnzZmJt1s4k29dXrdY0pqSnVsl7JA==}
-    engines: {node: '>=20'}
-
   '@discordjs/formatters@0.6.1':
     resolution: {integrity: sha512-5cnX+tASiPCqCWtFcFslxBVUaCetB0thvM/JyavhbXInP1HJIEU+Qv/zMrnuwSsX3yWH2lVXNJZeDK3EiP4HHg==}
     engines: {node: '>=16.11.0'}
@@ -126,10 +119,6 @@ packages:
   '@discordjs/ws@1.2.3':
     resolution: {integrity: sha512-wPlQDxEmlDg5IxhJPuxXr3Vy9AjYq5xCvFWGJyD7w7Np8ZGu+Mc+97LCoEc/+AYCo2IDpKioiH0/c/mj5ZR9Uw==}
     engines: {node: '>=16.11.0'}
-
-  '@discordjs/ws@2.0.3':
-    resolution: {integrity: sha512-c/Yd0eK2kFAvGn5/xECdUziSXLQh7tFO7kw2nfsj46B6txhPpJweR8yYjtYQ+kbUsaFcoQOrZ69wYqfetdqSHw==}
-    engines: {node: '>=20'}
 
   '@esbuild/aix-ppc64@0.25.10':
     resolution: {integrity: sha512-0NFWnA+7l41irNuaSVlLfgNT12caWJVLzp5eAVhZ0z1qpxbockccEt3s+149rE64VUI3Ml2zt8Nv5JVc4QXTsw==}
@@ -1024,18 +1013,6 @@ snapshots:
 
   '@discordjs/collection@2.1.1': {}
 
-  '@discordjs/core@2.2.2':
-    dependencies:
-      '@discordjs/rest': 2.6.0
-      '@discordjs/util': 1.1.1
-      '@discordjs/ws': 2.0.3
-      '@sapphire/snowflake': 3.5.5
-      '@vladfrangu/async_event_emitter': 2.4.7
-      discord-api-types: 0.38.28
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
   '@discordjs/formatters@0.6.1':
     dependencies:
       discord-api-types: 0.38.28
@@ -1055,21 +1032,6 @@ snapshots:
   '@discordjs/util@1.1.1': {}
 
   '@discordjs/ws@1.2.3':
-    dependencies:
-      '@discordjs/collection': 2.1.1
-      '@discordjs/rest': 2.6.0
-      '@discordjs/util': 1.1.1
-      '@sapphire/async-queue': 1.5.5
-      '@types/ws': 8.18.1
-      '@vladfrangu/async_event_emitter': 2.4.7
-      discord-api-types: 0.38.28
-      tslib: 2.8.1
-      ws: 8.18.3
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
-  '@discordjs/ws@2.0.3':
     dependencies:
       '@discordjs/collection': 2.1.1
       '@discordjs/rest': 2.6.0
