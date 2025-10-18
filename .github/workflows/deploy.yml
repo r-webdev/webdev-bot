@@ -1,6 +1,8 @@
-name: Build, Test and Deploy Discord Bot to VPS but shorter
+name: Build, Test and Deploy Discord Bot to VPS
 
 on:
+  push:
+    branches: [ "main" ]
   workflow_dispatch: # Allow manual deployment
 
 jobs:
@@ -26,6 +28,13 @@ jobs:
           # Pull latest changes
           git checkout main
           git pull origin main
+
+          # Create .env.local file with secrets
+          cat > .env.local << EOF
+          DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}
+          CLIENT_ID=${{ secrets.CLIENT_ID }}
+          NODE_VERSION=$(cat .nvmrc | tr -d 'v')
+          EOF
 
           # Stop any existing containers
           docker-compose down || true
