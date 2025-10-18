@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment files
+.env
+.env.*
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# IDE
+.vscode/
+.idea/
+.cursor/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# CI/CD
+.github/
+
+# Documentation
+*.md
+!DOCKER.md
+
+# Test files
+test/
+*.test.ts
+*.test.js
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Misc
+.husky/
+
