@@ -17,12 +17,13 @@ export const readyEvent = createEvent(
         await fetchAndCachePublicChannelsMessages(guild, true);
       }
 
-    // Sync guides to channel
-    try {
-      console.log(`🔄 Starting guide sync to channel ${config.guides.channelId}...`);
-      await syncGuidesToChannel(client, config.guides.channelId);
-    } catch (error) {
-      console.error('❌ Failed to sync guides:', error);
+      // Sync guides to channel
+      try {
+        console.log(`🔄 Starting guide sync to channel ${config.guides.channelId}...`);
+        await syncGuidesToChannel(client, config.guides.channelId);
+      } catch (error) {
+        console.error('❌ Failed to sync guides:', error);
+      }
     }
   }
 );
