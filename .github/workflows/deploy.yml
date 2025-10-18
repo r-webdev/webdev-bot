@@ -107,29 +107,48 @@ jobs:
             NODE_VERSION=${{ env.NODE_VERSION }}
 
       - name: Deploy to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: "docker-compose.yml"
+          target: "~/webdev-bot-deploy"
+          strip_components: 0
+
+      - name: Start containers on VPS
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
+            cd ~/webdev-bot-deploy
+            
+            # Create .env.local file with secrets
+            cat > .env.local << EOF
+            DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}
+            CLIENT_ID=${{ secrets.CLIENT_ID }}
+            EOF
+            
+            # Set NODE_VERSION for docker-compose
+            export NODE_VERSION=${{ env.NODE_VERSION }}
+            
             # Login to GitHub Container Registry
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             
-            # Pull the latest image
-            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            # Update docker-compose.yml to use the pre-built image
+            cat > docker-compose.override.yml << EOF
+            version: '3.8'
+            services:
+              bot-prod:
+                image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+                build: null
+            EOF
             
-            # Stop and remove old container if it exists
-            docker stop webdev-bot-prod 2>/dev/null || true
-            docker rm webdev-bot-prod 2>/dev/null || true
-            
-            # Run new container
-            docker run -d \
-              --name webdev-bot-prod \
-              --restart unless-stopped \
-              -e DISCORD_TOKEN="${{ secrets.DISCORD_TOKEN }}" \
-              -e CLIENT_ID="${{ secrets.CLIENT_ID }}" \
-              ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            # Pull the latest image and start
+            docker compose --profile prod pull
+            docker compose --profile prod up -d
             
             # Clean up old images
             docker image prune -af --filter "until=24h"
