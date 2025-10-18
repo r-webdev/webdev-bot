@@ -41,6 +41,9 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
 COPY package.json ./
 
+# Create data directory and set permissions for node user
+RUN mkdir -p /app/data && chown -R node:node /app/data
+
 # Run as non-root user for security
 USER node
 
@@ -52,6 +55,9 @@ FROM deps-dev AS development
 ENV NODE_ENV=development
 
 COPY . .
+
+# Create data directory and set permissions for node user
+RUN mkdir -p /app/data && chown -R node:node /app/data
 
 # Run as non-root user for security
 USER node
