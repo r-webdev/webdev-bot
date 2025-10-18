@@ -43,7 +43,5 @@ export default createCommand({
     await interaction.editReply(
       `Cached messages in ${cachedChannels} out of ${totalChannels} text channels.`
     );
-
-    return;
   },
 });
