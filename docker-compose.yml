@@ -10,6 +10,11 @@ services:
     restart: unless-stopped
     env_file:
       - .env.local
+    environment:
+      - GUIDES_TRACKER_PATH=/app/data/guides-tracker.json
+    volumes:
+      # Persist guides tracker data
+      - guides-data:/app/data
     profiles:
       - prod
 
@@ -24,6 +29,8 @@ services:
     restart: unless-stopped
     env_file:
       - .env.local
+    environment:
+      - GUIDES_TRACKER_PATH=/app/data/guides-tracker.json
     volumes:
       # Mount source code for hot reload
       - ./src:/app/src:ro
@@ -33,6 +40,11 @@ services:
       # Mount package files (in case dependencies change)
       - ./package.json:/app/package.json:ro
       - ./pnpm-lock.yaml:/app/pnpm-lock.yaml:ro
+      # Persist guides tracker data
+      - guides-data:/app/data
     profiles:
       - dev
 
+volumes:
+  guides-data:
+    driver: local

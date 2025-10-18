@@ -42,6 +42,7 @@ jobs:
           cat > .env.local << EOF
           DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}
           CLIENT_ID=${{ secrets.CLIENT_ID }}
+          GUIDES_CHANNEL_ID=${{ secrets.GUIDES_CHANNEL_ID }}
           EOF
 
           # Stop any existing containers
