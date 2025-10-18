@@ -11,6 +11,10 @@
     "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
     "deploy": "tsx src/util/deploy.ts",
+    "docker:build": "NODE_VERSION=$(cat .nvmrc | tr -d 'v') docker compose build",
+    "docker:dev": "NODE_VERSION=$(cat .nvmrc | tr -d 'v') docker compose --profile dev up",
+    "docker:prod": "NODE_VERSION=$(cat .nvmrc | tr -d 'v') docker compose --profile prod up -d",
+    "docker:stop": "docker compose down",
     "lint": "biome lint .",
     "lint:fix": "biome lint --fix .",
     "format": "biome format --write .",
@@ -20,7 +24,9 @@
     "test": "pnpm run build:dev && node --test dist/**/*.test.js",
     "test:ci": "node --test dist/**/*.test.js",
     "prepare": "husky",
-    "pre-commit": "lint-staged"
+    "pre-commit": "lint-staged",
+    "sync-guides": "tsx scripts/sync-guides.js",
+    "sync-guides:init": "tsx scripts/sync-guides.js --initialize"
   },
   "keywords": [],
   "author": "",

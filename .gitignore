@@ -16,3 +16,6 @@ yarn-error.log*
 .env
 .env.local
 .env.*.local
+
+# guides tracker
+guides-tracker.json

@@ -1,5 +1,9 @@
 import './loadEnvFile.js';
 
+function optionalEnv(key: string): string | undefined {
+  return process.env[key];
+}
+
 function requireEnv(key: string): string {
   const value = process.env[key];
   if (!value) {
@@ -25,6 +29,10 @@ export const config = {
   moderatorsRoleIds: requireEnv('MODERATORS_ROLE_IDS')
     ? requireEnv('MODERATORS_ROLE_IDS').split(',')
     : [],
+  guides: {
+    channelId: requireEnv('GUIDES_CHANNEL_ID'),
+    trackerPath: optionalEnv('GUIDES_TRACKER_PATH'),
+  },
   // Add more config sections as needed:
   // database: {
   //   url: requireEnv('DATABASE_URL'),
