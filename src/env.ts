@@ -20,6 +20,15 @@ export const config = {
     token: requireEnv('DISCORD_TOKEN'),
     clientId: requireEnv('CLIENT_ID'),
   },
+  repel: {
+    repelLogChannelId: requireEnv('REPEL_LOG_CHANNEL_ID'),
+    repelRoleId: requireEnv('REPEL_ROLE_ID'),
+  },
+  fetchAndSyncMessages: true,
+  serverId: requireEnv('SERVER_ID'),
+  moderatorsRoleIds: requireEnv('MODERATORS_ROLE_IDS')
+    ? requireEnv('MODERATORS_ROLE_IDS').split(',')
+    : [],
   guides: {
     channelId: requireEnv('GUIDES_CHANNEL_ID'),
     trackerPath: optionalEnv('GUIDES_TRACKER_PATH'),
