@@ -1,4 +1,4 @@
-import { Events } from 'discord.js';
+import { Events, MessageFlags } from 'discord.js';
 import { commands } from '../commands/index.js';
 import { createEvent } from '../util/events.js';
 import { isAllowedServer } from '../util/server-guard.js';
@@ -15,7 +15,7 @@ export const interactionCreateEvent = createEvent(
         if (interaction.isRepliable()) {
           await interaction.reply({
             content: '❌ This bot is not authorized to operate in this server.',
-            ephemeral: true,
+            flags: MessageFlags.Ephemeral,
           });
         }
         return;
