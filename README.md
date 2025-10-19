@@ -51,11 +51,11 @@ A comprehensive Discord bot designed specifically for the Web Dev Discord server
    pnpm install
    ```
 
-3. Set up environment variables (create `.env` file):
+3. Set up environment variables (create `.env.local` file):
    ```
    DISCORD_TOKEN=your_bot_token_here
-   DISCORD_CLIENT_ID=your_client_id_here
-   DISCORD_GUILD_ID=your_guild_id_here
+   CLIENT_ID=your_client_id_here
+   SERVER_ID=your_guild_id_here
    ```
 
 4. Build and start the bot:
@@ -72,8 +72,8 @@ A comprehensive Discord bot designed specifically for the Web Dev Discord server
 <br>
 
 
-### Docker Support
-To use docker with the bot:
+## Docker Support
+To use docker with the bot, run:
 ```bash
 # Development
 pnpm run docker:dev
@@ -88,18 +88,10 @@ pnpm run docker:build
 <br>
 
 
-# Configuration
 
-### Environment Variables
-- `DISCORD_TOKEN` - Discord bot token (required)
-- `DISCORD_CLIENT_ID` - Discord application client ID
-- `DISCORD_GUILD_ID` - Target guild/server ID
-- Additional moderation-specific configuration in `src/env.ts`
 
-<br>
+# Required Permissions
 
-### Bot Permissions
-The bot requires the following Discord permissions:
 - Send Messages
 - Read Message History
 - Manage Messages
@@ -120,14 +112,14 @@ The bot requires the following Discord permissions:
 <br>
 
 
-#### Adding New Guides/Tips
+### Adding New Guides or Tips
 1. Add markdown files to `src/commands/guides/subjects/` or `src/commands/tips/subjects/`
 2. Include frontmatter with `name` field
 3. The bot will automatically detect and load new content
 
 <br>
 
-## Support
+# Support
 
 For issues, questions, or feature requests:
 - Open an issue on GitHub
