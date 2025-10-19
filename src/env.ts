@@ -19,7 +19,6 @@ export const config = {
   discord: {
     token: requireEnv('DISCORD_TOKEN'),
     clientId: requireEnv('CLIENT_ID'),
-    serverId: requireEnv('SERVER_ID'),
   },
   repel: {
     repelLogChannelId: requireEnv('REPEL_LOG_CHANNEL_ID'),
