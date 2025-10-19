@@ -117,7 +117,7 @@ const handleTimeout = async ({
     return 0;
   }
   try {
-    await target.timeout(duration * HOUR, 'Repel command executed');
+    await target.timeout(duration, 'Repel command executed');
     return duration;
   } catch (error) {
     console.error('Error applying timeout to user:', error);
