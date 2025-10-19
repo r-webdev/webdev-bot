@@ -44,6 +44,9 @@ jobs:
           CLIENT_ID=${{ secrets.CLIENT_ID }}
           GUIDES_CHANNEL_ID=${{ secrets.GUIDES_CHANNEL_ID }}
           SERVER_ID=${{ secrets.SERVER_ID }}
+          REPEL_LOG_CHANNEL_ID=${{ secrets.REPEL_LOG_CHANNEL_ID }}
+          REPEL_ROLE_ID=${{ secrets.REPEL_ROLE_ID }}
+          MODERATORS_ROLE_IDS=${{ secrets.MODERATORS_ROLE_IDS }}
           EOF
 
           # Stop any existing containers
