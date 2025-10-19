@@ -17,8 +17,8 @@ import { getPublicChannels } from '../../util/channel.js';
 import { logToChannel } from '../../util/channel-logging.js';
 import { buildCommandString, createCommand } from '../../util/commands.js';
 
-const DEFAULT_LOOK_BACK = 10 * MINUTE;
-const DEFAULT_TIMEOUT_DURATION = 1 * HOUR;
+const DEFAULT_LOOK_BACK_MS = 10 * MINUTE;
+const DEFAULT_TIMEOUT_DURATION_MS = 1 * HOUR;
 
 const isUserInServer = (target: User | GuildMember): target is GuildMember => {
   return target instanceof GuildMember;
@@ -108,17 +108,17 @@ const getTargetFromInteraction = async (
 
 const handleTimeout = async ({
   target,
-  duration,
+  durationInMilliseconds,
 }: {
   target: GuildMember | User;
-  duration: number;
+  durationInMilliseconds: number;
 }): Promise<number> => {
-  if (duration === 0 || !isUserInServer(target) || isUserTimedOut(target)) {
+  if (durationInMilliseconds === 0 || !isUserInServer(target) || isUserTimedOut(target)) {
     return 0;
   }
   try {
-    await target.timeout(duration * HOUR, 'Repel command executed');
-    return duration;
+    await target.timeout(durationInMilliseconds, 'Repel command executed');
+    return durationInMilliseconds;
   } catch (error) {
     console.error('Error applying timeout to user:', error);
     return 0;
@@ -307,7 +307,7 @@ export const repelCommand = createCommand({
         name: RepelOptions.LOOK_BACK,
         required: false,
         type: ApplicationCommandOptionType.Integer,
-        description: `Number of recent messages to delete (default: ${timeToString(DEFAULT_LOOK_BACK)})`,
+        description: `Number of recent messages to delete (default: ${timeToString(DEFAULT_LOOK_BACK_MS)})`,
         choices: [
           {
             name: '10 minutes (Default)',
@@ -331,8 +331,8 @@ export const repelCommand = createCommand({
         name: RepelOptions.TIMEOUT_DURATION,
         required: false,
         type: ApplicationCommandOptionType.Integer,
-        description: `Duration of the timeout in hours (default: ${timeToString(DEFAULT_TIMEOUT_DURATION)})`,
-        min_value: 1,
+        description: `Duration of the timeout in hours (default: ${timeToString(DEFAULT_TIMEOUT_DURATION_MS)})`,
+        min_value: 0,
         max_value: 24,
       },
       {
@@ -396,11 +396,11 @@ export const repelCommand = createCommand({
     try {
       const reason = interaction.options.getString(RepelOptions.REASON, true);
       const lookBack = interaction.options.getInteger(RepelOptions.LOOK_BACK);
-      const timeoutDuration = interaction.options.getInteger(RepelOptions.TIMEOUT_DURATION);
+      const timeoutHours = interaction.options.getInteger(RepelOptions.TIMEOUT_DURATION);
 
       const timeout = await handleTimeout({
         target: target,
-        duration: timeoutDuration ? timeoutDuration * HOUR : DEFAULT_TIMEOUT_DURATION,
+        durationInMilliseconds: timeoutHours ? timeoutHours * HOUR : DEFAULT_TIMEOUT_DURATION_MS,
       });
 
       const channels = getTextChannels(interaction);
@@ -408,7 +408,7 @@ export const repelCommand = createCommand({
       const { deleted, failedChannels } = await handleDeleteMessages({
         channels,
         target: target,
-        lookBack: lookBack ?? DEFAULT_LOOK_BACK,
+        lookBack: lookBack ?? DEFAULT_LOOK_BACK_MS,
       });
 
       logRepelAction({
