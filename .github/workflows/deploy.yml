@@ -31,8 +31,8 @@ jobs:
           git stash push -m "Auto-deploy $(date)" 2>/dev/null || true
 
           # Pull latest changes
-          git checkout ci/deploy-with-docker
-          git pull origin ci/deploy-with-docker
+          git checkout main
+          git pull origin main
 
           # Read NODE_VERSION from .nvmrc
           export NODE_VERSION=$(cat .nvmrc | sed 's/v//')
