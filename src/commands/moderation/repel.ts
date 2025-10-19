@@ -150,12 +150,14 @@ const handleDeleteMessages = async ({
       try {
         const messages = channel.messages.cache;
         const targetMessages = messages
-          .filter(
-            (message) =>
+          .filter((message) => {
+            return (
+              message.author &&
               message.author.id === target.id &&
               message.deletable &&
               Date.now() - message.createdTimestamp < lookBack
-          )
+            );
+          })
           .first(10);
 
         if (targetMessages.length === 0) {
