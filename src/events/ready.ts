@@ -3,6 +3,7 @@ import { config } from '../env.js';
 import { fetchAndCachePublicChannelsMessages } from '../util/cache.js';
 import { createEvent } from '../util/events.js';
 import { syncGuidesToChannel } from '../util/post-guides.js';
+import { leaveIfNotAllowedServer } from '../util/server-guard.js';
 
 export const readyEvent = createEvent(
   {
@@ -11,6 +12,13 @@ export const readyEvent = createEvent(
   },
   async (client) => {
     console.log(`Ready! Logged in as ${client.user.tag}`);
+
+    // Check all guilds and leave any unauthorized ones
+    console.log(`🔍 Checking ${client.guilds.cache.size} guild(s)...`);
+    for (const guild of client.guilds.cache.values()) {
+      await leaveIfNotAllowedServer(guild);
+    }
+
     if (config.fetchAndSyncMessages) {
       const guild = client.guilds.cache.get(config.serverId);
       if (guild) {
