@@ -1,74 +1,60 @@
 name: Build, Test and Deploy Discord Bot to VPS
 
 on:
-  workflow_dispatch: # Manual trigger only
-  # Uncomment below when VPS is ready:
-  # push:
-  #   branches: [ "main" ]
-  #   paths-ignore:
-  #     - 'docs/**'
-  #     - '.gitignore'
-  #     - 'LICENSE'
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: # Allow manual deployment
 
 jobs:
-  build-test-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
+    - name: Read Node version
+      run: |
+        NODE_VERSION=$(cat .nvmrc | sed 's/v//')
+        echo "NODE_VERSION=$NODE_VERSION" >> $GITHUB_ENV
 
-      - name: Install dependencies
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci --no-audit --no-fund
-          else
-            npm install --no-audit --no-fund
-          fi
+    - name: Deploy to VPS
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USER }}
+        key: ${{ secrets.VPS_SSH_KEY }}
+        script: |
+          cd /home/${{ secrets.VPS_USER }}/webdev-bot-deploy
 
-      - name: Lint
-        run: npm run lint
+          # Stash any local changes
+          git stash push -m "Auto-deploy $(date)" 2>/dev/null || true
 
-      - name: Build bot
-        run: npm run build:ci
+          # Pull latest changes
+          git checkout main
+          git pull origin main
 
-      - name: Run tests
-        run: npm run test:ci
+          # Read NODE_VERSION from .nvmrc
+          export NODE_VERSION=$(cat .nvmrc | sed 's/v//')
+          echo "Using Node version: $NODE_VERSION"
 
-      - name: Package build output
-        run: tar czf bot-build.tar.gz ./dist
+          # Create .env.local file with secrets
+          cat > .env.local << EOF
+          DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}
+          CLIENT_ID=${{ secrets.CLIENT_ID }}
+          GUIDES_CHANNEL_ID=${{ secrets.GUIDES_CHANNEL_ID }}
+          SERVER_ID=${{ secrets.SERVER_ID }}
+          REPEL_LOG_CHANNEL_ID=${{ secrets.REPEL_LOG_CHANNEL_ID }}
+          REPEL_ROLE_ID=${{ secrets.REPEL_ROLE_ID }}
+          MODERATORS_ROLE_IDS=${{ secrets.MODERATORS_ROLE_IDS }}
+          EOF
 
-      - name: Copy build artifact to VPS
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          source: "bot-build.tar.gz"
-          target: "/home/${{ secrets.VPS_USER }}/discord-bot/"
+          # Stop any existing containers
+          docker compose down || true
 
-      - name: Create .env file on VPS
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          script: |
-            echo "DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}" > /home/${{ secrets.VPS_USER }}/discord-bot/.env
-            echo "CLIENT_ID=${{ secrets.CLIENT_ID }}" >> /home/${{ secrets.VPS_USER }}/discord-bot/.env
+          # Build and start production container with profile
+          docker compose --profile prod up -d --build
 
-      - name: Extract and restart bot on VPS
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          script: |
-            cd /home/${{ secrets.VPS_USER }}/discord-bot/
-            tar xzf bot-build.tar.gz
-            pm2 restart bot || pm2 start ./dist/index.js --name bot
+          # Check status
+          echo "Deployment completed. Container status:"
+          docker compose ps
