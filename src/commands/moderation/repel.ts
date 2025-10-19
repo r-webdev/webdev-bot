@@ -144,7 +144,6 @@ const handleDeleteMessages = async ({
   lookBack: number;
 }) => {
   let deleted = 0;
-  console.log({ '😭 targetId': target.id });
   const failedChannels: string[] = [];
   await Promise.allSettled(
     channels.map(async (channel) => {
@@ -152,10 +151,8 @@ const handleDeleteMessages = async ({
         const messages = channel.messages.cache;
         const targetMessages = messages
           .filter((message) => {
-            console.log({
-              '😭 message author id': message.author.id,
-            });
             return (
+              message.author &&
               message.author.id === target.id &&
               message.deletable &&
               Date.now() - message.createdTimestamp < lookBack
