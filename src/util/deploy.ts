@@ -5,10 +5,7 @@ import { config } from '../env.js';
 export async function deployCommands(): Promise<RESTPutAPIApplicationCommandsResult> {
   const commandData = [...commands.values()].map((command) => command.data);
 
-  const guildId = config.discord.serverId;
-
   const rest = new REST({ version: '10' }).setToken(config.discord.token);
-
 
   const result = (await rest.put(
     Routes.applicationGuildCommands(config.discord.clientId, config.serverId),
