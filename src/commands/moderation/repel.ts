@@ -131,7 +131,10 @@ const getTextChannels = (interaction: ChatInputCommandInteraction) => {
     return [];
   }
   const channels = getPublicChannels(interaction.guild).map((c) => c);
-  return channels;
+  return [
+    interaction.channel as TextChannel,
+    ...channels.filter((c) => c.id !== interaction.channelId),
+  ];
 };
 
 const handleDeleteMessages = async ({
