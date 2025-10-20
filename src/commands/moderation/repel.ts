@@ -130,7 +130,7 @@ const getTextChannels = (interaction: ChatInputCommandInteraction) => {
     console.error('Interaction is not in a guild');
     return [];
   }
-  const channels = getPublicChannels(interaction.guild).map((c) => c);
+  const channels = getPublicChannels(interaction.guild).values();
   return [
     interaction.channel as TextChannel,
     ...channels.filter((channel) => channel.id !== interaction.channelId),
