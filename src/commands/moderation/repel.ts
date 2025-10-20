@@ -133,7 +133,7 @@ const getTextChannels = (interaction: ChatInputCommandInteraction) => {
   const channels = getPublicChannels(interaction.guild).map((c) => c);
   return [
     interaction.channel as TextChannel,
-    ...channels.filter((c) => c.id !== interaction.channelId),
+    ...channels.filter((channel) => channel.id !== interaction.channelId),
   ];
 };
 
