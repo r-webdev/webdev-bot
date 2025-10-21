@@ -13,8 +13,9 @@ A comprehensive Discord bot designed specifically for the Web Dev Discord server
 
 ### Educational Resources
 - **`/guides [subject]`** - Access detailed guides on various web development topics
-- **`/tips [subject]`** - Get helpful tips and best practices for web development
 
+### Discord Server Tips
+- **`/tips [subject]`** - Get quick tips on interacting within the Web Dev Discord server
 
 ### Moderation Tools
 - **`/repel [target] [reason]`** - Advanced moderation command (meant to be given to a high quantity of volunteer assistants) that:
@@ -43,7 +44,7 @@ A comprehensive Discord bot designed specifically for the Web Dev Discord server
 1. Clone the repository:
    ```bash
    git clone <repository-url>
-   cd webdev-bot-main
+   cd webdev-bot
    ```
 
 2. Install dependencies:
@@ -51,11 +52,10 @@ A comprehensive Discord bot designed specifically for the Web Dev Discord server
    pnpm install
    ```
 
-3. Set up environment variables (create `.env.local` file):
-   ```
-   DISCORD_TOKEN=your_bot_token_here
-   CLIENT_ID=your_client_id_here
-   SERVER_ID=your_guild_id_here
+3. Create a `.env.local` file based on `.env.example` and fill in the required environment variables:
+   ```bash
+   cp .env.example .env.local
+   # Edit .env.local to add your Discord bot token and other configurations
    ```
 
 4. Build and start the bot:
