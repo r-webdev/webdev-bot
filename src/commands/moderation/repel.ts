@@ -161,7 +161,7 @@ const handleDeleteMessages = async ({
               Date.now() - message.createdTimestamp < lookBack
             );
           })
-          .first(10);
+          .map((msg) => msg.id);
 
         if (targetMessages.length === 0) {
           return;
