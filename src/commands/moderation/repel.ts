@@ -312,7 +312,9 @@ export const repelCommand = createCommand({
         name: RepelOptions.LOOK_BACK,
         required: false,
         type: ApplicationCommandOptionType.Integer,
-        description: `Number of recent messages to delete (default: ${timeToString(DEFAULT_LOOK_BACK_MS)})`,
+        description: `How far back to look for messages to delete in minutes (default: ${timeToString(
+          DEFAULT_LOOK_BACK_MS
+        )})`,
         choices: [
           {
             name: '10 minutes (Default)',
