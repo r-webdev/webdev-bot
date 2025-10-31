@@ -150,22 +150,26 @@ const handleDeleteMessages = async ({
   const failedChannels: string[] = [];
 
   // Collect all target messages from all channels and find the latest timestamp
-  const channelMessages = channels.map((channel) => {
-    const messages = channel.messages.cache;
-    const targetMessages = messages.filter(
-      (message) => message.author && message.author.id === target.id && message.deletable
-    );
-    return { channel, targetMessages };
-  });
+  const channelMessages: Array<{
+    channel: TextChannel;
+    targetMessages: Map<string, import('discord.js').Message>;
+  }> = [];
+  let latestMessageTimestamp = 0;
 
-  // Find the latest message timestamp across all channels
-  const latestMessageTimestamp = channelMessages.reduce((latest, { targetMessages }) => {
-    const channelLatest = targetMessages.reduce(
-      (max, msg) => Math.max(max, msg.createdTimestamp),
-      0
-    );
-    return Math.max(latest, channelLatest);
-  }, 0);
+  for (const channel of channels) {
+    const targetMessages = new Map<string, import('discord.js').Message>();
+
+    for (const [id, message] of channel.messages.cache) {
+      if (message.author && message.author.id === target.id && message.deletable) {
+        targetMessages.set(id, message);
+        latestMessageTimestamp = Math.max(latestMessageTimestamp, message.createdTimestamp);
+      }
+    }
+
+    if (targetMessages.size > 0) {
+      channelMessages.push({ channel, targetMessages });
+    }
+  }
 
   // If no messages found from the target user, return early
   if (latestMessageTimestamp === 0) {
@@ -176,9 +180,13 @@ const handleDeleteMessages = async ({
   await Promise.allSettled(
     channelMessages.map(async ({ channel, targetMessages }) => {
       try {
-        const messagesToDelete = targetMessages
-          .filter((message) => latestMessageTimestamp - message.createdTimestamp < lookBack)
-          .map((msg) => msg.id);
+        const messagesToDelete: string[] = [];
+
+        for (const [id, message] of targetMessages) {
+          if (latestMessageTimestamp - message.createdTimestamp < lookBack) {
+            messagesToDelete.push(id);
+          }
+        }
 
         if (messagesToDelete.length === 0) {
           return;
