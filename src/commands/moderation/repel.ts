@@ -5,6 +5,7 @@ import {
   type ChatInputCommandInteraction,
   EmbedBuilder,
   GuildMember,
+  type Message,
   MessageFlags,
   PermissionFlagsBits,
   type Role,
@@ -13,8 +14,8 @@ import {
 } from 'discord.js';
 import { HOUR, MINUTE, timeToString } from '../../constants/time.js';
 import { config } from '../../env.js';
-import { getPublicChannels } from '../../util/channel.js';
 import { logToChannel } from '../../util/channel-logging.js';
+import { getPublicChannels } from '../../util/channel.js';
 import { buildCommandString, createCommand } from '../../util/commands.js';
 
 const DEFAULT_LOOK_BACK_MS = 10 * MINUTE;
@@ -130,7 +131,7 @@ const getTextChannels = (interaction: ChatInputCommandInteraction) => {
     console.error('Interaction is not in a guild');
     return [];
   }
-  const channels = getPublicChannels(interaction.guild).values();
+  const channels = Array.from(getPublicChannels(interaction.guild).values());
   return [
     interaction.channel as TextChannel,
     ...channels.filter((channel) => channel.id !== interaction.channelId),
@@ -148,26 +149,51 @@ const handleDeleteMessages = async ({
 }) => {
   let deleted = 0;
   const failedChannels: string[] = [];
-  await Promise.allSettled(
-    channels.map(async (channel) => {
-      try {
-        const messages = channel.messages.cache;
-        const targetMessages = messages
-          .filter((message) => {
-            return (
-              message.author &&
-              message.author.id === target.id &&
-              message.deletable &&
-              Date.now() - message.createdTimestamp < lookBack
-            );
-          })
-          .map((msg) => msg.id);
 
-        if (targetMessages.length === 0) {
+  // Collect all target messages from all channels and find the latest timestamp
+  const channelMessages: Array<{
+    channel: TextChannel;
+    targetMessages: Map<string, Message>;
+  }> = [];
+  let latestMessageTimestamp = 0;
+
+  for (const channel of channels) {
+    const targetMessages = new Map<string, Message>();
+
+    for (const [id, message] of channel.messages.cache) {
+      if (message.author && message.author.id === target.id && message.deletable) {
+        targetMessages.set(id, message);
+        latestMessageTimestamp = Math.max(latestMessageTimestamp, message.createdTimestamp);
+      }
+    }
+
+    if (targetMessages.size > 0) {
+      channelMessages.push({ channel, targetMessages });
+    }
+  }
+
+  // If no messages found from the target user, return early
+  if (latestMessageTimestamp === 0) {
+    return { deleted: 0, failedChannels: [] };
+  }
+
+  // Delete messages within the lookback window from the latest message
+  await Promise.allSettled(
+    channelMessages.map(async ({ channel, targetMessages }) => {
+      try {
+        const messagesToDelete: string[] = [];
+
+        for (const [id, message] of targetMessages) {
+          if (latestMessageTimestamp - message.createdTimestamp < lookBack) {
+            messagesToDelete.push(id);
+          }
+        }
+
+        if (messagesToDelete.length === 0) {
           return;
         }
-        await channel.bulkDelete(targetMessages, true);
-        deleted += targetMessages.length;
+        await channel.bulkDelete(messagesToDelete, true);
+        deleted += messagesToDelete.length;
       } catch (error) {
         console.error(`Error deleting messages in channel ${channel.name}:`, error);
         failedChannels.push(channel.id);
