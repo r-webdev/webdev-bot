@@ -5,6 +5,7 @@ import {
   type ChatInputCommandInteraction,
   EmbedBuilder,
   GuildMember,
+  type Message,
   MessageFlags,
   PermissionFlagsBits,
   type Role,
@@ -152,12 +153,12 @@ const handleDeleteMessages = async ({
   // Collect all target messages from all channels and find the latest timestamp
   const channelMessages: Array<{
     channel: TextChannel;
-    targetMessages: Map<string, import('discord.js').Message>;
+    targetMessages: Map<string, Message>;
   }> = [];
   let latestMessageTimestamp = 0;
 
   for (const channel of channels) {
-    const targetMessages = new Map<string, import('discord.js').Message>();
+    const targetMessages = new Map<string, Message>();
 
     for (const [id, message] of channel.messages.cache) {
       if (message.author && message.author.id === target.id && message.deletable) {
