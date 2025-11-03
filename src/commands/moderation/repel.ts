@@ -14,8 +14,8 @@ import {
 } from 'discord.js';
 import { HOUR, MINUTE, timeToString } from '../../constants/time.js';
 import { config } from '../../env.js';
-import { logToChannel } from '../../util/channel-logging.js';
 import { getPublicChannels } from '../../util/channel.js';
+import { logToChannel } from '../../util/channel-logging.js';
 import { buildCommandString, createCommand } from '../../util/commands.js';
 
 const DEFAULT_LOOK_BACK_MS = 10 * MINUTE;
