@@ -38,18 +38,14 @@ jobs:
           export NODE_VERSION=$(cat .nvmrc | sed 's/v//')
           echo "Using Node version: $NODE_VERSION"
 
-          # Create .env.local file with secrets
-          cat > .env.local << EOF
+          # Create .env.secrets file with secrets
+          cat > .env.secrets << EOF
           DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}
           CLIENT_ID=${{ secrets.CLIENT_ID }}
-          GUIDES_CHANNEL_ID=${{ secrets.GUIDES_CHANNEL_ID }}
-          SERVER_ID=${{ secrets.SERVER_ID }}
-          REPEL_LOG_CHANNEL_ID=${{ secrets.REPEL_LOG_CHANNEL_ID }}
-          REPEL_ROLE_ID=${{ secrets.REPEL_ROLE_ID }}
-          MODERATORS_ROLE_IDS=${{ secrets.MODERATORS_ROLE_IDS }}
-          ONBOARDING_CHANNEL_ID=${{ secrets.ONBOARDING_CHANNEL_ID }}
-          ONBOARDING_ROLE_ID=${{ secrets.ONBOARDING_ROLE_ID }}
           EOF
+
+          # copy .env.production file
+          cp .env.production .env.production
 
           # Stop any existing containers
           docker compose down || true

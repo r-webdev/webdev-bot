@@ -32,4 +32,8 @@ function loadEnvFile(filePath: string) {
 }
 
 // Load local environment file if it exists
-loadEnvFile(join(process.cwd(), '.env.local'));
+// In production, docker will use .env.production and .env.secrets automatically
+const isProd = process.env.NODE_ENV === 'production';
+if (!isProd) {
+  loadEnvFile(join(process.cwd(), '.env.local'));
+}
