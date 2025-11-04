@@ -9,8 +9,10 @@ services:
     container_name: webdev-bot-prod
     restart: unless-stopped
     env_file:
-      - .env.local
+      - .env.production
+      - .env.secrets
     environment:
+      - NODE_ENV=production
       - GUIDES_TRACKER_PATH=/app/data/guides-tracker.json
     volumes:
       # Persist guides tracker data

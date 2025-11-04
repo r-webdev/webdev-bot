@@ -32,4 +32,7 @@ function loadEnvFile(filePath: string) {
 }
 
 // Load local environment file if it exists
-loadEnvFile(join(process.cwd(), '.env.local'));
+const isProd = process.env.NODE_ENV === 'production';
+if (!isProd) {
+  loadEnvFile(join(process.cwd(), '.env.local'));
+}
