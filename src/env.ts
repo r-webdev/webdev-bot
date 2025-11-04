@@ -14,6 +14,14 @@ function requireEnv(key: string): string {
   return value;
 }
 
+function useDevEnv(key: string): string | undefined {
+  const isDev = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
+  if (isDev) {
+    return optionalEnv(key);
+  }
+  return undefined;
+}
+
 // Single source of truth for all configuration
 export const config = {
   discord: {
@@ -32,6 +40,9 @@ export const config = {
   guides: {
     channelId: requireEnv('GUIDES_CHANNEL_ID'),
     trackerPath: optionalEnv('GUIDES_TRACKER_PATH'),
+  },
+  roleIds: {
+    examleRole: useDevEnv('EXAMPLE_ROLE_ID') ?? '12345',
   },
   // Add more config sections as needed:
   // database: {
