@@ -12,8 +12,9 @@ services:
       - .env.local
     environment:
       - NODE_ENV=production
-      - GUIDES_TRACKER_PATH=/app/data/guides-tracker.json
     volumes:
+      # Mount environment config file
+      - ./.env.production:/app/.env.production:ro
       # Persist guides tracker data
       - guides-data:/app/data
     profiles:
@@ -32,7 +33,6 @@ services:
       - .env.local
     environment:
       - NODE_ENV=development
-      - GUIDES_TRACKER_PATH=/app/data/guides-tracker.json
     volumes:
       # Mount source code for hot reload
       - ./src:/app/src:ro
