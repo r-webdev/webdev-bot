@@ -12,10 +12,12 @@ yarn-debug.log*
 yarn-error.log*
 
 # Env files
-!.env.example
-.env
 .env.local
 .env.*.local
+# Allow environment-specific configs (public, non-secret)
+!.env.development
+!.env.production
+!.env.example
 
 # guides tracker
 guides-tracker.json
