@@ -30,7 +30,18 @@ export const readyEvent = createEvent(
         console.log(`🔄 Starting guide sync to channel ${config.guides.channelId}...`);
         await syncGuidesToChannel(client, config.guides.channelId);
       } catch (error) {
-        console.error('❌ Failed to sync guides:', error);
+        if (error && typeof error === 'object' && 'code' in error) {
+          const discordError = error as { code: number; message?: string };
+          if (discordError.code === 50001) {
+            console.warn(
+              '⚠️ Bot does not have access to the guides channel. Please check bot permissions and channel ID.'
+            );
+          } else {
+            console.error('❌ Failed to sync guides:', error);
+          }
+        } else {
+          console.error('❌ Failed to sync guides:', error);
+        }
       }
     }
   }
