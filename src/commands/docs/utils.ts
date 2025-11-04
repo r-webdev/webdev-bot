@@ -92,7 +92,11 @@ export const executeDocCommand = async (
   }
 };
 
-export const NON_BASELINE_FEATURES = ['numeric-seperators', 'single-color-gradients'];
+export const NON_BASELINE_FEATURES = [
+  'numeric-seperators',
+  'open-closed',
+  'single-color-gradients',
+];
 export const getBaselineFeatures = (
   originalFeatures: Record<string, unknown>,
   nonFeatureKeys: string[] = NON_BASELINE_FEATURES
