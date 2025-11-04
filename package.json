@@ -35,7 +35,7 @@
   "dependencies": {
     "discord.js": "^14.22.1",
     "typescript": "^5.9.3",
-    "web-features": "^3.3.0"
+    "web-features": "^3.7.0"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.4",
