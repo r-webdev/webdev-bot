@@ -33,6 +33,10 @@ export const config = {
     channelId: requireEnv('GUIDES_CHANNEL_ID'),
     trackerPath: optionalEnv('GUIDES_TRACKER_PATH'),
   },
+  onboarding: {
+    channelId: requireEnv('ONBOARDING_CHANNEL_ID'),
+    roleId: requireEnv('ONBOARDING_ROLE_ID'),
+  },
   // Add more config sections as needed:
   // database: {
   //   url: requireEnv('DATABASE_URL'),
