@@ -38,10 +38,10 @@ jobs:
           export NODE_VERSION=$(cat .nvmrc | sed 's/v//')
           echo "Using Node version: $NODE_VERSION"
 
-          # Create .env.local file with secrets only
+          # Create .env file with secrets
           # Public config comes from .env.production (committed to repo)
           # NODE_ENV=production is set in docker-compose.yml
-          cat > .env.local << EOF
+          cat > .env << EOF
           DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}
           CLIENT_ID=${{ secrets.CLIENT_ID }}
           EOF

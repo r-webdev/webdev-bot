@@ -9,7 +9,7 @@ services:
     container_name: webdev-bot-prod
     restart: unless-stopped
     env_file:
-      - .env.local
+      - .env
     environment:
       - NODE_ENV=production
     volumes:
@@ -30,7 +30,7 @@ services:
     container_name: webdev-bot-dev
     restart: unless-stopped
     env_file:
-      - .env.local
+      - .env
     environment:
       - NODE_ENV=development
     volumes:
@@ -43,7 +43,6 @@ services:
       - ./package.json:/app/package.json:ro
       - ./pnpm-lock.yaml:/app/pnpm-lock.yaml:ro
       # Mount environment config files
-      - ./.env.development:/app/.env.development:ro
       - ./.env.production:/app/.env.production:ro
       # Persist guides tracker data
       - guides-data:/app/data

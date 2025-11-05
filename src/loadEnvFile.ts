@@ -36,11 +36,13 @@ function loadEnvFile(filePath: string) {
 const nodeEnv = process.env.NODE_ENV || 'development';
 console.log(`🌍 Environment: ${nodeEnv}`);
 
-// Load environment-specific config first (public values)
-const envFile = join(process.cwd(), `.env.${nodeEnv}`);
-loadEnvFile(envFile);
+// Load environment-specific config first (public values, production only)
+if (nodeEnv === 'production') {
+  const envFile = join(process.cwd(), '.env.production');
+  loadEnvFile(envFile);
+}
 
-// Load local overrides and secrets second (overrides public config)
-// Required in both dev and prod for DISCORD_TOKEN
-const localEnvFile = join(process.cwd(), '.env.local');
+// Load .env file with secrets and local config (overrides public config if any)
+// Required for DISCORD_TOKEN and other secrets
+const localEnvFile = join(process.cwd(), '.env');
 loadEnvFile(localEnvFile);
