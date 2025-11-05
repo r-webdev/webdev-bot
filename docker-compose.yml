@@ -9,10 +9,12 @@ services:
     container_name: webdev-bot-prod
     restart: unless-stopped
     env_file:
-      - .env.local
+      - .env
     environment:
-      - GUIDES_TRACKER_PATH=/app/data/guides-tracker.json
+      - NODE_ENV=production
     volumes:
+      # Mount environment config file
+      - ./.env.production:/app/.env.production:ro
       # Persist guides tracker data
       - guides-data:/app/data
     profiles:
@@ -28,9 +30,9 @@ services:
     container_name: webdev-bot-dev
     restart: unless-stopped
     env_file:
-      - .env.local
+      - .env
     environment:
-      - GUIDES_TRACKER_PATH=/app/data/guides-tracker.json
+      - NODE_ENV=development
     volumes:
       # Mount source code for hot reload
       - ./src:/app/src:ro
@@ -40,6 +42,8 @@ services:
       # Mount package files (in case dependencies change)
       - ./package.json:/app/package.json:ro
       - ./pnpm-lock.yaml:/app/pnpm-lock.yaml:ro
+      # Mount environment config files
+      - ./.env.production:/app/.env.production:ro
       # Persist guides tracker data
       - guides-data:/app/data
     profiles:

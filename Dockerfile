@@ -41,6 +41,9 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
 COPY package.json ./
 
+# Copy environment config file (public, non-secret)
+COPY .env.production ./
+
 # Create data directory and set permissions for node user
 RUN mkdir -p /app/data && chown -R node:node /app/data
 

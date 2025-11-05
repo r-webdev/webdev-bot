@@ -8,7 +8,7 @@ function requireEnv(key: string): string {
   const value = process.env[key];
   if (!value) {
     console.error(`❌ Required environment variable ${key} is not set`);
-    console.error('Please check your .env.local file or CI/CD configuration');
+    console.error('Please check your .env file or CI/CD configuration');
     process.exit(1);
   }
   return value;
@@ -33,13 +33,6 @@ export const config = {
     channelId: requireEnv('GUIDES_CHANNEL_ID'),
     trackerPath: optionalEnv('GUIDES_TRACKER_PATH'),
   },
-  // Add more config sections as needed:
-  // database: {
-  //   url: requireEnv('DATABASE_URL'),
-  // },
-  // api: {
-  //   openaiKey: optionalEnv('OPENAI_API_KEY'),
-  // },
 };
 
 export type Config = typeof config;
