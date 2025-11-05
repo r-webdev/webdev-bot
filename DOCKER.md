@@ -6,7 +6,7 @@ This document explains how to run the webdev-bot using Docker.
 
 - Docker installed (version 20.10 or higher)
 - Docker Compose installed (version 2.0 or higher)
-- `.env.local` file with required environment variables
+- `.env` file with required environment variables
 
 ## Node Version Management
 
@@ -14,7 +14,7 @@ The Docker setup uses `.nvmrc` as the single source of truth for the Node.js ver
 
 ## Environment Variables
 
-Before running the bot, create a `.env.local` file in the project root with the following variables:
+Before running the bot, create a `.env` file in the project root with the following variables:
 
 ```env
 DISCORD_TOKEN=your_discord_bot_token
@@ -104,7 +104,7 @@ Run the production container manually (after building with the NODE_VERSION arg)
 ```bash
 docker run -d \
   --name webdev-bot \
-  --env-file .env.local \
+  --env-file .env \
   --restart unless-stopped \
   webdev-bot:latest
 ```
@@ -114,7 +114,7 @@ Run the development container manually (after building with the NODE_VERSION arg
 ```bash
 docker run -it \
   --name webdev-bot-dev \
-  --env-file .env.local \
+  --env-file .env \
   -v $(pwd)/src:/app/src:ro \
   webdev-bot:dev
 ```
@@ -183,7 +183,7 @@ docker compose build --no-cache
 
 ## Best Practices
 
-1. **Never commit `.env.local`** - Keep your secrets secure
+1. **Never commit `.env`** - Keep your secrets secure
 2. **Use production profile for deployment** - Smaller, more secure images
 3. **Keep development profile for local testing** - Faster iteration with hot reload
 4. **Node version is managed in `.nvmrc`** - Update `.nvmrc` to change Node version for Docker

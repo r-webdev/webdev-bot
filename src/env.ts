@@ -8,7 +8,7 @@ function requireEnv(key: string): string {
   const value = process.env[key];
   if (!value) {
     console.error(`❌ Required environment variable ${key} is not set`);
-    console.error('Please check your .env.local file or CI/CD configuration');
+    console.error('Please check your .env file or CI/CD configuration');
     process.exit(1);
   }
   return value;

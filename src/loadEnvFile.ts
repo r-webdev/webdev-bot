@@ -4,6 +4,7 @@ import { join } from 'node:path';
 // Simple .env loader without external dependencies
 function loadEnvFile(filePath: string) {
   if (!existsSync(filePath)) {
+    console.warn(`Warning: File ${filePath} not found`);
     return;
   }
 
@@ -24,12 +25,24 @@ function loadEnvFile(filePath: string) {
         }
       }
     }
+    console.log(`✅ Loaded: ${filePath}`);
   } catch (error) {
     console.warn(`Warning: Could not load ${filePath}`);
-    console.warn('Make sure a valid .env.local file exists.');
     console.warn(error);
   }
 }
 
-// Load local environment file if it exists
-loadEnvFile(join(process.cwd(), '.env.local'));
+// Determine environment (defaults to development)
+const nodeEnv = process.env.NODE_ENV || 'development';
+console.log(`🌍 Environment: ${nodeEnv}`);
+
+// Load environment-specific config first (public values, production only)
+if (nodeEnv === 'production') {
+  const envFile = join(process.cwd(), '.env.production');
+  loadEnvFile(envFile);
+}
+
+// Load .env file with secrets and local config (overrides public config if any)
+// Required for DISCORD_TOKEN and other secrets
+const localEnvFile = join(process.cwd(), '.env');
+loadEnvFile(localEnvFile);
