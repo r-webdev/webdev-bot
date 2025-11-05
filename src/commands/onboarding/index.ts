@@ -46,8 +46,21 @@ export const onboardingCommand = createCommand({
 
     collector.on('collect', async (componentInteraction) => {
       if (componentInteraction.customId === 'onboarding_add_role') {
-        const member = await guild.members.fetch(componentInteraction.user.id);
-        await addRoleToUser(member, onboardingRole, componentInteraction);
+        try {
+          const member = await guild.members.fetch(componentInteraction.user.id);
+          await addRoleToUser(member, onboardingRole);
+
+          await componentInteraction.reply({
+            content: `You have been given the ${onboardingRole.name} role!`,
+            flags: MessageFlags.Ephemeral,
+          });
+        } catch (error) {
+          await componentInteraction.reply({
+            content: `Failed to add role. Please contact an administrator.`,
+            flags: MessageFlags.Ephemeral,
+          });
+          console.error('Error adding role:\n', error);
+        }
       }
     });
   },
