@@ -1,4 +1,3 @@
-import { autoRoleEvent } from './auto-roles.js';
 import { guildCreateEvent } from './guild-create.js';
 import { hasVarEvent } from './has-var.js';
 import { interactionCreateEvent } from './interaction-create.js';
@@ -12,5 +11,4 @@ export const events = [
   justAskEvent,
   hasVarEvent,
   interactionCreateEvent,
-  autoRoleEvent,
 ] as DiscordEvent[];
