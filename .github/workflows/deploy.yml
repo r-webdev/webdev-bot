@@ -38,21 +38,19 @@ jobs:
           export NODE_VERSION=$(cat .nvmrc | sed 's/v//')
           echo "Using Node version: $NODE_VERSION"
 
-          # Create .env.local file with secrets
-          cat > .env.local << EOF
+          # Create .env file with secrets
+          # Public config comes from .env.production (committed to repo)
+          # NODE_ENV=production is set in docker-compose.yml
+          cat > .env << EOF
           DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}
           CLIENT_ID=${{ secrets.CLIENT_ID }}
-          GUIDES_CHANNEL_ID=${{ secrets.GUIDES_CHANNEL_ID }}
-          SERVER_ID=${{ secrets.SERVER_ID }}
-          REPEL_LOG_CHANNEL_ID=${{ secrets.REPEL_LOG_CHANNEL_ID }}
-          REPEL_ROLE_ID=${{ secrets.REPEL_ROLE_ID }}
-          MODERATORS_ROLE_IDS=${{ secrets.MODERATORS_ROLE_IDS }}
           EOF
 
           # Stop any existing containers
           docker compose down || true
 
           # Build and start production container with profile
+          # NODE_ENV=production is explicitly set in docker-compose.yml bot-prod service
           docker compose --profile prod up -d --build
 
           # Check status

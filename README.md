@@ -52,10 +52,10 @@ A comprehensive Discord bot designed specifically for the Web Dev Discord server
    pnpm install
    ```
 
-3. Create a `.env.local` file based on `.env.example` and fill in the required environment variables:
+3. Create a `.env` file based on `.env.example` and fill in the required environment variables:
    ```bash
-   cp .env.example .env.local
-   # Edit .env.local to add your Discord bot token and other configurations
+   cp .env.example .env
+   # Edit .env to add your Discord bot token and other configurations
    ```
 
 4. Build and start the bot:

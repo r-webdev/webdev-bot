@@ -12,10 +12,15 @@ yarn-debug.log*
 yarn-error.log*
 
 # Env files
-!.env.example
 .env
-.env.local
-.env.*.local
+.env.*
+
+# Public config (committed to repo)
+!.env.production
+!.env.example
 
 # guides tracker
 guides-tracker.json
+
+# Docker
+docker-compose.yml
