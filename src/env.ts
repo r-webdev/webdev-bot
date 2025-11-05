@@ -33,13 +33,6 @@ export const config = {
     channelId: requireEnv('GUIDES_CHANNEL_ID'),
     trackerPath: optionalEnv('GUIDES_TRACKER_PATH'),
   },
-  // Add more config sections as needed:
-  // database: {
-  //   url: requireEnv('DATABASE_URL'),
-  // },
-  // api: {
-  //   openaiKey: optionalEnv('OPENAI_API_KEY'),
-  // },
 };
 
 export type Config = typeof config;
