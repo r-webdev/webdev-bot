@@ -33,7 +33,7 @@ export type GuideTracker = {
 
 const GUIDES_DIR = fileURLToPath(new URL('../commands/guides/subjects/', import.meta.url));
 
-const TRACKER_FILE = config.guides.trackerPath ?? 'guides-tracker.json';
+const TRACKER_FILE = config.guidesTrackerPath ?? 'guides-tracker.json';
 
 const calculateHash = (content: string): string => {
   return createHash('sha256').update(content, 'utf8').digest('hex');

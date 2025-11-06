@@ -27,8 +27,8 @@ export const readyEvent = createEvent(
 
       // Sync guides to channel
       try {
-        console.log(`🔄 Starting guide sync to channel ${config.guides.channelId}...`);
-        await syncGuidesToChannel(client, config.guides.channelId);
+        console.log(`🔄 Starting guide sync to channel ${config.channelIds.guides}...`);
+        await syncGuidesToChannel(client, config.channelIds.guides);
       } catch (error) {
         if (error && typeof error === 'object' && 'code' in error) {
           const discordError = error as { code: number; message?: string };

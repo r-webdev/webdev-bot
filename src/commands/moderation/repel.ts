@@ -14,8 +14,8 @@ import {
 } from 'discord.js';
 import { HOUR, MINUTE, timeToString } from '../../constants/time.js';
 import { config } from '../../env.js';
-import { logToChannel } from '../../util/channel-logging.js';
 import { getPublicChannels } from '../../util/channel.js';
+import { logToChannel } from '../../util/channel-logging.js';
 import { buildCommandString, createCommand } from '../../util/commands.js';
 
 const DEFAULT_LOOK_BACK_MS = 10 * MINUTE;
@@ -287,11 +287,9 @@ const logRepelAction = async ({
 
   const modMessage = interaction.options.getString(RepelOptions.MESSAGE_FOR_MODS) ?? false;
   const mentionText = modMessage
-    ? `${config.moderatorsRoleIds.map((id) => `<@&${id}>`)} - ${modMessage}`
+    ? `${config.roleIds.moderators.map((id) => `<@&${id}>`)} - ${modMessage}`
     : undefined;
-  const channel = interaction.client.channels.cache.get(
-    config.repel.repelLogChannelId
-  ) as TextChannel;
+  const channel = interaction.client.channels.cache.get(config.channelIds.repelLogs) as TextChannel;
 
   const embed =
     failedChannelsEmbed !== null
@@ -390,7 +388,7 @@ export const repelCommand = createCommand({
     }
     await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
-    const repelRole = interaction.guild.roles.cache.get(config.repel.repelRoleId);
+    const repelRole = interaction.guild.roles.cache.get(config.roleIds.repel);
     if (!repelRole) {
       await interaction.editReply({
         content: '❌ Repel role is not configured correctly. Please contact an administrator.',
