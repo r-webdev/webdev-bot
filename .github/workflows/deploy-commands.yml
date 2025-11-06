@@ -17,9 +17,9 @@ jobs:
         script: |
           cd /home/${{ secrets.VPS_USER }}/webdev-bot-deploy
           
-          # Set up environment variables for the deploy script
-          export DISCORD_TOKEN="${{ secrets.DISCORD_TOKEN }}"
-          export CLIENT_ID="${{ secrets.CLIENT_ID }}"
+          # Load environment variables
+          source .env
+          source .env.production
           export NODE_ENV=production
           
           # Run the deploy script
