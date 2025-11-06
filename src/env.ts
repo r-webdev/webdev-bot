@@ -28,9 +28,9 @@ export const config = {
       ? requireEnv('MODERATORS_ROLE_IDS').split(',')
       : [],
     repel: requireEnv('REPEL_ROLE_ID'),
-    a: requireEnv('ROLE_A_ID'),
-    b: requireEnv('ROLE_B_ID'),
-    c: requireEnv('ROLE_C_ID'),
+    a: optionalEnv('ROLE_A_ID'),
+    b: optionalEnv('ROLE_B_ID'),
+    c: optionalEnv('ROLE_C_ID'),
   },
   channelIds: {
     repelLogs: requireEnv('REPEL_LOG_CHANNEL_ID'),
