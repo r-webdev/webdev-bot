@@ -1,0 +1,29 @@
+name: Deploy Discord Commands
+
+on:
+  workflow_dispatch: # Manual trigger only
+
+jobs:
+  deploy-commands:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Deploy Discord Commands to VPS
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USER }}
+        key: ${{ secrets.VPS_SSH_KEY }}
+        script: |
+          cd /home/${{ secrets.VPS_USER }}/webdev-bot-deploy
+          
+          # Set up environment variables for the deploy script
+          export DISCORD_TOKEN="${{ secrets.DISCORD_TOKEN }}"
+          export CLIENT_ID="${{ secrets.CLIENT_ID }}"
+          export NODE_ENV=production
+          
+          # Run the deploy script
+          echo "Deploying Discord commands..."
+          node dist/util/deploy.js
+          
+          echo "Discord commands deployment completed!"
