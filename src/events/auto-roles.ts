@@ -8,12 +8,12 @@ export const autoRoleEvent = createEvent(
     name: Events.GuildMemberUpdate,
   },
   async (_, newMember) => {
-    const hasRoleC = hasRoles(newMember, config.roleC);
+    const hasRoleC = hasRoles(newMember, config.roleIds.c);
     if (!hasRoleC) {
-      const hasRequiredRoles = hasRoles(newMember, config.roleA, config.roleB);
+      const hasRequiredRoles = hasRoles(newMember, config.roleIds.a, config.roleIds.b);
       if (hasRequiredRoles) {
         try {
-          await newMember.roles.add(config.roleC);
+          await newMember.roles.add(config.roleIds.c);
         } catch (error) {
           console.error(`Failed to add roleC to ${newMember.user.tag}:`, error);
         }
