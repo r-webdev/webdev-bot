@@ -107,7 +107,7 @@ async function checkAndCreateTodaysPost(client: Client, channelId: string): Prom
   const year = now.getUTCFullYear();
 
   // Only run during December (month 11)
-  if (month !== 10) {
+  if (month !== 11) {
     return;
   }
 
