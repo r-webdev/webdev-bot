@@ -35,6 +35,7 @@ export const config = {
   channelIds: {
     repelLogs: requireEnv('REPEL_LOG_CHANNEL_ID'),
     guides: requireEnv('GUIDES_CHANNEL_ID'),
+    adventOfCode: requireEnv('ADVENT_OF_CODE_CHANNEL_ID'),
   },
 };
 
