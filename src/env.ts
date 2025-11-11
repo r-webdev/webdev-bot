@@ -23,6 +23,7 @@ export const config = {
   serverId: requireEnv('SERVER_ID'),
   fetchAndSyncMessages: true,
   guidesTrackerPath: optionalEnv('GUIDES_TRACKER_PATH'),
+  adventOfCodeTrackerPath: requireEnv('ADVENT_OF_CODE_TRACKER_PATH'),
   roleIds: {
     moderators: requireEnv('MODERATORS_ROLE_IDS')
       ? requireEnv('MODERATORS_ROLE_IDS').split(',')

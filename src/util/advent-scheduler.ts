@@ -1,8 +1,9 @@
 import { ChannelType, type Client, type ForumChannel } from 'discord.js';
 import * as cron from 'node-cron';
 import { promises as fs } from 'node:fs';
+import { config } from '../env.js';
 
-const TRACKER_FILE = 'advent-of-code-tracker.json';
+const TRACKER_FILE = config.adventOfCodeTrackerPath;
 
 type TrackerData = {
   [year: string]: number[];
