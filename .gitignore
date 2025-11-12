@@ -18,6 +18,7 @@ yarn-error.log*
 # Public config (committed to repo)
 !.env.production
 !.env.example
+!.env.test
 
 # guides tracker
 guides-tracker.json
