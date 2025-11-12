@@ -2,9 +2,6 @@ import assert from 'node:assert/strict';
 import { promises as fs } from 'node:fs';
 import test from 'node:test';
 
-const TEST_TRACKER_FILE = 'test-advent-tracker.json';
-process.env.ADVENT_OF_CODE_TRACKER_PATH = TEST_TRACKER_FILE;
-
 // Import after setting env var
 const { loadTracker, saveTracker } = await import('./advent-scheduler.js');
 
