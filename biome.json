@@ -33,6 +33,6 @@
     }
   },
   "files": {
-    "includes": ["*.ts", "*.js", "*.json", "src/**/*"]
+    "includes": ["*.ts", "*.js", "*.json", "src/**/*", "test/**/*"]
   }
 }
