@@ -15,7 +15,7 @@ services:
     volumes:
       # Mount environment config file
       - ./.env.production:/app/.env.production:ro
-      # Persist guides tracker data
+      # Persist tracker data
       - guides-data:/app/data
     profiles:
       - prod

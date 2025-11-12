@@ -20,8 +20,9 @@ yarn-error.log*
 !.env.example
 !.env.test
 
-# guides tracker
+# tracker
 guides-tracker.json
+advent-of-code-tracker.json
 
 # Docker
 docker-compose.yml

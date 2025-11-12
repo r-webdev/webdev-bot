@@ -21,7 +21,7 @@
     "check": "biome check .",
     "check:fix": "biome check --write .",
     "typecheck": "tsc --noEmit",
-    "test": "pnpm run build:dev && node --test dist/**/*.test.js",
+    "test": "tsx --test '**/*.test.ts'",
     "test:ci": "NODE_ENV=test node --test dist/**/*.test.js",
     "prepare": "husky",
     "pre-commit": "lint-staged",
@@ -34,12 +34,14 @@
   "packageManager": "pnpm@10.17.1",
   "dependencies": {
     "discord.js": "^14.22.1",
+    "node-cron": "^4.2.1",
     "typescript": "^5.9.3",
     "web-features": "^3.7.0"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.4",
     "@types/node": "^24.5.2",
+    "@types/node-cron": "^3.0.11",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.1",
     "tsup": "^8.5.0",
