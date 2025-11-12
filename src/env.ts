@@ -37,8 +37,8 @@ export const config = {
     guides: requireEnv('GUIDES_CHANNEL_ID'),
   },
   onboarding: {
-    channelId: requireEnv('ONBOARDING_CHANNEL_ID'),
-    roleId: requireEnv('ONBOARDING_ROLE_ID'),
+    channelId: optionalEnv('ONBOARDING_CHANNEL_ID'),
+    roleId: optionalEnv('ONBOARDING_ROLE_ID'),
   },
   // Add more config sections as needed:
   // database: {
