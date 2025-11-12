@@ -88,12 +88,10 @@ async function checkAndCreateTodaysPost(client: Client, channelId: string): Prom
   const day = now.getUTCDate();
   const year = now.getUTCFullYear();
 
-  // Only run during December (month 11)
   if (month !== 11) {
     return;
   }
 
-  // Only run for days 1-25
   if (day < 1 || day > 25) {
     return;
   }
@@ -113,7 +111,7 @@ async function checkAndCreateTodaysPost(client: Client, channelId: string): Prom
 
 /**
  * Initialize the Advent of Code scheduler
- * Runs every day at midnight UTC and checks if we should create a post
+ * Runs every day at midnight UTC-5 and checks if we should create a post
  */
 export function initializeAdventScheduler(client: Client, channelId: string): void {
   console.log('🎄 Initializing Advent of Code scheduler...');
