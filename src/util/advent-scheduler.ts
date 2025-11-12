@@ -13,7 +13,7 @@ export async function loadTracker(): Promise<TrackerData> {
   try {
     const data = await fs.readFile(TRACKER_FILE, 'utf-8');
     return JSON.parse(data);
-  } catch (_error) {
+  } catch {
     // If file doesn't exist or can't be read, return empty object
     return {};
   }
