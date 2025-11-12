@@ -82,9 +82,6 @@ async function createAdventPost(
   }
 }
 
-/**
- * Check if today is during Advent of Code (December 1-25) and create post if needed
- */
 async function checkAndCreateTodaysPost(client: Client, channelId: string): Promise<void> {
   const now = new Date();
   const month = now.getUTCMonth(); // 0-indexed, so December is 11
@@ -101,17 +98,14 @@ async function checkAndCreateTodaysPost(client: Client, channelId: string): Prom
     return;
   }
 
-  // Check if we've already posted for this day this year
   const alreadyPosted = await isDayPosted(year, day);
   if (alreadyPosted) {
     console.log(`ℹ️ Advent of Code post for ${year} day ${day} already exists`);
     return;
   }
 
-  // Create the post
   const success = await createAdventPost(client, channelId, year, day);
 
-  // Mark as posted if successful
   if (success) {
     await markDayAsPosted(year, day);
   }
@@ -124,13 +118,12 @@ async function checkAndCreateTodaysPost(client: Client, channelId: string): Prom
 export function initializeAdventScheduler(client: Client, channelId: string): void {
   console.log('🎄 Initializing Advent of Code scheduler...');
 
-  // Run immediately on startup to check if we need to post today
   checkAndCreateTodaysPost(client, channelId).catch((error) => {
     console.error('❌ Error checking for Advent of Code post on startup:', error);
   });
 
-  // Schedule to run every day at midnight UTC
-  // Cron pattern: '0 5 * * *' = At 05:00 UTC every day (midnight UTC-5)
+  // Schedule to run every day at midnight UTC-5
+  // https://github.com/node-cron/node-cron?tab=readme-ov-file#cron-syntax
   cron.schedule('0 5 * * *', () => {
     console.log('⏰ Running scheduled Advent of Code check...');
     checkAndCreateTodaysPost(client, channelId).catch((error) => {
