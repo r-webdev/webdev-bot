@@ -23,6 +23,7 @@ export const config = {
   serverId: requireEnv('SERVER_ID'),
   fetchAndSyncMessages: true,
   guidesTrackerPath: optionalEnv('GUIDES_TRACKER_PATH'),
+  adventOfCodeTrackerPath: requireEnv('ADVENT_OF_CODE_TRACKER_PATH'),
   roleIds: {
     moderators: requireEnv('MODERATORS_ROLE_IDS')
       ? requireEnv('MODERATORS_ROLE_IDS').split(',')
@@ -35,6 +36,7 @@ export const config = {
   channelIds: {
     repelLogs: requireEnv('REPEL_LOG_CHANNEL_ID'),
     guides: requireEnv('GUIDES_CHANNEL_ID'),
+    adventOfCode: requireEnv('ADVENT_OF_CODE_CHANNEL_ID'),
   },
   onboarding: {
     channelId: optionalEnv('ONBOARDING_CHANNEL_ID'),

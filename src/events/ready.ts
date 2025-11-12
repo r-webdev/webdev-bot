@@ -1,5 +1,6 @@
 import { Events } from 'discord.js';
 import { config } from '../env.js';
+import { initializeAdventScheduler } from '../util/advent-scheduler.js';
 import { fetchAndCachePublicChannelsMessages } from '../util/cache.js';
 import { createEvent } from '../util/events.js';
 import { syncGuidesToChannel } from '../util/post-guides.js';
@@ -43,6 +44,13 @@ export const readyEvent = createEvent(
           console.error('❌ Failed to sync guides:', error);
         }
       }
+    }
+
+    // Initialize Advent of Code scheduler
+    try {
+      initializeAdventScheduler(client, config.channelIds.adventOfCode);
+    } catch (error) {
+      console.error('❌ Failed to initialize Advent of Code scheduler:', error);
     }
   }
 );
