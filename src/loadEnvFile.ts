@@ -46,3 +46,9 @@ if (nodeEnv === 'production') {
 // Required for DISCORD_TOKEN and other secrets
 const localEnvFile = join(process.cwd(), '.env');
 loadEnvFile(localEnvFile);
+
+if (nodeEnv === 'test') {
+  console.log('🧪 Loading test environment variables');
+  const testEnvFile = join(process.cwd(), '.env.test');
+  loadEnvFile(testEnvFile);
+}
