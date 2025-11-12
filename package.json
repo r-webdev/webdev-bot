@@ -22,7 +22,7 @@
     "check:fix": "biome check --write .",
     "typecheck": "tsc --noEmit",
     "test": "pnpm run build:dev && node --test dist/**/*.test.js",
-    "test:ci": "node --test dist/**/*.test.js",
+    "test:ci": "NODE_ENV=test node --test dist/**/*.test.js",
     "prepare": "husky",
     "pre-commit": "lint-staged",
     "sync-guides": "tsx scripts/sync-guides.js",

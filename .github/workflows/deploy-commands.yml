@@ -1,0 +1,37 @@
+name: Deploy Discord Commands
+
+on:
+  workflow_dispatch: # Manual trigger only
+
+jobs:
+  deploy-commands:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Read Node version
+      run: |
+        NODE_VERSION=$(cat .nvmrc | sed 's/v//')
+        echo "NODE_VERSION=$NODE_VERSION" >> $GITHUB_ENV
+
+    - name: Deploy Discord Commands to VPS
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USER }}
+        key: ${{ secrets.VPS_SSH_KEY }}
+        script: |
+          cd /home/${{ secrets.VPS_USER }}/webdev-bot-deploy
+
+          # Read NODE_VERSION from .nvmrc
+          export NODE_VERSION=$(cat .nvmrc | sed 's/v//')
+          echo "Using Node version: $NODE_VERSION"
+
+          # Run deploy script inside the already running Docker container
+          # .env file should already exist from main deployment
+          echo "Deploying Discord commands..."
+          docker compose --profile prod exec bot-prod node dist/util/deploy.js
+
+          echo "Discord commands deployment completed!"

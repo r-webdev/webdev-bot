@@ -37,10 +37,7 @@ jobs:
 
       - name: Build
         run: npm run build:ci
-        env:
-          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
 
-      - name: Run tests
+      - name: Test
         run: npm run test:ci
 

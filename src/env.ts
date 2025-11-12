@@ -20,18 +20,21 @@ export const config = {
     token: requireEnv('DISCORD_TOKEN'),
     clientId: requireEnv('CLIENT_ID'),
   },
-  repel: {
-    repelLogChannelId: requireEnv('REPEL_LOG_CHANNEL_ID'),
-    repelRoleId: requireEnv('REPEL_ROLE_ID'),
-  },
-  fetchAndSyncMessages: true,
   serverId: requireEnv('SERVER_ID'),
-  moderatorsRoleIds: requireEnv('MODERATORS_ROLE_IDS')
-    ? requireEnv('MODERATORS_ROLE_IDS').split(',')
-    : [],
-  guides: {
-    channelId: requireEnv('GUIDES_CHANNEL_ID'),
-    trackerPath: optionalEnv('GUIDES_TRACKER_PATH'),
+  fetchAndSyncMessages: true,
+  guidesTrackerPath: optionalEnv('GUIDES_TRACKER_PATH'),
+  roleIds: {
+    moderators: requireEnv('MODERATORS_ROLE_IDS')
+      ? requireEnv('MODERATORS_ROLE_IDS').split(',')
+      : [],
+    repel: requireEnv('REPEL_ROLE_ID'),
+    a: optionalEnv('ROLE_A_ID'),
+    b: optionalEnv('ROLE_B_ID'),
+    c: optionalEnv('ROLE_C_ID'),
+  },
+  channelIds: {
+    repelLogs: requireEnv('REPEL_LOG_CHANNEL_ID'),
+    guides: requireEnv('GUIDES_CHANNEL_ID'),
   },
   onboarding: {
     channelId: requireEnv('ONBOARDING_CHANNEL_ID'),
