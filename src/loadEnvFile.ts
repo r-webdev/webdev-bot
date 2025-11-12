@@ -36,19 +36,16 @@ function loadEnvFile(filePath: string) {
 const nodeEnv = process.env.NODE_ENV || 'development';
 console.log(`🌍 Environment: ${nodeEnv}`);
 
-if (nodeEnv === 'test') {
-  console.log('🧪 Loading test environment variables');
-  const testEnvFile = join(process.cwd(), '.env.test');
-  loadEnvFile(testEnvFile);
-} else {
-  // Load environment-specific config first (public values, production only)
-  if (nodeEnv === 'production') {
-    const envFile = join(process.cwd(), '.env.production');
-    loadEnvFile(envFile);
-  }
+const ENV_FILES = {
+  test: join(process.cwd(), '.env.test'),
+  production: join(process.cwd(), '.env.production'),
+  development: join(process.cwd(), '.env'),
+};
 
-  // Load .env file with secrets and local config (overrides public config if any)
-  // Required for DISCORD_TOKEN and other secrets
-  const localEnvFile = join(process.cwd(), '.env');
-  loadEnvFile(localEnvFile);
+const envFile = ENV_FILES[nodeEnv as keyof typeof ENV_FILES];
+if (envFile) {
+  loadEnvFile(envFile);
+} else {
+  console.error(`❌ Environment file ${nodeEnv} not found`);
+  process.exit(1);
 }
