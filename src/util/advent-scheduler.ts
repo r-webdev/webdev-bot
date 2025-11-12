@@ -1,4 +1,4 @@
-import { ChannelType, type Client, type ForumChannel } from 'discord.js';
+import { ChannelType, type Client } from 'discord.js';
 import * as cron from 'node-cron';
 import { promises as fs } from 'node:fs';
 import { config } from '../env.js';
@@ -9,10 +9,7 @@ type TrackerData = {
   [year: string]: number[];
 };
 
-/**
- * Load the tracker file to see which days have already been posted
- */
-async function loadTracker(): Promise<TrackerData> {
+export async function loadTracker(): Promise<TrackerData> {
   try {
     const data = await fs.readFile(TRACKER_FILE, 'utf-8');
     return JSON.parse(data);
@@ -22,25 +19,16 @@ async function loadTracker(): Promise<TrackerData> {
   }
 }
 
-/**
- * Save the tracker file with updated data
- */
-async function saveTracker(data: TrackerData): Promise<void> {
+export async function saveTracker(data: TrackerData): Promise<void> {
   await fs.writeFile(TRACKER_FILE, JSON.stringify(data, null, 2), 'utf-8');
 }
 
-/**
- * Check if a specific day has already been posted for a given year
- */
 async function isDayPosted(year: number, day: number): Promise<boolean> {
   const tracker = await loadTracker();
   const yearData = tracker[year.toString()];
   return yearData ? yearData.includes(day) : false;
 }
 
-/**
- * Mark a day as posted for a given year
- */
 async function markDayAsPosted(year: number, day: number): Promise<void> {
   const tracker = await loadTracker();
   const yearKey = year.toString();
@@ -56,9 +44,6 @@ async function markDayAsPosted(year: number, day: number): Promise<void> {
   }
 }
 
-/**
- * Create a forum post for a specific Advent of Code day
- */
 async function createAdventPost(
   client: Client,
   channelId: string,
@@ -78,7 +63,7 @@ async function createAdventPost(
       return false;
     }
 
-    const forumChannel = channel as ForumChannel;
+    const forumChannel = channel;
     const title = `Day ${day}, ${year}`;
     const content = `https://adventofcode.com/${year}/day/${day}`;
 
