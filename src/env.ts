@@ -38,6 +38,17 @@ export const config = {
     guides: requireEnv('GUIDES_CHANNEL_ID'),
     adventOfCode: requireEnv('ADVENT_OF_CODE_CHANNEL_ID'),
   },
+  onboarding: {
+    channelId: optionalEnv('ONBOARDING_CHANNEL_ID'),
+    roleId: optionalEnv('ONBOARDING_ROLE_ID'),
+  },
+  // Add more config sections as needed:
+  // database: {
+  //   url: requireEnv('DATABASE_URL'),
+  // },
+  // api: {
+  //   openaiKey: optionalEnv('OPENAI_API_KEY'),
+  // },
 };
 
 export type Config = typeof config;
