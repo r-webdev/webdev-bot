@@ -32,8 +32,11 @@ jobs:
             npm install --no-audit --no-fund
           fi
 
-      - name: Lint
-        run: npm run lint
+      - name: Lint and Format
+        run: npm run check
+
+      - name: Typecheck
+        run: npm run typecheck
 
       - name: Build
         run: npm run build:ci
