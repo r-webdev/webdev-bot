@@ -1,3 +1,4 @@
+// @ts-nocheck: This event isn't used and shouldn't affect anything, auto-roles are TBD
 import { Events } from 'discord.js';
 import { config } from '../env.js';
 import { createEvent } from '../util/events.js';

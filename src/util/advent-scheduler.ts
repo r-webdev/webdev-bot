@@ -1,6 +1,6 @@
+import { promises as fs } from 'node:fs';
 import { ChannelType, type Client } from 'discord.js';
 import * as cron from 'node-cron';
-import { promises as fs } from 'node:fs';
 import { config } from '../env.js';
 
 const TRACKER_FILE = config.adventOfCodeTrackerPath;
