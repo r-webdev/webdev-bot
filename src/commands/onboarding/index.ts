@@ -19,6 +19,7 @@ export const onboardingCommand = createCommand({
       });
       return;
     }
+    // @ts-expect-error: This command isn't used and shouldn't affect anything, onboarding roles are TBD
     const onboardingRole = guild.roles.cache.get(config.onboarding.roleId);
     if (!onboardingRole) {
       await interaction.reply({
@@ -27,6 +28,7 @@ export const onboardingCommand = createCommand({
       });
       return;
     }
+    // @ts-expect-error: This command isn't used and shouldn't affect anything, onboarding channels are TBD
     const onboardingChannel = guild.channels.cache.get(config.onboarding.channelId);
     if (!onboardingChannel || !onboardingChannel.isSendable()) {
       await interaction.reply({
