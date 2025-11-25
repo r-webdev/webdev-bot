@@ -431,7 +431,8 @@ export const repelCommand = createCommand({
 
       const timeout = await handleTimeout({
         target: target,
-        durationInMilliseconds: timeoutHours ? timeoutHours * HOUR : DEFAULT_TIMEOUT_DURATION_MS,
+        durationInMilliseconds:
+          timeoutHours !== null ? timeoutHours * HOUR : DEFAULT_TIMEOUT_DURATION_MS,
       });
 
       const channels = getTextChannels(interaction);
