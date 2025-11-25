@@ -9,23 +9,6 @@ export const createCommands = (commands: Array<Command>): Command[] => {
   return commands.map(createCommand);
 };
 
-export const registerCommands = async (
-  client: Client,
-  commands: Map<string, Command>
-): Promise<void> => {
-  const commandArray = Array.from(commands.values()).map((cmd) => cmd.data);
-
-  try {
-    await client.application?.commands.set(commandArray);
-    commandArray.forEach((cmd) => {
-      console.log(`Registered command: ${cmd.type}, ${cmd.name}`);
-    });
-    console.log(`Registered ${commandArray.length} commands globally.`);
-  } catch (error) {
-    console.error('Error registering commands:', error);
-  }
-};
-
 export const buildCommandString = (interaction: ChatInputCommandInteraction): string => {
   const commandName = interaction.commandName;
   return `/${commandName} ${interaction.options.data.map((option) => `${option.name}:${option.value}`).join(' ')}`;
