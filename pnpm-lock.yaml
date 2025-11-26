@@ -18,8 +18,8 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
       web-features:
-        specifier: ^3.7.0
-        version: 3.7.0
+        specifier: ^3.9.2
+        version: 3.9.2
     devDependencies:
       '@biomejs/biome':
         specifier: 2.2.4
@@ -928,8 +928,8 @@ packages:
     resolution: {integrity: sha512-gBLkYIlEnSp8pFbT64yFgGE6UIB9tAkhukC23PmMDCe5Nd+cRqKxSjw5y54MK2AZMgZfJWMaNE4nYUHgi1XEOw==}
     engines: {node: '>=18.17'}
 
-  web-features@3.7.0:
-    resolution: {integrity: sha512-97Fif4cwt6AuoEZOYfpjHY0SZlV2u+3AuiHqJPxIzzAvKVXErkt3ST+z1ySFuJqS1+7OU8zAR/iFY1a6jnmMsA==}
+  web-features@3.9.2:
+    resolution: {integrity: sha512-f3gfIAaxdSfsM0/3gycITqiriZEPIcfcjs25FC7qRhUGUMM5JNcIAivJz7mP1RwHKO6Fg0c4/GsW6pkhdfCCUA==}
 
   webidl-conversions@4.0.2:
     resolution: {integrity: sha512-YQ+BmxuTgd6UXZW3+ICGfyqRyHXVlD5GtQr5+qjiNW7bF0cqrzX500HVXPBOvgXb5YnzDd+h0zqyv61KUD7+Sg==}
@@ -1738,7 +1738,7 @@ snapshots:
 
   undici@6.21.3: {}
 
-  web-features@3.7.0: {}
+  web-features@3.9.2: {}
 
   webidl-conversions@4.0.2: {}
 
