@@ -22,6 +22,7 @@ export const config = {
   },
   serverId: requireEnv('SERVER_ID'),
   fetchAndSyncMessages: true,
+  clearGlobalCommands: optionalEnv('CLEAR_GLOBAL_COMMANDS') === 'true',
   guidesTrackerPath: optionalEnv('GUIDES_TRACKER_PATH'),
   adventOfCodeTrackerPath: requireEnv('ADVENT_OF_CODE_TRACKER_PATH'),
   roleIds: {
