@@ -56,8 +56,8 @@ export const mdnProvider: ProviderConfig<SearchItem> = {
         .setMaxValues(Math.min(5, data.size))
         .addOptions(
           ...data.map((doc) => ({
-            label: doc.title.length > 100 ? `${doc.title.slice(0, 97)}...` : doc.title,
-            description: doc.summary.length > 100 ? `${doc.summary.slice(0, 97)}...` : doc.summary,
+            label: clampText(doc.title, 100),
+            description: clampText(doc.summary, 100),
             value: doc.slug,
           }))
         )

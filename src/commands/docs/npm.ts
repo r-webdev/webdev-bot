@@ -64,7 +64,7 @@ export const npmProvider: ProviderConfig<SearchItem> = {
           ...data.map((pkg) =>
             new StringSelectMenuOptionBuilder()
               .setLabel(pkg.name)
-              .setDescription(pkg.description)
+              .setDescription(clampText(pkg.description, 100))
               .setValue(pkg.name)
           )
         )
