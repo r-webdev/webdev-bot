@@ -3,6 +3,8 @@ import {
   ApplicationCommandType,
   ChannelType,
   type ChatInputCommandInteraction,
+  Colors,
+  ContainerBuilder,
   EmbedBuilder,
   GuildMember,
   type Message,
@@ -10,6 +12,7 @@ import {
   PermissionFlagsBits,
   type Role,
   type TextChannel,
+  TextDisplayBuilder,
   type User,
 } from 'discord.js';
 import { HOUR, MINUTE, timeToString } from '../../constants/time.js';
@@ -88,6 +91,39 @@ const checkCanRepelTarget = ({
   }
 
   return { ok: true };
+};
+
+const sendReasonToTarget = async ({
+  target,
+  reason,
+  guildName,
+  timeoutDuration,
+}: {
+  target: GuildMember | User;
+  reason: string;
+  guildName: string;
+  timeoutDuration?: number;
+}): Promise<boolean> => {
+  const parts: string[] = [];
+  parts.push(`You have been repelled from **${guildName}**.`);
+  if (timeoutDuration && timeoutDuration > 0) {
+    parts.push(`You have been timed out for ${timeToString(timeoutDuration)}.`);
+  }
+  parts.push(`**Reason:** ${reason}`);
+  const messageContent = parts.join('\n');
+
+  const containerComponent = new ContainerBuilder()
+    .setAccentColor(Colors.DarkRed)
+    .addTextDisplayComponents(new TextDisplayBuilder().setContent(messageContent));
+  try {
+    await target.send({
+      flags: MessageFlags.IsComponentsV2,
+      components: [containerComponent],
+    });
+    return true;
+  } catch {
+    return false;
+  }
 };
 
 const getTargetFromInteraction = async (
@@ -215,6 +251,7 @@ const logRepelAction = async ({
   deleteCount,
   reason,
   failedChannels,
+  dm,
 }: {
   interaction: ChatInputCommandInteraction;
   member: GuildMember;
@@ -223,6 +260,10 @@ const logRepelAction = async ({
   duration?: number;
   deleteCount: number;
   failedChannels: string[];
+  dm: {
+    sent: boolean;
+    shouldSend: boolean;
+  };
 }) => {
   const channelInfo =
     interaction.channel?.type === ChannelType.GuildVoice
@@ -276,6 +317,14 @@ const logRepelAction = async ({
     .setColor('Orange')
     .setTimestamp();
 
+  if (dm.shouldSend) {
+    resultEmbed.addFields({
+      name: 'DM Sent',
+      value: dm.sent ? 'Yes' : 'No',
+      inline: true,
+    });
+  }
+
   const failedChannelsEmbed =
     failedChannels.length > 0
       ? new EmbedBuilder()
@@ -312,6 +361,7 @@ const RepelOptions = {
   LOOK_BACK: 'look_back',
   TIMEOUT_DURATION: 'timeout_duration',
   MESSAGE_FOR_MODS: 'message_for_mods',
+  DM_USER: 'dm_user',
 } as const;
 
 export const repelCommand = createCommand({
@@ -371,6 +421,12 @@ export const repelCommand = createCommand({
         required: false,
         type: ApplicationCommandOptionType.String,
         description: 'Optional message to include for moderators in the log',
+      },
+      {
+        name: RepelOptions.DM_USER,
+        required: false,
+        type: ApplicationCommandOptionType.Boolean,
+        description: 'Whether to DM the user about the repel action (Defaults to true)',
       },
     ],
   },
@@ -443,6 +499,17 @@ export const repelCommand = createCommand({
         lookBack: lookBack ?? DEFAULT_LOOK_BACK_MS,
       });
 
+      const shouldDMUser = interaction.options.getBoolean(RepelOptions.DM_USER) ?? true;
+      let dmSent = false;
+      if (shouldDMUser) {
+        dmSent = await sendReasonToTarget({
+          target,
+          reason,
+          guildName: interaction.guild.name,
+          timeoutDuration: timeout,
+        });
+      }
+
       logRepelAction({
         interaction,
         member: commandUser,
@@ -451,6 +518,10 @@ export const repelCommand = createCommand({
         duration: timeout,
         deleteCount: deleted,
         failedChannels,
+        dm: {
+          sent: dmSent,
+          shouldSend: shouldDMUser,
+        },
       });
 
       await interaction.editReply({
