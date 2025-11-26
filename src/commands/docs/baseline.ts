@@ -11,6 +11,7 @@ import { features as data } from 'web-features';
 import { fuzzySearch } from '../../util/fuzzy-search.js';
 import type { ProviderConfig } from './types.js';
 import { createBaseConfig, getBaselineFeatures } from './utils.js';
+import { clampText } from '../../util/text.js';
 
 export type FeatureData = {
   name: string;
@@ -72,11 +73,8 @@ export const baselineProvider: ProviderConfig<FeatureItem> = {
         .setMaxValues(1)
         .addOptions(
           ...data.map((feature) => ({
-            label: feature.name.length > 100 ? `${feature.name.slice(0, 97)}...` : feature.name,
-            description:
-              feature.description.length > 100
-                ? `${feature.description.slice(0, 97)}...`
-                : feature.description,
+            label: clampText(feature.name, 100),
+            description: clampText(feature.description, 100),
             value: feature.key,
           }))
         )
