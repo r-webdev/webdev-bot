@@ -83,7 +83,8 @@ export const executeDocCommand = async (
           },
         });
       } else if (componentInteraction.isButton()) {
-        await choiceInteraction.delete();
+        console.log('Documentation command cancelled by user.');
+        await interaction.deleteReply();
       }
     });
   } catch (error) {
