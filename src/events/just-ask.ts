@@ -6,7 +6,7 @@ import { loadMarkdownOptions } from '../util/markdown.js';
 import { rateLimit } from '../util/rate-limit.js';
 
 // Subject patterns (who)
-const reSubject = `(?:(?:any|some|no|every)(?:one|body)|people|folks|peeps|who)`;
+const reSubject = `(?:(?:any|some|no|every)(?: ?(?:one|body))|people|folks|peeps|who)`;
 
 // Verb patterns (has/knows/can help/etc)
 const reVerb = `(?:ha[sv]e?|got|knows?|can(?: help)?|tried|used|worked(?: with)?|familiar(?: with)?|experience[ds]?(?: with)?|heard(?: of)?|seen)`;
@@ -25,7 +25,7 @@ const askToAskPattern = new RegExp(
   'i'
 );
 
-const isAskingToAsk = (text: string) => askToAskPattern.test(text);
+export const isAskingToAsk = (text: string) => askToAskPattern.test(text);
 
 const [response] = await loadMarkdownOptions<{ name: string }>(
   new URL('../commands/tips/subjects/', import.meta.url),
