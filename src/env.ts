@@ -30,6 +30,7 @@ export const config = {
       ? requireEnv('MODERATORS_ROLE_IDS').split(',')
       : [],
     repel: requireEnv('REPEL_ROLE_ID'),
+    regular: requireEnv('REGULAR_ROLE_ID'),
     a: optionalEnv('ROLE_A_ID'),
     b: optionalEnv('ROLE_B_ID'),
     c: optionalEnv('ROLE_C_ID'),
