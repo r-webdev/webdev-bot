@@ -1,5 +1,6 @@
-import { Events } from 'discord.js';
+import { Events, type Message, PermissionFlagsBits } from 'discord.js';
 import { MINUTE } from '../constants/time.js';
+import { config } from '../env.js';
 import { createEvent } from '../util/events.js';
 import { loadMarkdownOptions } from '../util/markdown.js';
 import { rateLimit } from '../util/rate-limit.js';
@@ -20,7 +21,7 @@ const reQuestion = `(?:experience|knowledge|info(?:rmation)?|ideas?|clues?|tips?
 const reConnector = `(?:with|about|on|regarding|for|of)`;
 
 const askToAskPattern = new RegExp(
-  String.raw`\b${reSubject}\s+${reVerb}\s+(?:${reQuantifier}\s+)?(?:${reQuestion}\s+)?(?:${reConnector}\s+)?.+\??`,
+  String.raw`\b${reSubject}\s+${reVerb}\s+(?:${reQuantifier}\s+)?(?:${reQuestion}\s+)?(?:${reConnector}\s+)?.+\?`,
   'i'
 );
 
@@ -33,15 +34,34 @@ const [response] = await loadMarkdownOptions<{ name: string }>(
 
 const { canRun, reset } = rateLimit(10 * MINUTE);
 
+const shouldCheck = (message: Message) => {
+  // check rate limit
+  if (!canRun()) {
+    return false;
+  }
+  // check author
+  if (message.author.bot || message.author.system) {
+    return false;
+  }
+  // check roles/permissions
+  if (
+    message.member !== null &&
+    (message.member.roles.highest.comparePositionTo(config.roleIds.repel) >= 0 ||
+      message.member.permissions.has(PermissionFlagsBits.ModerateMembers))
+  ) {
+    return false;
+  }
+  return true;
+};
+
 export const justAskEvent = createEvent(
   {
     name: Events.MessageCreate,
   },
   async (message) => {
-    if (!canRun() || message.author.bot) {
+    if (!shouldCheck(message)) {
       return;
     }
-
     // Ignore long messages, likely user provided more context
     if (message.content.split(' ').length > 10) {
       return;
