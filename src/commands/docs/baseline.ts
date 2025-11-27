@@ -9,9 +9,9 @@ import {
 } from 'discord.js';
 import { features as data } from 'web-features';
 import { fuzzySearch } from '../../util/fuzzy-search.js';
+import { clampText } from '../../util/text.js';
 import type { ProviderConfig } from './types.js';
 import { createBaseConfig, getBaselineFeatures } from './utils.js';
-import { clampText } from '../../util/text.js';
 
 export type FeatureData = {
   name: string;

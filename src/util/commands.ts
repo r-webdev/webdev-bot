@@ -1,4 +1,4 @@
-import type { ChatInputCommandInteraction, Client } from 'discord.js';
+import type { ChatInputCommandInteraction } from 'discord.js';
 import type { Command } from '../commands/types.js';
 
 export const createCommand = (command: Command): Command => {
