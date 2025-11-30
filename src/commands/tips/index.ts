@@ -54,7 +54,10 @@ const slashCommand = createCommand({
     }
     const tip = subjectChoices.get(subject);
     if (!tip) {
-      await interaction.reply({ content: 'No tip found for that subject.', ephemeral: true });
+      await interaction.reply({
+        content: 'No tip found for that subject.',
+        flags: MessageFlags.Ephemeral,
+      });
       return;
     }
 
@@ -68,7 +71,7 @@ const slashCommand = createCommand({
       },
     });
 
-    await interaction.reply({ content: 'Tip sent!', ephemeral: true });
+    await interaction.reply({ content: 'Tip sent!', flags: MessageFlags.Ephemeral });
   },
 });
 
