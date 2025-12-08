@@ -92,7 +92,7 @@ async function checkAndCreateTodaysPost(client: Client, channelId: string): Prom
     return;
   }
 
-  if (day < 1 || day > 25) {
+  if (day < 1 || day > 12) {
     return;
   }
 
