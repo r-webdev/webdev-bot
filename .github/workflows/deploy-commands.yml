@@ -32,6 +32,6 @@ jobs:
           # Run deploy script inside the already running Docker container
           # .env file should already exist from main deployment
           echo "Deploying Discord commands..."
-          docker compose --profile prod exec bot-prod node dist/util/deploy.js
+          docker compose --profile prod exec bot-prod node dist/scripts/deploy-commands.js
 
           echo "Discord commands deployment completed!"

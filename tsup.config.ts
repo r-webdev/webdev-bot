@@ -7,6 +7,6 @@ export default defineConfig({
   outDir: 'dist',
   format: ['esm'],
   target: 'esnext',
-  entry: ['src/**/*.ts', 'src/*.ts'],
+  entry: ['src/**/*.ts', 'scripts/**/*.ts'],
   minify: true,
 });

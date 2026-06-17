@@ -4,13 +4,10 @@
   "description": "Web Dev & Web Design discord bot",
   "type": "module",
   "scripts": {
-    "build:ci": "npm run build:ts && npm run build:copy",
-    "build:dev": "pnpm run build:ts && pnpm run build:copy",
-    "build:ts": "tsup",
-    "build:copy": "node scripts/copy-assets.js",
+    "build": "tsup && tsc-alias",
     "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
-    "deploy": "tsx src/util/deploy.ts",
+    "deploy": "tsx src/scripts/deploy-commands.ts",
     "docker:build": "NODE_VERSION=$(cat .nvmrc | tr -d 'v') docker compose build",
     "docker:dev": "NODE_VERSION=$(cat .nvmrc | tr -d 'v') docker compose --profile dev up",
     "docker:prod": "NODE_VERSION=$(cat .nvmrc | tr -d 'v') docker compose --profile prod up -d",
@@ -21,8 +18,8 @@
     "test:ci": "NODE_ENV=test node --test dist/**/*.test.js",
     "prepare": "husky",
     "pre-commit": "lint-staged",
-    "sync-guides": "tsx scripts/sync-guides.js",
-    "sync-guides:init": "tsx scripts/sync-guides.js --initialize"
+    "sync-guides": "tsx src/scripts/sync-guides.ts",
+    "sync-guides:init": "tsx src/scripts/sync-guides.ts --initialize"
   },
   "keywords": [],
   "author": "",
@@ -40,6 +37,7 @@
     "@types/node-cron": "^3.0.11",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.1",
+    "tsc-alias": "^1.8.17",
     "tsup": "^8.5.0",
     "tsx": "^4.20.6"
   },
