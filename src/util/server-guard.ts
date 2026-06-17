@@ -1,11 +1,11 @@
 import type { Guild } from 'discord.js';
-import { config } from '../env.js';
+import { config } from '@/env.js';
 
 /**
  * Checks if a guild is the allowed server
  */
 export function isAllowedServer(guildId: string): boolean {
-  return guildId === config.serverId;
+  return guildId === config.discord.serverId;
 }
 
 /**

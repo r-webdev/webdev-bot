@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { promises as fs } from 'node:fs';
 import test from 'node:test';
-import { config } from '../env.js';
+import { config } from '@/env.js';
 
 // Import after setting env var
 const { loadTracker, saveTracker } = await import('./advent-scheduler.js');

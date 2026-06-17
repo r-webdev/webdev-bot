@@ -1,7 +1,6 @@
 import { ActivityType, Client, GatewayIntentBits } from 'discord.js';
+import { loadEvents } from './common/events/load-events.js';
 import { config } from './env.js';
-import { events } from './events/index.js';
-import { registerEvents } from './util/events.js';
 
 // Create a new client instance
 const client = new Client({
@@ -23,7 +22,6 @@ const client = new Client({
   },
 });
 
-// Register events and commands
-await registerEvents(client, events);
+loadEvents(client);
 
 void client.login(config.discord.token);

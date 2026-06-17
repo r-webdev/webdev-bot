@@ -1,0 +1,38 @@
+import { ApplicationCommandOptionType } from 'discord.js';
+import { createSlashCommand } from '@/common/commands/create-commands.js';
+import { baselineProvider } from './baseline.js';
+import { mdnProvider } from './mdn.js';
+import { npmProvider } from './npm.js';
+import type { ProviderConfig } from './types.js';
+import { executeDocCommand } from './utils.js';
+
+const docProviders = {
+  mdn: mdnProvider,
+  npm: npmProvider,
+  baseline: baselineProvider,
+};
+
+export const docsCommands = Object.entries(docProviders).map(([providerKey, providerConfig]) =>
+  createSlashCommand({
+    data: {
+      name: providerKey,
+      description: providerConfig.commandDescription,
+      options: [
+        {
+          name: 'query',
+          type: ApplicationCommandOptionType.String,
+          description: 'The search query',
+          required: true,
+        },
+        {
+          name: 'user',
+          type: ApplicationCommandOptionType.User,
+          description: 'The user to mention in the response',
+          required: false,
+        },
+      ],
+    },
+    execute: async (interaction) =>
+      executeDocCommand(providerConfig as ProviderConfig, interaction),
+  })
+);
