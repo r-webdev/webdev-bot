@@ -33,6 +33,7 @@ services:
       - .env
     environment:
       - NODE_ENV=development
+      - GUIDES_TRACKER_PATH=/app/data/guides-tracker.json
     volumes:
       # Mount source code for hot reload
       - ./src:/app/src:ro
