@@ -1,5 +1,6 @@
 import type { PathLike } from 'node:fs';
 import { readdir, readFile } from 'node:fs/promises';
+import path from 'node:path';
 
 /**
  * A simple markdown parser that extracts frontmatter and content
@@ -34,12 +35,12 @@ export const parseMarkdown = async <T extends Record<string, unknown>>(
 
 /** Load markdown files from a directory and parse them
  *
- * @param path - The path to the directory containing markdown files
+ * @param sourcePath - The path to the directory containing markdown files
  * @param name - Optional specific file name to load (must include .md extension)
  * @returns An array of parsed markdown files with frontmatter and content
  */
 export const loadMarkdownOptions = async <T extends Record<string, unknown>>(
-  path: PathLike,
+  sourcePath: PathLike,
   name?: string
 ): Promise<
   Array<{
@@ -47,7 +48,7 @@ export const loadMarkdownOptions = async <T extends Record<string, unknown>>(
     content: string;
   }>
 > => {
-  const files = await readdir(path);
+  const files = await readdir(sourcePath);
   const markdownFiles = files.filter(
     (file) => file.endsWith('.md') && (name ? file === name : true)
   );
@@ -55,7 +56,8 @@ export const loadMarkdownOptions = async <T extends Record<string, unknown>>(
   const results: Array<{ frontmatter: Partial<T>; content: string }> = [];
 
   for (const file of markdownFiles) {
-    const filePath = new URL(`${path}/${file}`, import.meta.url);
+    // const filePath = new URL(`${path}/${file}`, import.meta.url);
+    const filePath = path.join(sourcePath.toString(), file);
 
     const fileContent = await readFile(filePath, 'utf-8');
     const result = await parseMarkdown<T>(fileContent);

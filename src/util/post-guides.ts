@@ -1,9 +1,8 @@
 import { createHash } from 'node:crypto';
 import { readdir, readFile, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import path, { join } from 'node:path';
 import { ChannelType, type Client, EmbedBuilder, type TextChannel } from 'discord.js';
-import { config } from '../env.js';
+import { config } from '@/env.js';
 import { parseMarkdown } from './markdown.js';
 
 export type GuideInfo = {
@@ -31,9 +30,11 @@ export type GuideTracker = {
   };
 };
 
-const GUIDES_DIR = fileURLToPath(new URL('../commands/guides/subjects/', import.meta.url));
+// const GUIDES_DIR = fileURLToPath(new URL('../features/guides/subjects/', import.meta.url));
+const GUIDES_DIR = path.join(process.cwd(), 'assets/guides');
 
-const TRACKER_FILE = config.guidesTrackerPath ?? 'guides-tracker.json';
+// const TRACKER_FILE = config.guidesTrackerPath ?? 'guides-tracker.json';
+const TRACKER_FILE = config.guidesTrackerPath ?? path.join(process.cwd(), 'guides-tracker.json');
 
 const calculateHash = (content: string): string => {
   return createHash('sha256').update(content, 'utf8').digest('hex');

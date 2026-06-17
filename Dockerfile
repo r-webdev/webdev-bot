@@ -27,7 +27,7 @@ FROM deps-dev AS build
 
 COPY . .
 
-RUN pnpm run build:ci
+RUN pnpm run build
 
 # Production stage - Minimal runtime image
 FROM base AS production
@@ -43,6 +43,9 @@ COPY package.json ./
 
 # Copy environment config file (public, non-secret)
 COPY .env.production ./
+
+# Copy static assets (guides, tips, etc.) from the build stage
+COPY --from=build /app/assets ./assets
 
 # Create data directory and set permissions for node user
 RUN mkdir -p /app/data && chown -R node:node /app/data

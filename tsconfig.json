@@ -7,7 +7,11 @@
     "target": "esnext",
     "outDir": "dist",
     "skipLibCheck": true,
-    "strict": true
+    "types": ["node"],
+    "strict": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "scripts/**/*"]
 }

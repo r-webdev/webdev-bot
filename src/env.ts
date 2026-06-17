@@ -1,4 +1,4 @@
-import './loadEnvFile.js';
+import '@/loadEnvFile.js';
 
 function optionalEnv(key: string): string | undefined {
   return process.env[key];
@@ -19,8 +19,8 @@ export const config = {
   discord: {
     token: requireEnv('DISCORD_TOKEN'),
     clientId: requireEnv('CLIENT_ID'),
+    serverId: requireEnv('SERVER_ID'),
   },
-  serverId: requireEnv('SERVER_ID'),
   fetchAndSyncMessages: true,
   guidesTrackerPath: optionalEnv('GUIDES_TRACKER_PATH'),
   adventOfCodeTrackerPath: requireEnv('ADVENT_OF_CODE_TRACKER_PATH'),
