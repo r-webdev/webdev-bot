@@ -8,10 +8,6 @@ export const deleteShowcase: ButtonSubmitInteraction = {
   handler: async (interaction) => {
     const interactionUser = interaction.user;
     const [, ownerId] = parseCustomId(interaction.customId);
-    console.log({
-      interactionUserId: interactionUser.id,
-      ownerId,
-    });
 
     if (!interaction.member || !isUserInServer(interaction.member)) {
       await interaction.reply({

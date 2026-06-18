@@ -32,7 +32,6 @@ export const createShowcaseCommand = createSlashCommand({
       });
       return;
     }
-    console.log(channel.availableTags);
 
     const modal = buildShowcaseModal({
       id: customId('showcase', interaction.user.id),
@@ -56,9 +55,8 @@ const modalHandler: ModalSubmitInteraction = {
 
     const channel = interaction.guild?.channels.cache.get(config.channelIds.showcase);
     if (channel === undefined || channel.type !== ChannelType.GuildForum) {
-      await interaction.reply({
+      await interaction.editReply({
         content: 'Showcase channel is not properly configured. Please contact an administrator.',
-        flags: MessageFlags.Ephemeral,
       });
       return;
     }
@@ -111,6 +109,9 @@ const modalHandler: ModalSubmitInteraction = {
       });
     } catch (error) {
       console.error('Error creating showcase thread:', error);
+      await interaction.editReply({
+        content: 'There was an error showcasing your project. Please try again later.',
+      });
     }
   },
 };
