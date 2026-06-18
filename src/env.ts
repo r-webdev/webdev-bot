@@ -38,6 +38,7 @@ export const config = {
     repelLogs: requireEnv('REPEL_LOG_CHANNEL_ID'),
     guides: requireEnv('GUIDES_CHANNEL_ID'),
     adventOfCode: requireEnv('ADVENT_OF_CODE_CHANNEL_ID'),
+    showcase: requireEnv('SHOWCASE_CHANNEL_ID'),
   },
   onboarding: {
     channelId: optionalEnv('ONBOARDING_CHANNEL_ID'),
