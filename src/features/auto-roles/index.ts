@@ -3,16 +3,16 @@
 import { Events } from 'discord.js';
 import { createEvent } from '@/common/events/create-event.js';
 import { config } from '@/env.js';
-import { hasRoles } from '@/util/member.js';
+import { hasAllRoles } from '@/util/member.js';
 
 export const autoRoleEvent = createEvent(
   {
     name: Events.GuildMemberUpdate,
   },
   async (_, newMember) => {
-    const hasRoleC = hasRoles(newMember, config.roleIds.c);
+    const hasRoleC = hasAllRoles(newMember, config.roleIds.c);
     if (!hasRoleC) {
-      const hasRequiredRoles = hasRoles(newMember, config.roleIds.a, config.roleIds.b);
+      const hasRequiredRoles = hasAllRoles(newMember, config.roleIds.a, config.roleIds.b);
       if (hasRequiredRoles) {
         try {
           await newMember.roles.add(config.roleIds.c);
