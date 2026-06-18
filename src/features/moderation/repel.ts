@@ -5,7 +5,7 @@ import {
   Colors,
   ContainerBuilder,
   EmbedBuilder,
-  GuildMember,
+  type GuildMember,
   type Message,
   MessageFlags,
   PermissionFlagsBits,
@@ -14,6 +14,7 @@ import {
   TextDisplayBuilder,
   type User,
 } from 'discord.js';
+import { isUserInServer } from '@/util/member.js';
 import { createSlashCommand } from '../../common/commands/create-commands.js';
 import { HOUR, MINUTE, timeToString } from '../../constants/time.js';
 import { config } from '../../env.js';
@@ -23,10 +24,6 @@ import { logToChannel } from '../../util/channel-logging.js';
 
 const DEFAULT_LOOK_BACK_MS = 10 * MINUTE;
 const DEFAULT_TIMEOUT_DURATION_MS = 1 * HOUR;
-
-const isUserInServer = (target: User | GuildMember): target is GuildMember => {
-  return target instanceof GuildMember;
-};
 
 const isUserTimedOut = (target: GuildMember) => {
   return target.communicationDisabledUntilTimestamp
