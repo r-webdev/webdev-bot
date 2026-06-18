@@ -59,7 +59,7 @@ export const editShowcaseInteraction: ButtonSubmitInteraction = {
         return;
       }
 
-      const { name, link, description } = parseShowcaseMessage(message.content);
+      const { projectName, link, description } = parseShowcaseMessage(message.content);
       const appliedTags = forumPost.appliedTags;
       const tags = parent.availableTags;
 
@@ -67,7 +67,7 @@ export const editShowcaseInteraction: ButtonSubmitInteraction = {
         id: customId('edit_showcase_modal', ownerId, forumPost.id),
         title: 'Edit Showcase',
         tags,
-        name,
+        projectName,
         link,
         description,
         appliedTagIds: appliedTags,

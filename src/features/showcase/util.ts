@@ -10,7 +10,7 @@ import {
 } from 'discord.js';
 
 export type ShowcaseMessageData = {
-  name: string;
+  projectName: string;
   link: string;
   description: string;
   authorId: string;
@@ -20,21 +20,21 @@ export const parseShowcaseMessage = (content: string): ShowcaseMessageData => {
   const [header = '', ...descriptionParts] = content.split(/\n\n+/);
   const headerLines = header.split('\n');
 
-  const name = headerLines[0]?.replace(/^## Project Name:\s*/, '') ?? '';
+  const projectName = headerLines[0]?.replace(/^## Project Name:\s*/, '') ?? '';
   const authorLine = headerLines.find((line) => line.startsWith('**Author:** '));
   const authorId = authorLine?.match(/<@(\d+)>/)?.[1] ?? '';
   const linkLine = headerLines.find((line) => line.startsWith('**Link:** '));
   const link = linkLine?.replace(/^\*\*Link:\*\*\s*/, '') ?? '';
   const description = descriptionParts.join('\n\n').trim();
 
-  return { name, link, description, authorId };
+  return { projectName, link, description, authorId };
 };
 
 export type BuildShowcaseModalOptions = {
   id: string;
   title: string;
   tags: GuildForumTag[];
-  name?: string;
+  projectName?: string;
   link?: string;
   description?: string;
   appliedTagIds?: string[];
@@ -44,7 +44,7 @@ export const buildShowcaseModal = ({
   id,
   title,
   tags,
-  name = '',
+  projectName = '',
   link = '',
   description = '',
   appliedTagIds = [],
@@ -61,7 +61,7 @@ export const buildShowcaseModal = ({
             .setCustomId('projectName')
             .setStyle(TextInputStyle.Short)
             .setRequired(true)
-            .setValue(name)
+            .setValue(projectName)
         ),
       new LabelBuilder()
         .setLabel('Project Link')
