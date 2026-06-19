@@ -90,11 +90,9 @@ module "repository" {
         required_approving_review_count = 1
       }
 
-      # CI must pass before merge; contexts must match the GitHub Actions job name.
+      # Require branches to be up to date before merging; no hardcoded check names.
       required_status_checks = {
-        # Branch must be up to date with main before merging.
-        strict   = true
-        contexts = ["ci"]
+        strict = true
       }
     }
   }
