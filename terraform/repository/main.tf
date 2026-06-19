@@ -84,6 +84,8 @@ module "repository" {
       required_pull_request_reviews = {
         # New commits dismiss previous approvals so reviewers re-check changes.
         dismiss_stale_reviews = true
+        # Require approval from CODEOWNERS when changed files match .github/CODEOWNERS.
+        require_code_owner_reviews = true
         # At least one approving review from someone other than the author.
         required_approving_review_count = 1
       }
