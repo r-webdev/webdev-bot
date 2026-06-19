@@ -13,6 +13,10 @@
     "docker:prod": "NODE_VERSION=$(cat .nvmrc | tr -d 'v') docker compose --profile prod up -d",
     "docker:stop": "docker compose down",
     "check": "biome check --write .",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "fmt": "oxfmt", 
+    "fmt:check": "oxfmt --check",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test '**/*.test.ts'",
     "test:ci": "NODE_ENV=test node --test dist/**/*.test.js",
@@ -28,7 +32,6 @@
   "dependencies": {
     "discord.js": "^14.26.4",
     "node-cron": "^4.2.1",
-    "typescript": "^5.9.3",
     "web-features": "^3.9.2"
   },
   "devDependencies": {
@@ -37,9 +40,13 @@
     "@types/node-cron": "^3.0.11",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.1",
+    "oxfmt": "^0.55.0",
+    "oxlint": "^1.70.0",
+    "oxlint-tsgolint": "^0.23.0",
     "tsc-alias": "^1.8.17",
     "tsup": "^8.5.0",
-    "tsx": "^4.20.6"
+    "tsx": "^4.20.6",
+    "typescript": "^6.0.3"
   },
   "lint-staged": {
     "*.{ts,js}": [
