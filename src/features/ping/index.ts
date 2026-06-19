@@ -6,7 +6,10 @@ export const pingCommand = createSlashCommand({
     description: 'Replies with Pong!',
   },
   execute: async (interaction) => {
-    const sent = await interaction.reply({ content: 'pinging...', withResponse: true });
+    const sent = await interaction.reply({
+      content: 'pinging...',
+      withResponse: true,
+    });
     const message = sent.resource?.message;
     if (!message) {
       await interaction.editReply('Failed to send ping message.');
@@ -14,6 +17,8 @@ export const pingCommand = createSlashCommand({
     }
     const roundTrip = message.createdTimestamp - interaction.createdTimestamp;
     const apiLatency = interaction.client.ws.ping;
-    await interaction.editReply(`latency: ${apiLatency}ms | Roundtrip: ${roundTrip}ms`);
+    await interaction.editReply(
+      `latency: ${apiLatency}ms | Roundtrip: ${roundTrip}ms`
+    );
   },
 });

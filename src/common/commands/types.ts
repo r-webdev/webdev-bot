@@ -10,13 +10,17 @@ import type {
 export type UserContextMenuCommand = {
   commandType: ApplicationCommandType.User;
   data: RESTPostAPIContextMenuApplicationCommandsJSONBody;
-  execute: (interaction: UserContextMenuCommandInteraction) => Promise<void> | void;
+  execute: (
+    interaction: UserContextMenuCommandInteraction
+  ) => Promise<void> | void;
 };
 
 export type MessageContextMenuCommand = {
   commandType: ApplicationCommandType.Message;
   data: RESTPostAPIContextMenuApplicationCommandsJSONBody;
-  execute: (interaction: MessageContextMenuCommandInteraction) => Promise<void> | void;
+  execute: (
+    interaction: MessageContextMenuCommandInteraction
+  ) => Promise<void> | void;
 };
 
 export type SlashCommand = {
@@ -25,7 +29,10 @@ export type SlashCommand = {
   execute: (interaction: ChatInputCommandInteraction) => Promise<void> | void;
 };
 
-export type Command = SlashCommand | UserContextMenuCommand | MessageContextMenuCommand;
+export type Command =
+  | SlashCommand
+  | UserContextMenuCommand
+  | MessageContextMenuCommand;
 
 export type CommandInteraction =
   | ChatInputCommandInteraction

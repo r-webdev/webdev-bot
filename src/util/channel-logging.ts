@@ -30,7 +30,10 @@ export type LoggerOptions = {
   silent?: boolean;
 };
 
-const sendMessage = async (channel: SendableChannels, content: LogContent): Promise<boolean> => {
+const sendMessage = async (
+  channel: SendableChannels,
+  content: LogContent
+): Promise<boolean> => {
   try {
     let options: MessageCreateOptions;
     switch (content.type) {
@@ -39,7 +42,9 @@ const sendMessage = async (channel: SendableChannels, content: LogContent): Prom
         break;
       case 'embed':
         options = {
-          embeds: Array.isArray(content.embed) ? content.embed : [content.embed],
+          embeds: Array.isArray(content.embed)
+            ? content.embed
+            : [content.embed],
           content: content.content,
         };
         break;
@@ -58,7 +63,9 @@ const sendMessage = async (channel: SendableChannels, content: LogContent): Prom
   }
 };
 
-export const logToChannel = async (options: LoggerOptions): Promise<boolean> => {
+export const logToChannel = async (
+  options: LoggerOptions
+): Promise<boolean> => {
   try {
     const { channel, content } = options;
     if (!channel || !channel.isSendable()) {
@@ -81,7 +88,9 @@ export const logToChannel = async (options: LoggerOptions): Promise<boolean> => 
         return sendMessage(fallbackChannel, options.content);
       } else {
         if (!options.silent) {
-          console.error('Fallback channel is not a text-based channel or could not be fetched');
+          console.error(
+            'Fallback channel is not a text-based channel or could not be fetched'
+          );
         }
         return false;
       }

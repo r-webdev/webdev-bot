@@ -1,4 +1,10 @@
-import { ChannelType, Colors, EmbedBuilder, escapeCodeBlock, MessageFlags } from 'discord.js';
+import {
+  ChannelType,
+  Colors,
+  EmbedBuilder,
+  escapeCodeBlock,
+  MessageFlags,
+} from 'discord.js';
 import type { ButtonSubmitInteraction } from '@/common/interactions/button-interaction.js';
 import {
   type ModalSubmitInteraction,
@@ -31,7 +37,10 @@ export const editShowcaseInteraction: ButtonSubmitInteraction = {
       return;
     }
 
-    if (interactionUser.id !== ownerId && !isUserModerator(interaction.member, interaction)) {
+    if (
+      interactionUser.id !== ownerId &&
+      !isUserModerator(interaction.member, interaction)
+    ) {
       await interaction.reply({
         content: '❌ You do not have permission to edit this showcase.',
         flags: MessageFlags.Ephemeral,
@@ -40,7 +49,9 @@ export const editShowcaseInteraction: ButtonSubmitInteraction = {
     }
 
     const forumPost =
-      interaction.channel?.type === ChannelType.PublicThread ? interaction.channel : null;
+      interaction.channel?.type === ChannelType.PublicThread
+        ? interaction.channel
+        : null;
     if (forumPost === null) {
       await interaction.reply({
         content: '❌ This command can only be used in a forum post.',
@@ -60,7 +71,9 @@ export const editShowcaseInteraction: ButtonSubmitInteraction = {
       }
 
       const parentChannel =
-        forumPost.parent?.type === ChannelType.GuildForum ? forumPost.parent : null;
+        forumPost.parent?.type === ChannelType.GuildForum
+          ? forumPost.parent
+          : null;
       if (parentChannel === null) {
         await interaction.reply({
           content: '❌ Could not find the parent forum channel.',
@@ -69,7 +82,9 @@ export const editShowcaseInteraction: ButtonSubmitInteraction = {
         return;
       }
 
-      const { projectName, link, description } = parseShowcaseMessage(message.content);
+      const { projectName, link, description } = parseShowcaseMessage(
+        message.content
+      );
       const appliedTags = forumPost.appliedTags;
       const tags = parentChannel.availableTags;
 
@@ -108,7 +123,10 @@ const modalHandler: ModalSubmitInteraction = {
       return;
     }
 
-    if (interactionUser.id !== ownerId && !isUserModerator(interaction.member, interaction)) {
+    if (
+      interactionUser.id !== ownerId &&
+      !isUserModerator(interaction.member, interaction)
+    ) {
       await interaction.reply({
         content: '❌ You do not have permission to edit this showcase.',
         flags: MessageFlags.Ephemeral,
@@ -117,7 +135,9 @@ const modalHandler: ModalSubmitInteraction = {
     }
 
     const forumPost =
-      interaction.channel?.type === ChannelType.PublicThread ? interaction.channel : null;
+      interaction.channel?.type === ChannelType.PublicThread
+        ? interaction.channel
+        : null;
     if (forumPost === null) {
       await interaction.reply({
         content: '❌ This command can only be used in a forum post.',
@@ -142,7 +162,9 @@ const modalHandler: ModalSubmitInteraction = {
       });
 
       const threadParent =
-        forumPost.parent?.type === ChannelType.GuildForum ? forumPost.parent : null;
+        forumPost.parent?.type === ChannelType.GuildForum
+          ? forumPost.parent
+          : null;
       if (threadParent === null) {
         await interaction.reply({
           content: '❌ Could not find the parent forum channel.',
@@ -159,10 +181,14 @@ const modalHandler: ModalSubmitInteraction = {
       const prevTagIds = forumPost.appliedTags ?? [];
       const prevAttachmentsCount = getAttachmentsCount(message.attachments);
 
-      const newProjectName = interaction.fields.getTextInputValue('projectName');
-      const newProjectLink = interaction.fields.getTextInputValue('projectLink');
-      const newProjectDescription = interaction.fields.getTextInputValue('projectDescription');
-      const newProjectTags = interaction.fields.getStringSelectValues('projectTags');
+      const newProjectName =
+        interaction.fields.getTextInputValue('projectName');
+      const newProjectLink =
+        interaction.fields.getTextInputValue('projectLink');
+      const newProjectDescription =
+        interaction.fields.getTextInputValue('projectDescription');
+      const newProjectTags =
+        interaction.fields.getStringSelectValues('projectTags');
       const projectMedia = interaction.fields.getUploadedFiles('projectMedia');
 
       let newAttachmentsCount = prevAttachmentsCount;
@@ -174,10 +200,18 @@ const modalHandler: ModalSubmitInteraction = {
 
       const changes: ShowcaseEditChange[] = [];
       if (prevTitle !== newProjectName) {
-        changes.push({ field: 'title', before: prevTitle, after: newProjectName });
+        changes.push({
+          field: 'title',
+          before: prevTitle,
+          after: newProjectName,
+        });
       }
       if (prevLink !== newProjectLink) {
-        changes.push({ field: 'link', before: prevLink, after: newProjectLink });
+        changes.push({
+          field: 'link',
+          before: prevLink,
+          after: newProjectLink,
+        });
       }
       if (prevDescription !== newProjectDescription) {
         changes.push({
@@ -196,8 +230,13 @@ const modalHandler: ModalSubmitInteraction = {
       if (!tagsEqual()) {
         changes.push({
           field: 'tags',
-          before: resolveTagNames(prevTagIds, threadParent.availableTags).join(', '),
-          after: resolveTagNames(newProjectTags, threadParent.availableTags).join(', '),
+          before: resolveTagNames(prevTagIds, threadParent.availableTags).join(
+            ', '
+          ),
+          after: resolveTagNames(
+            newProjectTags,
+            threadParent.availableTags
+          ).join(', '),
         });
       }
       if (newAttachmentsCount > 0) {
@@ -242,7 +281,10 @@ const modalHandler: ModalSubmitInteraction = {
               acc.push(
                 wrapInDiffBlock(
                   clampText(
-                    toDiscordDiff(escapeCodeBlock(change.before), escapeCodeBlock(change.after)),
+                    toDiscordDiff(
+                      escapeCodeBlock(change.before),
+                      escapeCodeBlock(change.after)
+                    ),
                     3500
                   )
                 )

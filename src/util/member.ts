@@ -7,11 +7,17 @@ import {
 } from 'discord.js';
 import { config } from '@/env.js';
 
-export const hasAllRoles = (member: GuildMember, ...roles: string[]): boolean => {
+export const hasAllRoles = (
+  member: GuildMember,
+  ...roles: string[]
+): boolean => {
   return roles.every((roleId) => member.roles.cache.has(roleId));
 };
 
-export const hasAnyRole = (member: GuildMember, ...roles: string[]): boolean => {
+export const hasAnyRole = (
+  member: GuildMember,
+  ...roles: string[]
+): boolean => {
   return roles.some((roleId) => member.roles.cache.has(roleId));
 };
 
@@ -21,7 +27,10 @@ export const isUserInServer = (
   return target instanceof GuildMember;
 };
 
-export const isUserModerator = (member: GuildMember, interaction: BaseInteraction): boolean => {
+export const isUserModerator = (
+  member: GuildMember,
+  interaction: BaseInteraction
+): boolean => {
   return (
     hasAnyRole(member, ...config.roleIds.moderators) ||
     member.permissions.has(

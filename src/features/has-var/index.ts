@@ -8,12 +8,19 @@ import { rateLimit } from '../../util/rate-limit.js';
 const { canRun, reset } = rateLimit(5 * MINUTE);
 
 const hasVarDeclaration = (code: string, language: string): boolean => {
-  if (!['js', 'javascript', 'ts', 'typescript'].includes(language.toLowerCase())) {
+  if (
+    !['js', 'javascript', 'ts', 'typescript'].includes(language.toLowerCase())
+  ) {
     return false;
   }
 
   try {
-    const sourceFile = ts.createSourceFile('temp.ts', code, ts.ScriptTarget.Latest, true);
+    const sourceFile = ts.createSourceFile(
+      'temp.ts',
+      code,
+      ts.ScriptTarget.Latest,
+      true
+    );
 
     let foundVar = false;
 
@@ -21,7 +28,8 @@ const hasVarDeclaration = (code: string, language: string): boolean => {
       if (ts.isVariableStatement(node)) {
         const declList = node.declarationList;
         const isVar =
-          (declList.flags & ts.NodeFlags.Let) === 0 && (declList.flags & ts.NodeFlags.Const) === 0;
+          (declList.flags & ts.NodeFlags.Let) === 0 &&
+          (declList.flags & ts.NodeFlags.Const) === 0;
         if (isVar) {
           foundVar = true;
         }

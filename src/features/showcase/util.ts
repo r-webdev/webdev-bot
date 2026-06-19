@@ -24,7 +24,9 @@ export const parseShowcaseMessage = (content: string): ShowcaseMessageData => {
   const headerLines = header.split('\n');
 
   const projectName = headerLines[0]?.replace(/^## Project Name:\s*/, '') ?? '';
-  const authorLine = headerLines.find((line) => line.startsWith('**Author:** '));
+  const authorLine = headerLines.find((line) =>
+    line.startsWith('**Author:** ')
+  );
   const authorId = authorLine?.match(/<@(\d+)>/)?.[1] ?? '';
   const linkLine = headerLines.find((line) => line.startsWith('**Link:** '));
   const link = linkLine?.replace(/^\*\*Link:\*\*\s*/, '') ?? '';
@@ -115,7 +117,9 @@ export const buildShowcaseModal = ({
         ),
       new LabelBuilder()
         .setLabel('Media')
-        .setDescription('Attach images or videos showcasing your project (optional)')
+        .setDescription(
+          'Attach images or videos showcasing your project (optional)'
+        )
         .setFileUploadComponent(
           new FileUploadBuilder()
             .setCustomId('projectMedia')
@@ -126,7 +130,9 @@ export const buildShowcaseModal = ({
     );
 };
 
-export const getAttachmentsCount = (files: Collection<string, unknown>): number => {
+export const getAttachmentsCount = (
+  files: Collection<string, unknown>
+): number => {
   return files.size;
 };
 

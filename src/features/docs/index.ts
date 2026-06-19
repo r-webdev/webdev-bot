@@ -12,27 +12,28 @@ const docProviders = {
   baseline: baselineProvider,
 };
 
-export const docsCommands = Object.entries(docProviders).map(([providerKey, providerConfig]) =>
-  createSlashCommand({
-    data: {
-      name: providerKey,
-      description: providerConfig.commandDescription,
-      options: [
-        {
-          name: 'query',
-          type: ApplicationCommandOptionType.String,
-          description: 'The search query',
-          required: true,
-        },
-        {
-          name: 'user',
-          type: ApplicationCommandOptionType.User,
-          description: 'The user to mention in the response',
-          required: false,
-        },
-      ],
-    },
-    execute: async (interaction) =>
-      executeDocCommand(providerConfig as ProviderConfig, interaction),
-  })
+export const docsCommands = Object.entries(docProviders).map(
+  ([providerKey, providerConfig]) =>
+    createSlashCommand({
+      data: {
+        name: providerKey,
+        description: providerConfig.commandDescription,
+        options: [
+          {
+            name: 'query',
+            type: ApplicationCommandOptionType.String,
+            description: 'The search query',
+            required: true,
+          },
+          {
+            name: 'user',
+            type: ApplicationCommandOptionType.User,
+            description: 'The user to mention in the response',
+            required: false,
+          },
+        ],
+      },
+      execute: async (interaction) =>
+        executeDocCommand(providerConfig as ProviderConfig, interaction),
+    })
 );

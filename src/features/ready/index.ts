@@ -28,7 +28,9 @@ export const readyEvent = createEvent(
 
       // Sync guides to channel
       try {
-        console.log(`🔄 Starting guide sync to channel ${config.channelIds.guides}...`);
+        console.log(
+          `🔄 Starting guide sync to channel ${config.channelIds.guides}...`
+        );
         await syncGuidesToChannel(client, config.channelIds.guides);
       } catch (error) {
         if (error && typeof error === 'object' && 'code' in error) {

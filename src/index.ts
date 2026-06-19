@@ -17,7 +17,9 @@ const client = new Client({
     GatewayIntentBits.GuildMessageTyping,
   ],
   presence: {
-    activities: [{ type: ActivityType.Custom, name: 'Helping you out in the community' }],
+    activities: [
+      { type: ActivityType.Custom, name: 'Helping you out in the community' },
+    ],
     status: 'online',
   },
 });

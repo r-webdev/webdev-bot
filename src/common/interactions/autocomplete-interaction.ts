@@ -5,10 +5,17 @@ export type AutoCompleteSubmitInteraction = {
   handler: (interaction: AutocompleteInteraction) => Promise<void> | void;
 };
 
-export const autoCompleteInteractions = new Map<string, AutoCompleteSubmitInteraction>();
+export const autoCompleteInteractions = new Map<
+  string,
+  AutoCompleteSubmitInteraction
+>();
 
-export const registerAutocompleteInteraction = (interaction: AutoCompleteSubmitInteraction) => {
-  console.log(`Registering autocomplete interaction: ${interaction.commandName}`);
+export const registerAutocompleteInteraction = (
+  interaction: AutoCompleteSubmitInteraction
+) => {
+  console.log(
+    `Registering autocomplete interaction: ${interaction.commandName}`
+  );
   autoCompleteInteractions.set(interaction.commandName, interaction);
 };
 

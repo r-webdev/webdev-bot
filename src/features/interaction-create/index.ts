@@ -12,7 +12,9 @@ export const interactionCreateEvent = createEvent(
   },
   async (interaction) => {
     if (!interaction.guildId || !isAllowedServer(interaction.guildId)) {
-      console.log(`⚠️ Command blocked from unauthorized server: ${interaction.guildId}`);
+      console.log(
+        `⚠️ Command blocked from unauthorized server: ${interaction.guildId}`
+      );
       if (interaction.isRepliable()) {
         await interaction.reply({
           content: '❌ This bot is not authorized to operate in this server.',
@@ -22,19 +24,25 @@ export const interactionCreateEvent = createEvent(
       return;
     }
     if (interaction.isButton()) {
-      console.log(`Received button interaction with custom ID: ${interaction.customId}`);
+      console.log(
+        `Received button interaction with custom ID: ${interaction.customId}`
+      );
       await handleButtonInteraction(interaction);
       return;
     }
 
     if (interaction.isModalSubmit()) {
-      console.log(`Received modal submit interaction with custom ID: ${interaction.customId}`);
+      console.log(
+        `Received modal submit interaction with custom ID: ${interaction.customId}`
+      );
       await handleModalInteraction(interaction);
       return;
     }
 
     if (interaction.isAutocomplete()) {
-      console.log(`Received autocomplete interaction with custom ID: ${interaction.commandName}`);
+      console.log(
+        `Received autocomplete interaction with custom ID: ${interaction.commandName}`
+      );
       await handleAutoCompleteInteraction(interaction);
       return;
     }
@@ -55,17 +63,23 @@ export const interactionCreateEvent = createEvent(
 
     if (command.commandType === ApplicationCommandType.ChatInput) {
       if (!interaction.isChatInputCommand()) {
-        throw new Error('Command type mismatch: expected ChatInput interaction');
+        throw new Error(
+          'Command type mismatch: expected ChatInput interaction'
+        );
       }
       await command.execute(interaction);
     } else if (command.commandType === ApplicationCommandType.Message) {
       if (!interaction.isMessageContextMenuCommand()) {
-        throw new Error('Command type mismatch: expected Message context menu interaction');
+        throw new Error(
+          'Command type mismatch: expected Message context menu interaction'
+        );
       }
       await command.execute(interaction);
     } else if (command.commandType === ApplicationCommandType.User) {
       if (!interaction.isUserContextMenuCommand()) {
-        throw new Error('Command type mismatch: expected User context menu interaction');
+        throw new Error(
+          'Command type mismatch: expected User context menu interaction'
+        );
       }
       await command.execute(interaction);
     }

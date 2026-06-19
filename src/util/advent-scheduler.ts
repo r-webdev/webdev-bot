@@ -59,7 +59,9 @@ async function createAdventPost(
     }
 
     if (channel.type !== ChannelType.GuildForum) {
-      console.error(`❌ Advent of Code channel is not a forum channel. Type: ${channel.type}`);
+      console.error(
+        `❌ Advent of Code channel is not a forum channel. Type: ${channel.type}`
+      );
       return false;
     }
 
@@ -77,12 +79,18 @@ async function createAdventPost(
     console.log(`✅ Created Advent of Code post: ${title}`);
     return true;
   } catch (error) {
-    console.error(`❌ Failed to create Advent of Code post for day ${day}:`, error);
+    console.error(
+      `❌ Failed to create Advent of Code post for day ${day}:`,
+      error
+    );
     return false;
   }
 }
 
-async function checkAndCreateTodaysPost(client: Client, channelId: string): Promise<void> {
+async function checkAndCreateTodaysPost(
+  client: Client,
+  channelId: string
+): Promise<void> {
   const now = new Date();
   const month = now.getUTCMonth(); // 0-indexed, so December is 11
   const day = now.getUTCDate();
@@ -113,11 +121,17 @@ async function checkAndCreateTodaysPost(client: Client, channelId: string): Prom
  * Initialize the Advent of Code scheduler
  * Runs every day at midnight UTC-5 and checks if we should create a post
  */
-export function initializeAdventScheduler(client: Client, channelId: string): void {
+export function initializeAdventScheduler(
+  client: Client,
+  channelId: string
+): void {
   console.log('🎄 Initializing Advent of Code scheduler...');
 
   checkAndCreateTodaysPost(client, channelId).catch((error) => {
-    console.error('❌ Error checking for Advent of Code post on startup:', error);
+    console.error(
+      '❌ Error checking for Advent of Code post on startup:',
+      error
+    );
   });
 
   // Schedule to run every day at midnight UTC-5
@@ -129,5 +143,7 @@ export function initializeAdventScheduler(client: Client, channelId: string): vo
     });
   });
 
-  console.log('✅ Advent of Code scheduler initialized (runs daily at midnight UTC)');
+  console.log(
+    '✅ Advent of Code scheduler initialized (runs daily at midnight UTC)'
+  );
 }

@@ -9,7 +9,8 @@ import {
 // Exported at the bottom after all child components are added
 const containerComponent = new ContainerBuilder();
 
-const actionRowComponent = new ActionRowBuilder<MessageActionRowComponentBuilder>();
+const actionRowComponent =
+  new ActionRowBuilder<MessageActionRowComponentBuilder>();
 
 const buttonComponent = new ButtonBuilder()
   .setCustomId('onboarding_add_role')

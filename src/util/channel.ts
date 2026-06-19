@@ -1,4 +1,9 @@
-import { ChannelType, type Guild, PermissionFlagsBits, type TextChannel } from 'discord.js';
+import {
+  ChannelType,
+  type Guild,
+  PermissionFlagsBits,
+  type TextChannel,
+} from 'discord.js';
 
 export const getPublicChannels = (guild: Guild) => {
   return guild.channels.cache.filter(

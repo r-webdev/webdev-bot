@@ -25,10 +25,12 @@ export type FeatureData = {
 type FeatureItem = FeatureData & { key: string };
 
 // Prepare baseline features by excluding non-feature entries and converting to array
-const features: FeatureItem[] = Object.entries(getBaselineFeatures(data)).map(([key, feature]) => ({
-  ...feature,
-  key,
-}));
+const features: FeatureItem[] = Object.entries(getBaselineFeatures(data)).map(
+  ([key, feature]) => ({
+    ...feature,
+    key,
+  })
+);
 
 const baselines = {
   high: {
@@ -37,7 +39,8 @@ const baselines = {
     description: 'Widely supported',
   },
   low: {
-    image: 'https://web-platform-dx.github.io/web-features/assets/img/baseline-newly-word-dark.png',
+    image:
+      'https://web-platform-dx.github.io/web-features/assets/img/baseline-newly-word-dark.png',
     description: 'Newly supported',
   },
   none: {
@@ -50,7 +53,8 @@ const baselines = {
 const baseConfig = createBaseConfig({
   color: 0x4e_8c_2f,
   icon: '',
-  commandDescription: 'Get baseline support information for web platform features',
+  commandDescription:
+    'Get baseline support information for web platform features',
 });
 
 export const baselineProvider: ProviderConfig<FeatureItem> = {
@@ -63,29 +67,32 @@ export const baselineProvider: ProviderConfig<FeatureItem> = {
       limit: 20,
     });
   },
-  createCollection: (items) => new Collection(items.map((item) => [item.key, item])),
+  createCollection: (items) =>
+    new Collection(items.map((item) => [item.key, item])),
   createActionBuilders: (data) => {
-    const selectRow = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-      new StringSelectMenuBuilder()
-        .setCustomId('baseline-select')
-        .setPlaceholder('Select one feature')
-        .setMinValues(1)
-        .setMaxValues(1)
-        .addOptions(
-          ...data.map((feature) => ({
-            label: clampText(feature.name, 100),
-            description: clampText(feature.description, 100),
-            value: feature.key,
-          }))
-        )
-    );
+    const selectRow =
+      new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
+        new StringSelectMenuBuilder()
+          .setCustomId('baseline-select')
+          .setPlaceholder('Select one feature')
+          .setMinValues(1)
+          .setMaxValues(1)
+          .addOptions(
+            ...data.map((feature) => ({
+              label: clampText(feature.name, 100),
+              description: clampText(feature.description, 100),
+              value: feature.key,
+            }))
+          )
+      );
 
-    const buttonRow = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-      new ButtonBuilder()
-        .setLabel('Cancel')
-        .setStyle(ButtonStyle.Danger)
-        .setCustomId('baseline-cancel')
-    );
+    const buttonRow =
+      new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
+        new ButtonBuilder()
+          .setLabel('Cancel')
+          .setStyle(ButtonStyle.Danger)
+          .setCustomId('baseline-cancel')
+      );
 
     return { selectRow, buttonRow };
   },

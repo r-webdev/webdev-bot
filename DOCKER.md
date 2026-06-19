@@ -40,6 +40,7 @@ docker compose --profile dev up
 ```
 
 In development mode:
+
 - Code changes in `src/` are automatically detected and the bot restarts
 - Full development dependencies are available
 - Logs are streamed to your terminal
@@ -67,6 +68,7 @@ docker compose --profile prod up -d
 ```
 
 In production mode:
+
 - Minimal image size (only production dependencies)
 - Optimized for runtime performance
 - Runs in detached mode by default
@@ -124,6 +126,7 @@ docker run -it \
 ### Bot Not Starting
 
 1. Check if environment variables are set correctly:
+
    ```bash
    docker compose --profile dev run --rm bot-dev env | grep DISCORD
    ```
@@ -149,6 +152,7 @@ chmod 755 src/
 If code changes aren't being detected in development mode:
 
 1. Verify the volume mounts are correct:
+
    ```bash
    docker inspect webdev-bot-dev | grep Mounts -A 10
    ```
@@ -161,6 +165,7 @@ If code changes aren't being detected in development mode:
 ### Image Size Concerns
 
 The production image is optimized for size using:
+
 - Alpine Linux base image
 - Multi-stage builds (dev dependencies not included)
 - Only compiled `dist/` folder and production dependencies
@@ -193,27 +198,31 @@ docker compose build --no-cache
 ## Additional Commands
 
 View running containers:
+
 ```bash
 docker ps
 ```
 
 View all containers (including stopped):
+
 ```bash
 docker ps -a
 ```
 
 Remove all stopped containers:
+
 ```bash
 docker compose down -v
 ```
 
 View container logs in real-time:
+
 ```bash
 docker compose --profile dev logs -f bot-dev
 ```
 
 Execute commands inside the container:
+
 ```bash
 docker compose --profile dev exec bot-dev sh
 ```
-

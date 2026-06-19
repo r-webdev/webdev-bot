@@ -5,6 +5,7 @@ The bot automatically synchronizes guide markdown files from `src/commands/guide
 ## Setup
 
 Add to your `.env` file:
+
 ```
 GUIDES_CHANNEL_ID=1234567890123456789
 ```

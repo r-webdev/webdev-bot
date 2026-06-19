@@ -42,36 +42,47 @@ export const npmProvider: ProviderConfig<SearchItem> = {
   ...baseConfig,
   getFilteredData: async (query: string) => {
     const response = await fetch(
-      getSearchUrl(`https://registry.npmjs.org/-/v1/search?text=${SEARCH_TERM}&size=10`, query)
+      getSearchUrl(
+        `https://registry.npmjs.org/-/v1/search?text=${SEARCH_TERM}&size=10`,
+        query
+      )
     );
 
     if (!response.ok) {
-      throw new Error(`Error fetching NPM data: ${response.status} ${response.statusText}`);
+      throw new Error(
+        `Error fetching NPM data: ${response.status} ${response.statusText}`
+      );
     }
 
     const data = (await response.json()) as SearchResult;
     return data.objects.map((obj) => obj.package);
   },
-  createCollection: (items) => new Collection(items.map((item) => [item.name, item])),
+  createCollection: (items) =>
+    new Collection(items.map((item) => [item.name, item])),
   createActionBuilders: (data) => {
-    const selectRow = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-      new StringSelectMenuBuilder()
-        .setCustomId('npm-select')
-        .setPlaceholder('Select a package')
-        .setMinValues(1)
-        .setMaxValues(1)
-        .addOptions(
-          ...data.map((pkg) =>
-            new StringSelectMenuOptionBuilder()
-              .setLabel(pkg.name)
-              .setDescription(clampText(pkg.description, 100))
-              .setValue(pkg.name)
+    const selectRow =
+      new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
+        new StringSelectMenuBuilder()
+          .setCustomId('npm-select')
+          .setPlaceholder('Select a package')
+          .setMinValues(1)
+          .setMaxValues(1)
+          .addOptions(
+            ...data.map((pkg) =>
+              new StringSelectMenuOptionBuilder()
+                .setLabel(pkg.name)
+                .setDescription(clampText(pkg.description, 100))
+                .setValue(pkg.name)
+            )
           )
-        )
-    );
-    const buttonRow = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-      new ButtonBuilder().setCustomId('npm-cancel').setLabel('Cancel').setStyle(ButtonStyle.Danger)
-    );
+      );
+    const buttonRow =
+      new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
+        new ButtonBuilder()
+          .setCustomId('npm-cancel')
+          .setLabel('Cancel')
+          .setStyle(ButtonStyle.Danger)
+      );
     return { selectRow, buttonRow };
   },
   createResultEmbeds: (selectedItems) =>
@@ -90,7 +101,9 @@ export const npmProvider: ProviderConfig<SearchItem> = {
               value,
             }))
         )
-        .setFooter({ text: `Version ${pkg.version} | License: ${pkg.license ?? 'N/A'}` })
+        .setFooter({
+          text: `Version ${pkg.version} | License: ${pkg.license ?? 'N/A'}`,
+        })
         .setTimestamp()
     ),
   getDisplayTitle: (item) => item.name,

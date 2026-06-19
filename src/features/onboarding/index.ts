@@ -27,8 +27,10 @@ export const onboardingCommand = createSlashCommand({
       });
       return;
     }
-    // @ts-expect-error: This command isn't used and shouldn't affect anything, onboarding channels are TBD
-    const onboardingChannel = guild.channels.cache.get(config.onboarding.channelId);
+    const onboardingChannel = guild.channels.cache.get(
+      // @ts-expect-error: This command isn't used and shouldn't affect anything, onboarding channels are TBD
+      config.onboarding.channelId
+    );
     if (!onboardingChannel || !onboardingChannel.isSendable()) {
       await interaction.reply({
         content:
@@ -48,7 +50,9 @@ export const onboardingCommand = createSlashCommand({
     collector.on('collect', async (componentInteraction) => {
       if (componentInteraction.customId === 'onboarding_add_role') {
         try {
-          const member = await guild.members.fetch(componentInteraction.user.id);
+          const member = await guild.members.fetch(
+            componentInteraction.user.id
+          );
           await addRoleToUser(member, onboardingRole);
 
           await componentInteraction.reply({

@@ -2,7 +2,7 @@ name: Test
 
 on:
   pull_request:
-    branches: [ "**" ]
+    branches: ['**']
     paths-ignore:
       - 'docs/**'
       - '.gitignore'
@@ -43,4 +43,3 @@ jobs:
 
       - name: Test
         run: npm run test:ci
-

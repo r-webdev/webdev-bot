@@ -19,7 +19,10 @@ export const deleteShowcase: ButtonSubmitInteraction = {
       return;
     }
 
-    if (interactionUser.id !== ownerId && !isUserModerator(interaction.member, interaction)) {
+    if (
+      interactionUser.id !== ownerId &&
+      !isUserModerator(interaction.member, interaction)
+    ) {
       await interaction.reply({
         content: '❌ You do not have permission to delete this showcase.',
         flags: MessageFlags.Ephemeral,
@@ -29,7 +32,9 @@ export const deleteShowcase: ButtonSubmitInteraction = {
 
     try {
       const forumPost =
-        interaction.channel?.type === ChannelType.PublicThread ? interaction.channel : null;
+        interaction.channel?.type === ChannelType.PublicThread
+          ? interaction.channel
+          : null;
       if (forumPost === null) {
         await interaction.reply({
           content: '❌ This command can only be used in a forum post.',
@@ -67,7 +72,10 @@ export const deleteShowcase: ButtonSubmitInteraction = {
               `**Project Name:** ${projectName}\n**Deleted By:** <@${interactionUser.id}>`
             )
             .setColor(Colors.Red)
-            .setAuthor({ name: interactionUser.tag, iconURL: interactionUser.displayAvatarURL() }),
+            .setAuthor({
+              name: interactionUser.tag,
+              iconURL: interactionUser.displayAvatarURL(),
+            }),
         },
       });
     } catch (error) {

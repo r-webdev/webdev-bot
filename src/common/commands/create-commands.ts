@@ -1,5 +1,9 @@
 import { ApplicationCommandType } from 'discord.js';
-import type { MessageContextMenuCommand, SlashCommand, UserContextMenuCommand } from './types.js';
+import type {
+  MessageContextMenuCommand,
+  SlashCommand,
+  UserContextMenuCommand,
+} from './types.js';
 
 export const createSlashCommand = (command: {
   data: Omit<SlashCommand['data'], 'type'>;
