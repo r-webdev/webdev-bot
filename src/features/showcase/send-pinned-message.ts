@@ -59,6 +59,9 @@ export const sendShowcasePinnedMessage = createSlashCommand({
     );
 
     if (pinnedThread) {
+      if (!pinnedThread.locked) {
+        await pinnedThread.setLocked(true);
+      }
       const message = await pinnedThread.fetchStarterMessage();
       if (message !== null) {
         await message.edit({
@@ -81,6 +84,7 @@ export const sendShowcasePinnedMessage = createSlashCommand({
       },
     });
     thread.pin();
+    thread.setLocked(true);
 
     await interaction.editReply({
       content: 'Showcase pinned message sent successfully.',
