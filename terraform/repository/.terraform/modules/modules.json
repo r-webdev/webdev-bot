@@ -1,1 +1,0 @@
-{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"repository","Source":"git::https://github.com/r-webdev/terraform-module-github-repository.git//modules/service?ref=v1.0.0","Dir":".terraform/modules/repository/modules/service"}]}
