@@ -2,6 +2,9 @@
   "name": "webdev-bot",
   "version": "1.0.0",
   "description": "Web Dev & Web Design discord bot",
+  "keywords": [],
+  "license": "MIT",
+  "author": "",
   "type": "module",
   "scripts": {
     "build": "tsup && tsc-alias",
@@ -15,7 +18,7 @@
     "check": "biome check --write .",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
-    "fmt": "oxfmt", 
+    "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test '**/*.test.ts'",
@@ -25,10 +28,6 @@
     "sync-guides": "tsx src/scripts/sync-guides.ts",
     "sync-guides:init": "tsx src/scripts/sync-guides.ts --initialize"
   },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
-  "packageManager": "pnpm@10.17.1",
   "dependencies": {
     "discord.js": "^14.26.4",
     "node-cron": "^4.2.1",
@@ -49,9 +48,8 @@
     "typescript": "^6.0.3"
   },
   "lint-staged": {
-    "*.{ts,js}": [
-      "biome format --write",
-      "biome lint --fix"
-    ]
-  }
+    "*.{js,ts}": "pnpm run lint",
+    "*.{js,ts,json}": "oxfmt --no-error-on-unmatched-pattern"
+  },
+  "packageManager": "pnpm@10.17.1"
 }
