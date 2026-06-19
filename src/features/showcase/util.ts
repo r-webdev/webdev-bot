@@ -1,5 +1,7 @@
+import type { Collection } from 'discord.js';
 import {
   FileUploadBuilder,
+  type Guild,
   type GuildForumTag,
   LabelBuilder,
   ModalBuilder,
@@ -8,6 +10,7 @@ import {
   TextInputBuilder,
   TextInputStyle,
 } from 'discord.js';
+import { config } from '@/env.js';
 
 export type ShowcaseMessageData = {
   projectName: string;
@@ -80,6 +83,7 @@ export const buildShowcaseModal = ({
           new TextInputBuilder()
             .setCustomId('projectDescription')
             .setStyle(TextInputStyle.Paragraph)
+            .setMaxLength(3000)
             .setRequired(true)
             .setValue(description)
         ),
@@ -120,4 +124,27 @@ export const buildShowcaseModal = ({
             .setRequired(false)
         )
     );
+};
+
+export const getAttachmentsCount = (files: Collection<string, unknown>): number => {
+  return files.size;
+};
+
+export const resolveTagNames = (
+  tagIds: readonly string[],
+  availableTags: GuildForumTag[]
+): string[] => {
+  return tagIds.map((id) => availableTags.find((t) => t.id === id)?.name ?? id);
+};
+
+export const getShowcaseLogChannel = (guild: Guild | null) => {
+  if (!guild) {
+    throw new Error('Guild is null');
+  }
+  const channelId = config.channelIds.showcaseLogs;
+  const channel = guild.channels.cache.get(channelId);
+  if (!channel?.isTextBased() || !channel.isSendable()) {
+    throw new Error('Showcase log channel not found or is not text-based');
+  }
+  return channel;
 };

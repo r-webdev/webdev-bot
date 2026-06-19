@@ -1,29 +1,33 @@
 import {
   ButtonBuilder,
+  type ButtonInteraction,
   ButtonStyle,
   ChannelType,
+  type ChatInputCommandInteraction,
+  Colors,
   ContainerBuilder,
+  EmbedBuilder,
   MessageFlags,
   TextDisplayBuilder,
 } from 'discord.js';
 import { createSlashCommand } from '@/common/commands/create-commands.js';
-import { registerButtonSubmitInteraction } from '@/common/interactions/button-interaction.js';
+import {
+  type ButtonSubmitInteraction,
+  registerButtonSubmitInteraction,
+} from '@/common/interactions/button-interaction.js';
 import {
   type ModalSubmitInteraction,
   registerModalSubmitInteraction,
 } from '@/common/interactions/modal-interaction.js';
 import { config } from '@/env.js';
+import { logToChannel } from '@/util/channel-logging.js';
 import { customId } from '@/util/custom-id.js';
 import { deleteShowcase } from './delete-showcase.js';
 import { editShowcaseInteraction } from './edit-showcase.js';
-import { buildShowcaseModal } from './util.js';
+import { buildShowcaseModal, getShowcaseLogChannel } from './util.js';
 
-export const createShowcaseCommand = createSlashCommand({
-  data: {
-    name: 'showcase',
-    description: 'Showcase a project in the showcase channel',
-  },
-  execute: async (interaction) => {
+export const showModal = async (interaction: ButtonInteraction | ChatInputCommandInteraction) => {
+  try {
     const channel = interaction.guild?.channels.cache.get(config.channelIds.showcase);
     if (channel === undefined || channel.type !== ChannelType.GuildForum) {
       await interaction.reply({
@@ -40,8 +44,29 @@ export const createShowcaseCommand = createSlashCommand({
     });
 
     await interaction.showModal(modal);
+  } catch (error) {
+    console.error('Error showing showcase modal:', error);
+    await interaction.reply({
+      content: 'There was an error showing the showcase modal. Please try again later.',
+      flags: MessageFlags.Ephemeral,
+    });
+  }
+};
+
+export const createShowcaseCommand = createSlashCommand({
+  data: {
+    name: 'showcase',
+    description: 'Showcase a project in the showcase channel',
   },
+  execute: showModal,
 });
+
+const createShowcaseButtonHandler: ButtonSubmitInteraction = {
+  commandName: 'create_showcase',
+  handler: showModal,
+};
+
+registerButtonSubmitInteraction(createShowcaseButtonHandler);
 
 const modalHandler: ModalSubmitInteraction = {
   commandName: 'showcase',
@@ -104,6 +129,34 @@ const modalHandler: ModalSubmitInteraction = {
             ),
         ],
       });
+
+      try {
+        const logChannel = getShowcaseLogChannel(interaction.guild);
+        const author = {
+          name: interaction.user.tag,
+          iconURL: interaction.user.displayAvatarURL(),
+        };
+
+        const embed = new EmbedBuilder()
+          .setAuthor(author)
+          .setTitle('Showcase Created')
+          .addFields(
+            { name: 'Project Name', value: projectName || '—', inline: false },
+            { name: 'Author', value: `<@${interaction.user.id}>`, inline: true },
+            { name: 'Thread', value: thread.url ?? '—', inline: true }
+          )
+          .setColor(Colors.Green)
+          .setTimestamp();
+
+        await logToChannel({
+          channel: logChannel,
+          content: { type: 'embed', embed },
+          silent: true,
+        });
+      } catch (error) {
+        console.error('Failed to log showcase creation:', error);
+      }
+
       await interaction.editReply({
         content: `Your project has been showcased successfully! You can view it here: ${thread.url}`,
       });
