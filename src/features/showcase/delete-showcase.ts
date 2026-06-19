@@ -1,7 +1,9 @@
-import { MessageFlags } from 'discord.js';
+import { ChannelType, Colors, EmbedBuilder, MessageFlags } from 'discord.js';
 import type { ButtonSubmitInteraction } from '@/common/interactions/button-interaction.js';
+import { logToChannel } from '@/util/channel-logging.js';
 import { parseCustomId } from '@/util/custom-id.js';
 import { isUserInServer, isUserModerator } from '@/util/member.js';
+import { getShowcaseLogChannel, parseShowcaseMessage } from './util.js';
 
 export const deleteShowcase: ButtonSubmitInteraction = {
   commandName: 'delete_showcase',
@@ -26,7 +28,48 @@ export const deleteShowcase: ButtonSubmitInteraction = {
     }
 
     try {
+      const forumPost =
+        interaction.channel?.type === ChannelType.PublicThread ? interaction.channel : null;
+      if (forumPost === null) {
+        await interaction.reply({
+          content: '❌ This command can only be used in a forum post.',
+          flags: MessageFlags.Ephemeral,
+        });
+        return;
+      }
+      if (forumPost === null) {
+        await interaction.reply({
+          content: '❌ This command can only be used in a forum post.',
+          flags: MessageFlags.Ephemeral,
+        });
+        return;
+      }
+
+      const message = await forumPost.fetchStarterMessage();
+      if (!message) {
+        await interaction.reply({
+          content: '❌ Could not find the showcase message to delete.',
+          flags: MessageFlags.Ephemeral,
+        });
+        return;
+      }
+
+      const { projectName } = parseShowcaseMessage(message.content);
       await interaction.channel?.delete();
+      const logChannel = getShowcaseLogChannel(interaction.guild);
+      await logToChannel({
+        channel: logChannel,
+        content: {
+          type: 'embed',
+          embed: new EmbedBuilder()
+            .setTitle('Showcase Deleted')
+            .setDescription(
+              `**Project Name:** ${projectName}\n**Deleted By:** <@${interactionUser.id}>`
+            )
+            .setColor(Colors.Red)
+            .setAuthor({ name: interactionUser.tag, iconURL: interactionUser.displayAvatarURL() }),
+        },
+      });
     } catch (error) {
       console.error('Error deleting showcase:', error);
       await interaction.reply({
