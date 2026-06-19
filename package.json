@@ -15,7 +15,6 @@
     "docker:dev": "NODE_VERSION=$(cat .nvmrc | tr -d 'v') docker compose --profile dev up",
     "docker:prod": "NODE_VERSION=$(cat .nvmrc | tr -d 'v') docker compose --profile prod up -d",
     "docker:stop": "docker compose down",
-    "check": "biome check --write .",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "fmt": "oxfmt",
