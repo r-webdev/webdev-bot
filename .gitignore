@@ -26,3 +26,8 @@ advent-of-code-tracker.json
 
 # Docker
 docker-compose.yml
+
+# terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
