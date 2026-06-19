@@ -5,6 +5,7 @@ import { repelCommand } from '@/features/moderation/repel.js';
 import { pingCommand } from '@/features/ping/index.js';
 import { publicGuidesCommand } from '@/features/public-guides/index.js';
 import { createShowcaseCommand } from '@/features/showcase/create-showcase.js';
+import { sendShowcasePinnedMessage } from '@/features/showcase/send-pinned-message.js';
 import { tipsCommands } from '@/features/tips/index.js';
 import type { Command } from './types.js';
 
@@ -18,6 +19,7 @@ export const commands = new Map<string, Command>(
     cacheMessages,
     publicGuidesCommand,
     createShowcaseCommand,
+    sendShowcasePinnedMessage,
   ]
     .flat()
     .map((command) => [command.data.name, command])
