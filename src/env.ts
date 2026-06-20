@@ -40,6 +40,7 @@ export const config = {
     adventOfCode: requireEnv('ADVENT_OF_CODE_CHANNEL_ID'),
     showcase: requireEnv('SHOWCASE_CHANNEL_ID'),
     showcaseLogs: requireEnv('SHOWCASE_LOG_CHANNEL_ID'),
+    showcaseRules: requireEnv('SHOWCASE_RULES_CHANNEL_ID'),
   },
   onboarding: {
     channelId: optionalEnv('ONBOARDING_CHANNEL_ID'),

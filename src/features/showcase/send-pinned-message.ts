@@ -2,7 +2,6 @@ import {
   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle,
-  ChannelFlags,
   type MessageActionRowComponentBuilder,
   MessageFlags,
   PermissionFlagsBits,
@@ -22,19 +21,14 @@ export const sendShowcasePinnedMessage = createSlashCommand({
   execute: async (interaction) => {
     await interaction.deferReply({ flags: MessageFlags.Ephemeral });
     const showcaseChannel = interaction.guild?.channels.cache.get(
-      config.channelIds.showcase
+      config.channelIds.showcaseRules
     );
-    if (showcaseChannel === undefined || !showcaseChannel.isThreadOnly()) {
+    if (showcaseChannel === undefined || !showcaseChannel.isTextBased()) {
       await interaction.editReply({
         content: 'Showcase channel not found or is not a forum channel.',
       });
       return;
     }
-
-    const activeThreads = await showcaseChannel.threads.fetchActive();
-    const pinnedThread = activeThreads.threads.find((thread) =>
-      thread.flags.has(ChannelFlags.Pinned)
-    );
 
     const guideLines = [
       'Welcome to the Showcase channel! Please read the rules and guidelines before posting your content. Make sure to follow the format and include all necessary information. Happy sharing!',
@@ -59,17 +53,14 @@ export const sendShowcasePinnedMessage = createSlashCommand({
           .setStyle(ButtonStyle.Primary)
       );
 
-    if (pinnedThread) {
-      if (!pinnedThread.locked) {
-        await pinnedThread.setLocked(true);
-      }
-      const message = await pinnedThread.fetchStarterMessage();
-      if (message !== null) {
-        await message.edit({
-          content: guideLines,
-          components: [actionRow],
-        });
-      }
+    const message = (
+      await showcaseChannel.messages.fetch({ limit: 1 })
+    ).first();
+    if (message !== undefined) {
+      await message.edit({
+        content: guideLines,
+        components: [actionRow],
+      });
 
       await interaction.editReply({
         content: 'Showcase pinned message updated successfully.',
@@ -77,15 +68,10 @@ export const sendShowcasePinnedMessage = createSlashCommand({
       return;
     }
 
-    const thread = await showcaseChannel.threads.create({
-      name: 'Rules and Guidelines',
-      message: {
-        content: guideLines,
-        components: [actionRow],
-      },
+    await showcaseChannel.send({
+      content: guideLines,
+      components: [actionRow],
     });
-    void thread.pin();
-    void thread.setLocked(true);
 
     await interaction.editReply({
       content: 'Showcase pinned message sent successfully.',
