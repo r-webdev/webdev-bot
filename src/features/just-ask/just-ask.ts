@@ -29,7 +29,6 @@ const askToAskPattern = new RegExp(
 export const isAskingToAsk = (text: string) => askToAskPattern.test(text);
 
 const [response] = await loadMarkdownOptions<{ name: string }>(
-  // new URL('../tips/subjects/', import.meta.url),
   path.join(process.cwd(), 'assets/tips/'),
   'justask.md'
 );

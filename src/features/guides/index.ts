@@ -4,7 +4,6 @@ import { createSlashCommand } from '../../common/commands/create-commands.js';
 import { logToChannel } from '../../util/channel-logging.js';
 import { loadMarkdownOptions } from '../../util/markdown.js';
 
-// const subjectsDir = new URL('assets/guides', import.meta.url);
 const subjectsDir = path.join(process.cwd(), 'assets/guides');
 
 const subjectChoices = new Map<string, string>();

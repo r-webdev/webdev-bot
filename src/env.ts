@@ -45,18 +45,10 @@ export const config = {
     channelId: optionalEnv('ONBOARDING_CHANNEL_ID'),
     roleId: optionalEnv('ONBOARDING_ROLE_ID'),
   },
-  // Add more config sections as needed:
-  // database: {
-  //   url: requireEnv('DATABASE_URL'),
-  // },
-  // api: {
-  //   openaiKey: optionalEnv('OPENAI_API_KEY'),
-  // },
 };
 
 export type Config = typeof config;
 
-// Log loaded configuration (without sensitive values)
 console.log('✅ Configuration loaded successfully');
 console.log(
   `📋 Client ID: ${config.discord.clientId ? config.discord.clientId : '❌ missing'}`

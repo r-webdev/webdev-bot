@@ -22,17 +22,15 @@ export type ProviderConfig<Item = unknown> = {
 
   createActionBuilders: (data: Collection<string, Item>) => ActionBuilders;
 
-  // Create result embeds to show after selection
   createResultEmbeds: (
     data: Collection<string, Item>
   ) => EmbedBuilder | EmbedBuilder[];
 
-  // Get display title for an item
   getDisplayTitle: (item: Item) => string;
 
-  // Get selection content message
+  // e.g. "Select a result for **{query}**"
   getSelectionMessage: (query: string) => string;
 
-  // Get display message after selection
+  // e.g. "Showing results for **{selected}**"
   getDisplayMessage: (selectedTitles: string[]) => string;
 };

@@ -1,7 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-// Simple .env loader without external dependencies
 function loadEnvFile(filePath: string) {
   if (!existsSync(filePath)) {
     console.warn(`Warning: File ${filePath} not found`);
@@ -32,7 +31,6 @@ function loadEnvFile(filePath: string) {
   }
 }
 
-// Determine environment (defaults to development)
 const nodeEnv = process.env.NODE_ENV || 'development';
 console.log(`🌍 Environment: ${nodeEnv}`);
 

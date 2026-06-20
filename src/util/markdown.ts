@@ -56,7 +56,6 @@ export const loadMarkdownOptions = async <T extends Record<string, unknown>>(
   const results: Array<{ frontmatter: Partial<T>; content: string }> = [];
 
   for (const file of markdownFiles) {
-    // const filePath = new URL(`${path}/${file}`, import.meta.url);
     const filePath = path.join(sourcePath.toString(), file);
 
     const fileContent = await readFile(filePath, 'utf-8');

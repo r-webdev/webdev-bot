@@ -2,7 +2,6 @@ import { ActivityType, Client, GatewayIntentBits } from 'discord.js';
 import { loadEvents } from './common/events/load-events.js';
 import { config } from './env.js';
 
-// Create a new client instance
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,

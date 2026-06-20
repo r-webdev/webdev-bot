@@ -6,7 +6,6 @@ import type { ProviderConfig } from './types.js';
 export const SEARCH_TERM = '%SEARCH%';
 export const TERM = '%TERM%';
 
-// Utility functions
 export const getSearchUrl = (url: string, search: string) => {
   return url.replace(SEARCH_TERM, encodeURIComponent(search));
 };

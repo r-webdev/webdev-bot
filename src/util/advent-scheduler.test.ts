@@ -3,7 +3,6 @@ import { promises as fs } from 'node:fs';
 import test from 'node:test';
 import { config } from '@/env.js';
 
-// Import after setting env var
 const { loadTracker, saveTracker } = await import('./advent-scheduler.js');
 
 async function cleanupTestTracker() {
@@ -45,6 +44,5 @@ void test('advent scheduler: tracker file operations', async (t) => {
     assert.ok(loaded['2025'].includes(25));
   });
 
-  // Cleanup
   await cleanupTestTracker();
 });
