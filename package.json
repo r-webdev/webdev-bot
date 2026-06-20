@@ -30,6 +30,7 @@
   "dependencies": {
     "discord.js": "^14.26.4",
     "node-cron": "^4.2.1",
+    "typescript": "^6.0.3",
     "web-features": "^3.9.2"
   },
   "devDependencies": {
@@ -43,8 +44,7 @@
     "oxlint-tsgolint": "^0.23.0",
     "tsc-alias": "^1.8.17",
     "tsup": "^8.5.0",
-    "tsx": "^4.20.6",
-    "typescript": "^6.0.3"
+    "tsx": "^4.20.6"
   },
   "lint-staged": {
     "*.{js,ts}": "pnpm run lint",
