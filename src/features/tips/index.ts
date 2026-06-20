@@ -7,7 +7,6 @@ import {
 import { logToChannel } from '@/util/channel-logging.js';
 import { loadMarkdownOptions } from '@/util/markdown.js';
 
-// const subjectsDir = new URL('assets/tips', import.meta.url);
 const subjectsDir = path.join(process.cwd(), 'assets/tips');
 
 const subjectChoices = new Map<string, string>();

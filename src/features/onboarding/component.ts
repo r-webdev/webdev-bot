@@ -6,7 +6,6 @@ import {
   type MessageActionRowComponentBuilder,
 } from 'discord.js';
 
-// Exported at the bottom after all child components are added
 const containerComponent = new ContainerBuilder();
 
 const actionRowComponent =

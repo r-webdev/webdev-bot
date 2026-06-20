@@ -38,10 +38,8 @@ export type GuideTracker = {
   };
 };
 
-// const GUIDES_DIR = fileURLToPath(new URL('../features/guides/subjects/', import.meta.url));
 const GUIDES_DIR = path.join(process.cwd(), 'assets/guides');
 
-// const TRACKER_FILE = config.guidesTrackerPath ?? 'guides-tracker.json';
 const TRACKER_FILE =
   config.guidesTrackerPath ?? path.join(process.cwd(), 'guides-tracker.json');
 
@@ -162,14 +160,13 @@ export const syncGuidesToChannel = async (
     const tracker = await loadTracker();
     const currentGuides = await scanGuideFiles();
 
-    // Create maps for easier lookup
     const currentGuideMap = new Map(
       currentGuides.map((guide) => [guide.filename, guide])
     );
     const trackedFiles = new Set(Object.keys(tracker));
     const currentFiles = new Set(currentGuides.map((guide) => guide.filename));
 
-    // Find changes
+    // Check for changes
     const newFiles = [...currentFiles].filter(
       (file) => !trackedFiles.has(file)
     );
@@ -246,7 +243,7 @@ export const initializeGuidesChannel = async (
 ): Promise<void> => {
   console.log('🚀 Initializing guides channel...');
 
-  // Clear existing tracker for fresh start
+  // Clear existing tracker
   await saveTracker({});
 
   await syncGuidesToChannel(client, channelId);
