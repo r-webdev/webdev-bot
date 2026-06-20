@@ -16,9 +16,7 @@ export const sendShowcasePinnedMessage = createSlashCommand({
     name: 'send-showcase-pinned-message',
     description: 'Send showcase pinned message',
     default_member_permissions: new PermissionsBitField(
-      PermissionFlagsBits.Administrator |
-        PermissionFlagsBits.ManageGuild |
-        PermissionFlagsBits.ModerateMembers
+      PermissionFlagsBits.ModerateMembers
     ).toJSON(),
   },
   execute: async (interaction) => {
