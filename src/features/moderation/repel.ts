@@ -45,7 +45,10 @@ const checkCanRepel = ({
     commandUser.permissions.has(PermissionFlagsBits.ModerateMembers) ||
     commandUser.roles.cache.has(repelRole.id);
   if (!hasPermission) {
-    return { ok: false, message: 'You do not have permission to use this command.' };
+    return {
+      ok: false,
+      message: 'You do not have permission to use this command.',
+    };
   }
   return { ok: true };
 };
@@ -80,11 +83,17 @@ const checkCanRepelTarget = ({
   }
 
   if (target.roles.highest.position >= commandUser.roles.highest.position) {
-    return { ok: false, message: 'You cannot repel this user due to role hierarchy.' };
+    return {
+      ok: false,
+      message: 'You cannot repel this user due to role hierarchy.',
+    };
   }
 
   if (target.roles.highest.position >= botMember.roles.highest.position) {
-    return { ok: false, message: 'I cannot repel this user due to role hierarchy.' };
+    return {
+      ok: false,
+      message: 'I cannot repel this user due to role hierarchy.',
+    };
   }
 
   return { ok: true };
@@ -111,7 +120,9 @@ const sendReasonToTarget = async ({
 
   const containerComponent = new ContainerBuilder()
     .setAccentColor(Colors.DarkRed)
-    .addTextDisplayComponents(new TextDisplayBuilder().setContent(messageContent));
+    .addTextDisplayComponents(
+      new TextDisplayBuilder().setContent(messageContent)
+    );
   try {
     await target.send({
       flags: MessageFlags.IsComponentsV2,
@@ -126,7 +137,10 @@ const sendReasonToTarget = async ({
 const getTargetFromInteraction = async (
   interaction: ChatInputCommandInteraction
 ): Promise<GuildMember | User> => {
-  const targetFromOption = interaction.options.getUser(RepelOptions.TARGET, true);
+  const targetFromOption = interaction.options.getUser(
+    RepelOptions.TARGET,
+    true
+  );
   let target: User | GuildMember | null = null;
   if (!interaction.inGuild() || interaction.guild === null) {
     return targetFromOption;
@@ -147,7 +161,11 @@ const handleTimeout = async ({
   target: GuildMember | User;
   durationInMilliseconds: number;
 }): Promise<number> => {
-  if (durationInMilliseconds === 0 || !isUserInServer(target) || isUserTimedOut(target)) {
+  if (
+    durationInMilliseconds === 0 ||
+    !isUserInServer(target) ||
+    isUserTimedOut(target)
+  ) {
     return 0;
   }
   try {
@@ -194,9 +212,16 @@ const handleDeleteMessages = async ({
     const targetMessages = new Map<string, Message>();
 
     for (const [id, message] of channel.messages.cache) {
-      if (message.author && message.author.id === target.id && message.deletable) {
+      if (
+        message.author &&
+        message.author.id === target.id &&
+        message.deletable
+      ) {
         targetMessages.set(id, message);
-        latestMessageTimestamp = Math.max(latestMessageTimestamp, message.createdTimestamp);
+        latestMessageTimestamp = Math.max(
+          latestMessageTimestamp,
+          message.createdTimestamp
+        );
       }
     }
 
@@ -228,14 +253,19 @@ const handleDeleteMessages = async ({
         await channel.bulkDelete(messagesToDelete, true);
         deleted += messagesToDelete.length;
       } catch (error) {
-        console.error(`Error deleting messages in channel ${channel.name}:`, error);
+        console.error(
+          `Error deleting messages in channel ${channel.name}:`,
+          error
+        );
         failedChannels.push(channel.id);
         throw error;
       }
     })
   );
   if (failedChannels.length > 0) {
-    console.error(`Failed to delete messages in ${failedChannels.length} channel(s).`);
+    console.error(
+      `Failed to delete messages in ${failedChannels.length} channel(s).`
+    );
   }
   return { deleted, failedChannels };
 };
@@ -274,12 +304,16 @@ const logRepelAction = async ({
     name: isUserInServer(target)
       ? `${target.user.tag} | Repel | ${target.user.username}`
       : `${target.tag} | Repel | ${target.username}`,
-    iconURL: isUserInServer(target) ? target.user.displayAvatarURL() : target.displayAvatarURL(),
+    iconURL: isUserInServer(target)
+      ? target.user.displayAvatarURL()
+      : target.displayAvatarURL(),
   };
 
   const commandEmbed = new EmbedBuilder()
     .setAuthor(memberAuthor)
-    .setDescription(`Used \`repel\` command in ${channelInfo}.\n${buildCommandString(interaction)}`)
+    .setDescription(
+      `Used \`repel\` command in ${channelInfo}.\n${buildCommandString(interaction)}`
+    )
     .setColor('Green')
     .setTimestamp();
   const resultEmbed = new EmbedBuilder()
@@ -331,11 +365,14 @@ const logRepelAction = async ({
           .setTimestamp()
       : null;
 
-  const modMessage = interaction.options.getString(RepelOptions.MESSAGE_FOR_MODS) ?? false;
+  const modMessage =
+    interaction.options.getString(RepelOptions.MESSAGE_FOR_MODS) ?? false;
   const mentionText = modMessage
-    ? `${config.roleIds.moderators.map((id) => `<@&${id}>`)} - ${modMessage}`
+    ? `${config.roleIds.moderators.map((id) => `<@&${id}>`).join(' ')} - ${modMessage}`
     : undefined;
-  const channel = interaction.client.channels.cache.get(config.channelIds.repelLogs) as TextChannel;
+  const channel = interaction.client.channels.cache.get(
+    config.channelIds.repelLogs
+  ) as TextChannel;
 
   const embed =
     failedChannelsEmbed !== null
@@ -422,7 +459,8 @@ export const repelCommand = createSlashCommand({
         name: RepelOptions.DM_USER,
         required: false,
         type: ApplicationCommandOptionType.Boolean,
-        description: 'Whether to DM the user about the repel action (Defaults to true)',
+        description:
+          'Whether to DM the user about the repel action (Defaults to true)',
       },
     ],
   },
@@ -443,7 +481,8 @@ export const repelCommand = createSlashCommand({
     const repelRole = interaction.guild.roles.cache.get(config.roleIds.repel);
     if (!repelRole) {
       await interaction.editReply({
-        content: '❌ Repel role is not configured correctly. Please contact an administrator.',
+        content:
+          '❌ Repel role is not configured correctly. Please contact an administrator.',
       });
       return;
     }
@@ -479,12 +518,16 @@ export const repelCommand = createSlashCommand({
     try {
       const reason = interaction.options.getString(RepelOptions.REASON, true);
       const lookBack = interaction.options.getInteger(RepelOptions.LOOK_BACK);
-      const timeoutHours = interaction.options.getInteger(RepelOptions.TIMEOUT_DURATION);
+      const timeoutHours = interaction.options.getInteger(
+        RepelOptions.TIMEOUT_DURATION
+      );
 
       const timeout = await handleTimeout({
         target: target,
         durationInMilliseconds:
-          timeoutHours !== null ? timeoutHours * HOUR : DEFAULT_TIMEOUT_DURATION_MS,
+          timeoutHours !== null
+            ? timeoutHours * HOUR
+            : DEFAULT_TIMEOUT_DURATION_MS,
       });
 
       const channels = getTextChannels(interaction);
@@ -495,7 +538,8 @@ export const repelCommand = createSlashCommand({
         lookBack: lookBack ?? DEFAULT_LOOK_BACK_MS,
       });
 
-      const shouldDMUser = interaction.options.getBoolean(RepelOptions.DM_USER) ?? true;
+      const shouldDMUser =
+        interaction.options.getBoolean(RepelOptions.DM_USER) ?? true;
       let dmSent = false;
       if (shouldDMUser) {
         dmSent = await sendReasonToTarget({
@@ -506,7 +550,7 @@ export const repelCommand = createSlashCommand({
         });
       }
 
-      logRepelAction({
+      void logRepelAction({
         interaction,
         member: commandUser,
         target,

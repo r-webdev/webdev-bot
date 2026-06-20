@@ -1,6 +1,9 @@
 import type { GuildMember, Role } from 'discord.js';
 
-export async function addRoleToUser(member: GuildMember, role: Role): Promise<void> {
+export async function addRoleToUser(
+  member: GuildMember,
+  role: Role
+): Promise<void> {
   const hasRole = member.roles.cache.has(role.id);
   if (!hasRole) {
     try {

@@ -76,7 +76,10 @@ const slashCommand = createSlashCommand({
       },
     });
 
-    await interaction.reply({ content: 'Tip sent!', flags: MessageFlags.Ephemeral });
+    await interaction.reply({
+      content: 'Tip sent!',
+      flags: MessageFlags.Ephemeral,
+    });
   },
 });
 
@@ -91,7 +94,10 @@ const contextMenuCommands = Array.from(subjectChoices).map(([key, value]) =>
       }
       const message = interaction.targetMessage;
 
-      await interaction.reply({ content: 'Fetching tip...', flags: MessageFlags.Ephemeral });
+      await interaction.reply({
+        content: 'Fetching tip...',
+        flags: MessageFlags.Ephemeral,
+      });
 
       await message.reply({
         content: value,

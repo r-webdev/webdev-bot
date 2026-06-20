@@ -6,7 +6,10 @@ import {
 } from 'discord.js';
 import { createSlashCommand } from '@/common/commands/create-commands.js';
 import { config } from '@/env.js';
-import { initializeGuidesChannel, syncGuidesToChannel } from '@/util/post-guides.js';
+import {
+  initializeGuidesChannel,
+  syncGuidesToChannel,
+} from '@/util/post-guides.js';
 
 export const publicGuidesCommand = createSlashCommand({
   data: {
@@ -42,7 +45,9 @@ export const publicGuidesCommand = createSlashCommand({
       } else {
         await syncGuidesToChannel(interaction.client, channelId);
       }
-      await interaction.editReply('✅ Guides have been synchronized successfully.');
+      await interaction.editReply(
+        '✅ Guides have been synchronized successfully.'
+      );
     } catch (error) {
       console.error('Error synchronizing guides:', error);
       await interaction.editReply(

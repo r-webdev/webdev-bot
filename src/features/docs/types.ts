@@ -23,7 +23,9 @@ export type ProviderConfig<Item = unknown> = {
   createActionBuilders: (data: Collection<string, Item>) => ActionBuilders;
 
   // Create result embeds to show after selection
-  createResultEmbeds: (data: Collection<string, Item>) => EmbedBuilder | EmbedBuilder[];
+  createResultEmbeds: (
+    data: Collection<string, Item>
+  ) => EmbedBuilder | EmbedBuilder[];
 
   // Get display title for an item
   getDisplayTitle: (item: Item) => string;

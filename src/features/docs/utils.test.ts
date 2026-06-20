@@ -3,8 +3,8 @@ import { describe, it } from 'node:test';
 import { features } from 'web-features';
 import { getBaselineFeatures, NON_BASELINE_FEATURES } from './utils.js';
 
-describe('getBaselineFeatures', () => {
-  it('should return the correct baseline features when provided with non-features key array', () => {
+void describe('getBaselineFeatures', () => {
+  void it('should return the correct baseline features when provided with non-features key array', () => {
     const originalFeatures = {
       'feature-1': {
         name: 'Feature 1',
@@ -49,7 +49,7 @@ describe('getBaselineFeatures', () => {
     assert.deepStrictEqual(result, expectedFeatures);
   });
 
-  it('NON_BASELINE_FEATURES should contain the correct features to exclude', () => {
+  void it('NON_BASELINE_FEATURES should contain the correct features to exclude', () => {
     const expectedNonBaselineFeatures = Object.entries(features)
       .filter(([, feature]) => feature.kind !== 'feature')
       .map(([key]) => key);

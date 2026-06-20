@@ -1,4 +1,8 @@
-import { ApplicationCommandOptionType, PermissionFlagsBits, PermissionsBitField } from 'discord.js';
+import {
+  ApplicationCommandOptionType,
+  PermissionFlagsBits,
+  PermissionsBitField,
+} from 'discord.js';
 import { createSlashCommand } from '../../common/commands/create-commands.js';
 import { fetchAndCachePublicChannelsMessages } from '../../util/cache.js';
 
@@ -25,15 +29,21 @@ export default createSlashCommand({
       return;
     }
 
-    if (!interaction.memberPermissions?.has(PermissionFlagsBits.ManageMessages)) {
-      await interaction.editReply('You do not have permission to use this command.');
+    if (
+      !interaction.memberPermissions?.has(PermissionFlagsBits.ManageMessages)
+    ) {
+      await interaction.editReply(
+        'You do not have permission to use this command.'
+      );
       return;
     }
 
     const guild = interaction.guild;
     const force = interaction.options.getBoolean('force') ?? false;
 
-    await interaction.editReply('Caching messages in all public text channels...');
+    await interaction.editReply(
+      'Caching messages in all public text channels...'
+    );
 
     const { cachedChannels, totalChannels, failedChannels } =
       await fetchAndCachePublicChannelsMessages(guild, force);

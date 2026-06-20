@@ -1,5 +1,7 @@
 export const levenshtein = (a: string, b: string) => {
-  const dp = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
+  const dp = Array.from({ length: a.length + 1 }, () =>
+    Array(b.length + 1).fill(0)
+  );
 
   for (let i = 0; i <= a.length; i++) {
     dp[i][0] = i;
@@ -80,7 +82,10 @@ export function fuzzySearch<T>({
       // Apply a large, non-normalized boost for exact or prefix matches
       if (text === query) {
         titleMatchScore = EXACT_MATCH_BOOST; // Query "array" matches title "Array"
-      } else if (titleMatchScore < EXACT_MATCH_BOOST && text.startsWith(query)) {
+      } else if (
+        titleMatchScore < EXACT_MATCH_BOOST &&
+        text.startsWith(query)
+      ) {
         // If not a perfect match, check for prefix match
         titleMatchScore = Math.max(titleMatchScore, PREFIX_BOOST);
       } else if (titleMatchScore === 0 && text.includes(` ${query} `)) {

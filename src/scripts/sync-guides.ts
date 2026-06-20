@@ -7,7 +7,10 @@
 
 import { Client, GatewayIntentBits } from 'discord.js';
 import { config } from '@/env.js';
-import { initializeGuidesChannel, syncGuidesToChannel } from '@/util/post-guides.js';
+import {
+  initializeGuidesChannel,
+  syncGuidesToChannel,
+} from '@/util/post-guides.js';
 
 async function main() {
   const args = process.argv.slice(2);
@@ -30,7 +33,9 @@ async function main() {
     console.log(`✅ Logged in as ${client.user?.tag}`);
 
     if (shouldInitialize) {
-      console.log('🚀 Initializing guides channel (will post all guides fresh)...');
+      console.log(
+        '🚀 Initializing guides channel (will post all guides fresh)...'
+      );
       await initializeGuidesChannel(client, config.channelIds.guides);
     } else {
       console.log('🔄 Synchronizing guides...');

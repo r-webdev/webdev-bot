@@ -7,7 +7,12 @@ export type ShowcaseCreateLog = {
   tagIds?: string[];
 };
 
-export type ShowcaseEditChangeField = 'title' | 'link' | 'description' | 'tags' | 'attachments';
+export type ShowcaseEditChangeField =
+  | 'title'
+  | 'link'
+  | 'description'
+  | 'tags'
+  | 'attachments';
 
 export type ShowcaseEditChange = {
   field: ShowcaseEditChangeField;

@@ -70,7 +70,10 @@ export const guidesCommand = createSlashCommand({
       },
     });
 
-    await interaction.reply({ content: 'Guide sent!', flags: MessageFlags.Ephemeral });
+    await interaction.reply({
+      content: 'Guide sent!',
+      flags: MessageFlags.Ephemeral,
+    });
 
     return;
   },

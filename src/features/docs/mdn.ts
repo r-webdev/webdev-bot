@@ -40,32 +40,40 @@ export const mdnProvider: ProviderConfig<SearchItem> = {
     );
 
     if (!response.ok) {
-      throw new Error(`Error fetching MDN data: ${response.status} ${response.statusText}`);
+      throw new Error(
+        `Error fetching MDN data: ${response.status} ${response.statusText}`
+      );
     }
 
     const data = (await response.json()) as SearchResult;
     return data.documents;
   },
-  createCollection: (items) => new Collection(items.map((item) => [item.slug, item])),
+  createCollection: (items) =>
+    new Collection(items.map((item) => [item.slug, item])),
   createActionBuilders: (data) => {
-    const selectRow = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-      new StringSelectMenuBuilder()
-        .setCustomId('mdn-select')
-        .setPlaceholder('Select 1 to 5 results')
-        .setMinValues(1)
-        .setMaxValues(Math.min(5, data.size))
-        .addOptions(
-          ...data.map((doc) => ({
-            label: clampText(doc.title, 100),
-            description: clampText(doc.summary, 100),
-            value: doc.slug,
-          }))
-        )
-    );
+    const selectRow =
+      new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
+        new StringSelectMenuBuilder()
+          .setCustomId('mdn-select')
+          .setPlaceholder('Select 1 to 5 results')
+          .setMinValues(1)
+          .setMaxValues(Math.min(5, data.size))
+          .addOptions(
+            ...data.map((doc) => ({
+              label: clampText(doc.title, 100),
+              description: clampText(doc.summary, 100),
+              value: doc.slug,
+            }))
+          )
+      );
 
-    const buttonRow = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-      new ButtonBuilder().setLabel('Cancel').setStyle(ButtonStyle.Danger).setCustomId('mdn-cancel')
-    );
+    const buttonRow =
+      new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
+        new ButtonBuilder()
+          .setLabel('Cancel')
+          .setStyle(ButtonStyle.Danger)
+          .setCustomId('mdn-cancel')
+      );
 
     return { selectRow, buttonRow };
   },

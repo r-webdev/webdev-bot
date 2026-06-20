@@ -4,20 +4,22 @@ A comprehensive Discord bot designed specifically for the Web Dev Discord server
 
 # Features
 
-
 ### Documentation Commands
+
 - **`/mdn [query]`** - Search MDN Web Docs for web development documentation
 - **`/npm [query]`** - Search npm registry for packages
 - **`/baseline [query]`** - Check browser baseline compatibility for web features
 
-
 ### Educational Resources
+
 - **`/guides [subject]`** - Access detailed guides on various web development topics
 
 ### Discord Server Tips
+
 - **`/tips [subject]`** - Get quick tips on interacting within the Web Dev Discord server
 
 ### Moderation Tools
+
 - **`/repel [target] [reason]`** - Advanced moderation command (meant to be given to a high quantity of volunteer assistants) that:
   - 1: Checks bot permissions.
   - 2: Checks target's role to make sure it's under in hierarchy.
@@ -25,8 +27,8 @@ A comprehensive Discord bot designed specifically for the Web Dev Discord server
   - 4: Deletes target user's very recent messages across channels.
   - 5: Logs the action to a channel.
 
-
 ### Utility Commands
+
 - **`/ping`** - Basic connectivity test to verify bot responsiveness
 
 <br>
@@ -34,25 +36,28 @@ A comprehensive Discord bot designed specifically for the Web Dev Discord server
 # Installation & Setup
 
 ### Prerequisites
+
 - Node.js (version specified in `.nvmrc`)
 - pnpm package manager
 - Discord Bot Token
 
 <br>
 
-
 1. Clone the repository:
+
    ```bash
    git clone <repository-url>
    cd webdev-bot
    ```
 
 2. Install dependencies:
+
    ```bash
    pnpm install
    ```
 
 3. Create a `.env` file based on `.env.example` and fill in the required environment variables:
+
    ```bash
    cp .env.example .env
    # Edit .env to add your Discord bot token and other configurations
@@ -71,9 +76,10 @@ A comprehensive Discord bot designed specifically for the Web Dev Discord server
 
 <br>
 
-
 ## Docker Support
+
 To use docker with the bot, run:
+
 ```bash
 # Development
 pnpm run docker:dev
@@ -87,9 +93,6 @@ pnpm run docker:build
 
 <br>
 
-
-
-
 # Required Permissions
 
 - Send Messages
@@ -99,7 +102,6 @@ pnpm run docker:build
 - Use Slash Commands
 
 <br>
-
 
 # Contributing
 
@@ -111,8 +113,8 @@ pnpm run docker:build
 
 <br>
 
-
 ### Adding New Guides or Tips
+
 1. Add markdown files to `src/commands/guides/subjects/` or `src/commands/tips/subjects/`
 2. Include frontmatter with `name` field
 3. The bot will automatically detect and load new content
@@ -122,10 +124,10 @@ pnpm run docker:build
 # Support
 
 For issues, questions, or feature requests:
+
 - Open an issue on GitHub
 - Contact the Web Dev Discord server moderators
 
 <br>
-
 
 **Made with ❤️ for the Web Dev Discord community**

@@ -1,7 +1,12 @@
 import { createHash } from 'node:crypto';
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import path, { join } from 'node:path';
-import { ChannelType, type Client, EmbedBuilder, type TextChannel } from 'discord.js';
+import {
+  ChannelType,
+  type Client,
+  EmbedBuilder,
+  type TextChannel,
+} from 'discord.js';
 import { config } from '@/env.js';
 import { parseMarkdown } from './markdown.js';
 
@@ -14,8 +19,11 @@ export type GuideInfo = {
   frontmatter: Record<string, unknown>;
 };
 
-const guidesColors = [0xff5733, 0x33ff57, 0x3357ff, 0xff33a8, 0xa833ff, 0x33fff5];
-const getRandomColor = () => guidesColors[Math.floor(Math.random() * guidesColors.length)];
+const guidesColors = [
+  0xff5733, 0x33ff57, 0x3357ff, 0xff33a8, 0xa833ff, 0x33fff5,
+];
+const getRandomColor = () =>
+  guidesColors[Math.floor(Math.random() * guidesColors.length)];
 const createGuideEmbed = (guide: GuideInfo) =>
   new EmbedBuilder()
     .setTitle(guide.name)
@@ -34,7 +42,8 @@ export type GuideTracker = {
 const GUIDES_DIR = path.join(process.cwd(), 'assets/guides');
 
 // const TRACKER_FILE = config.guidesTrackerPath ?? 'guides-tracker.json';
-const TRACKER_FILE = config.guidesTrackerPath ?? path.join(process.cwd(), 'guides-tracker.json');
+const TRACKER_FILE =
+  config.guidesTrackerPath ?? path.join(process.cwd(), 'guides-tracker.json');
 
 const calculateHash = (content: string): string => {
   return createHash('sha256').update(content, 'utf8').digest('hex');
@@ -65,7 +74,8 @@ const scanGuideFiles = async (): Promise<GuideInfo[]> => {
 
     const filePath = join(GUIDES_DIR, filename);
     const content = await readFile(filePath, 'utf8');
-    const { frontmatter, content: markdownContent } = await parseMarkdown(content);
+    const { frontmatter, content: markdownContent } =
+      await parseMarkdown(content);
 
     const hash = calculateHash(content);
     const name = (frontmatter.name as string) || filename.replace('.md', '');
@@ -82,7 +92,10 @@ const scanGuideFiles = async (): Promise<GuideInfo[]> => {
   return guides;
 };
 
-const postGuideToChannel = async (channel: TextChannel, guide: GuideInfo): Promise<string> => {
+const postGuideToChannel = async (
+  channel: TextChannel,
+  guide: GuideInfo
+): Promise<string> => {
   const message = await channel.send({
     embeds: [createGuideEmbed(guide)],
   });
@@ -104,7 +117,10 @@ const editGuideMessage = async (
 
     console.log(`📝 Updated guide "${guide.name}" (${guide.filename})`);
   } catch (error) {
-    console.error(`Failed to edit message ${messageId} for guide "${guide.name}":`, error);
+    console.error(
+      `Failed to edit message ${messageId} for guide "${guide.name}":`,
+      error
+    );
     throw error;
   }
 };
@@ -120,16 +136,26 @@ const deleteGuideMessage = async (
 
     console.log(`🗑️ Deleted guide "${guideName}"`);
   } catch (error) {
-    console.error(`Failed to delete message ${messageId} for guide "${guideName}":`, error);
+    console.error(
+      `Failed to delete message ${messageId} for guide "${guideName}":`,
+      error
+    );
   }
 };
 
-export const syncGuidesToChannel = async (client: Client, channelId: string): Promise<void> => {
+export const syncGuidesToChannel = async (
+  client: Client,
+  channelId: string
+): Promise<void> => {
   console.log('🔄 Starting guide synchronization...');
 
   try {
     const channel = await client.channels.fetch(channelId);
-    if (!channel || !channel.isTextBased() || channel.type !== ChannelType.GuildText) {
+    if (
+      !channel ||
+      !channel.isTextBased() ||
+      channel.type !== ChannelType.GuildText
+    ) {
       throw new Error(`Channel ${channelId} is not a valid text channel`);
     }
     // Load current state
@@ -137,16 +163,24 @@ export const syncGuidesToChannel = async (client: Client, channelId: string): Pr
     const currentGuides = await scanGuideFiles();
 
     // Create maps for easier lookup
-    const currentGuideMap = new Map(currentGuides.map((guide) => [guide.filename, guide]));
+    const currentGuideMap = new Map(
+      currentGuides.map((guide) => [guide.filename, guide])
+    );
     const trackedFiles = new Set(Object.keys(tracker));
     const currentFiles = new Set(currentGuides.map((guide) => guide.filename));
 
     // Find changes
-    const newFiles = [...currentFiles].filter((file) => !trackedFiles.has(file));
-    const deletedFiles = [...trackedFiles].filter((file) => !currentFiles.has(file));
+    const newFiles = [...currentFiles].filter(
+      (file) => !trackedFiles.has(file)
+    );
+    const deletedFiles = [...trackedFiles].filter(
+      (file) => !currentFiles.has(file)
+    );
     const modifiedFiles = [...currentFiles].filter((file) => {
       const guide = currentGuideMap.get(file);
-      return guide && trackedFiles.has(file) && tracker[file].hash !== guide.hash;
+      return (
+        guide && trackedFiles.has(file) && tracker[file].hash !== guide.hash
+      );
     });
 
     console.log(
@@ -191,11 +225,14 @@ export const syncGuidesToChannel = async (client: Client, channelId: string): Pr
 
     await saveTracker(tracker);
 
-    const totalChanges = newFiles.length + modifiedFiles.length + deletedFiles.length;
+    const totalChanges =
+      newFiles.length + modifiedFiles.length + deletedFiles.length;
     if (totalChanges === 0) {
       console.log('✨ All guides are up to date!');
     } else {
-      console.log(`✅ Guide synchronization complete! Made ${totalChanges} changes.`);
+      console.log(
+        `✅ Guide synchronization complete! Made ${totalChanges} changes.`
+      );
     }
   } catch (error) {
     console.error('❌ Guide synchronization failed:', error);
@@ -203,7 +240,10 @@ export const syncGuidesToChannel = async (client: Client, channelId: string): Pr
   }
 };
 
-export const initializeGuidesChannel = async (client: Client, channelId: string): Promise<void> => {
+export const initializeGuidesChannel = async (
+  client: Client,
+  channelId: string
+): Promise<void> => {
   console.log('🚀 Initializing guides channel...');
 
   // Clear existing tracker for fresh start

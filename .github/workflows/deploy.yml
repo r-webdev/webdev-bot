@@ -2,7 +2,7 @@ name: Build, Test and Deploy Discord Bot to VPS
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ['main']
   workflow_dispatch: # Allow manual deployment
 
 jobs:
@@ -10,49 +10,49 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Read Node version
-      run: |
-        NODE_VERSION=$(cat .nvmrc | sed 's/v//')
-        echo "NODE_VERSION=$NODE_VERSION" >> $GITHUB_ENV
+      - name: Read Node version
+        run: |
+          NODE_VERSION=$(cat .nvmrc | sed 's/v//')
+          echo "NODE_VERSION=$NODE_VERSION" >> $GITHUB_ENV
 
-    - name: Deploy to VPS
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.VPS_HOST }}
-        username: ${{ secrets.VPS_USER }}
-        key: ${{ secrets.VPS_SSH_KEY }}
-        script: |
-          cd /home/${{ secrets.VPS_USER }}/webdev-bot-deploy
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd /home/${{ secrets.VPS_USER }}/webdev-bot-deploy
 
-          # Stash any local changes
-          git stash push -m "Auto-deploy $(date)" 2>/dev/null || true
+            # Stash any local changes
+            git stash push -m "Auto-deploy $(date)" 2>/dev/null || true
 
-          # Pull latest changes
-          git checkout main
-          git pull origin main
+            # Pull latest changes
+            git checkout main
+            git pull origin main
 
-          # Read NODE_VERSION from .nvmrc
-          export NODE_VERSION=$(cat .nvmrc | sed 's/v//')
-          echo "Using Node version: $NODE_VERSION"
+            # Read NODE_VERSION from .nvmrc
+            export NODE_VERSION=$(cat .nvmrc | sed 's/v//')
+            echo "Using Node version: $NODE_VERSION"
 
-          # Create .env file with secrets
-          # Public config comes from .env.production (committed to repo)
-          # NODE_ENV=production is set in docker-compose.yml
-          cat > .env << EOF
-          DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}
-          CLIENT_ID=${{ secrets.CLIENT_ID }}
-          EOF
+            # Create .env file with secrets
+            # Public config comes from .env.production (committed to repo)
+            # NODE_ENV=production is set in docker-compose.yml
+            cat > .env << EOF
+            DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}
+            CLIENT_ID=${{ secrets.CLIENT_ID }}
+            EOF
 
-          # Stop any existing containers
-          docker compose down || true
+            # Stop any existing containers
+            docker compose down || true
 
-          # Build and start production container with profile
-          # NODE_ENV=production is explicitly set in docker-compose.yml bot-prod service
-          docker compose --profile prod up -d --build
+            # Build and start production container with profile
+            # NODE_ENV=production is explicitly set in docker-compose.yml bot-prod service
+            docker compose --profile prod up -d --build
 
-          # Check status
-          echo "Deployment completed. Container status:"
-          docker compose ps
+            # Check status
+            echo "Deployment completed. Container status:"
+            docker compose ps

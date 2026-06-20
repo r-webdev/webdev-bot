@@ -16,7 +16,10 @@ export const createBaseConfig = (options: {
   icon: string;
   commandDescription: string;
   directUrl?: string;
-}): Pick<ProviderConfig, 'color' | 'icon' | 'commandDescription' | 'directUrl'> => options;
+}): Pick<
+  ProviderConfig,
+  'color' | 'icon' | 'commandDescription' | 'directUrl'
+> => options;
 
 export const executeDocCommand = async (
   config: ProviderConfig,
@@ -43,7 +46,9 @@ export const executeDocCommand = async (
     const items = await config.getFilteredData(query);
 
     if (items.length === 0) {
-      await interaction.editReply({ content: `No results found for "${query}"` });
+      await interaction.editReply({
+        content: `No results found for "${query}"`,
+      });
       return;
     }
 
@@ -56,13 +61,16 @@ export const executeDocCommand = async (
     });
 
     const collector = choiceInteraction.createMessageComponentCollector({
-      filter: (componentInteraction) => componentInteraction.user.id === interaction.user.id,
+      filter: (componentInteraction) =>
+        componentInteraction.user.id === interaction.user.id,
     });
 
     collector.once('collect', async (componentInteraction) => {
       if (componentInteraction.isStringSelectMenu()) {
         const selectedSet = new Set(componentInteraction.values);
-        const selectedItems = collection.filter((_, key) => selectedSet.has(key));
+        const selectedItems = collection.filter((_, key) =>
+          selectedSet.has(key)
+        );
         const selectedTitles = selectedItems.map(config.getDisplayTitle);
 
         await interaction.editReply({
@@ -72,7 +80,7 @@ export const executeDocCommand = async (
 
         const embeds = config.createResultEmbeds(selectedItems);
 
-        logToChannel({
+        void logToChannel({
           channel: interaction.channel,
           content: {
             type: 'embed',
@@ -89,7 +97,7 @@ export const executeDocCommand = async (
     });
   } catch (error) {
     console.error(`executeDocCommand FAILED:`, error);
-    await interaction.editReply({ content: `Error: ${error}` });
+    await interaction.editReply({ content: `Error: ${String(error)}` });
   }
 };
 

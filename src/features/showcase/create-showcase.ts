@@ -26,12 +26,17 @@ import { deleteShowcase } from './delete-showcase.js';
 import { editShowcaseInteraction } from './edit-showcase.js';
 import { buildShowcaseModal, getShowcaseLogChannel } from './util.js';
 
-export const showModal = async (interaction: ButtonInteraction | ChatInputCommandInteraction) => {
+export const showModal = async (
+  interaction: ButtonInteraction | ChatInputCommandInteraction
+) => {
   try {
-    const channel = interaction.guild?.channels.cache.get(config.channelIds.showcase);
+    const channel = interaction.guild?.channels.cache.get(
+      config.channelIds.showcase
+    );
     if (channel === undefined || channel.type !== ChannelType.GuildForum) {
       await interaction.reply({
-        content: 'Showcase channel is not properly configured. Please contact an administrator.',
+        content:
+          'Showcase channel is not properly configured. Please contact an administrator.',
         flags: MessageFlags.Ephemeral,
       });
       return;
@@ -47,7 +52,8 @@ export const showModal = async (interaction: ButtonInteraction | ChatInputComman
   } catch (error) {
     console.error('Error showing showcase modal:', error);
     await interaction.reply({
-      content: 'There was an error showing the showcase modal. Please try again later.',
+      content:
+        'There was an error showing the showcase modal. Please try again later.',
       flags: MessageFlags.Ephemeral,
     });
   }
@@ -74,14 +80,18 @@ const modalHandler: ModalSubmitInteraction = {
     await interaction.deferReply({ flags: MessageFlags.Ephemeral });
     const projectName = interaction.fields.getTextInputValue('projectName');
     const projectLink = interaction.fields.getTextInputValue('projectLink');
-    const projectDescription = interaction.fields.getTextInputValue('projectDescription');
+    const projectDescription =
+      interaction.fields.getTextInputValue('projectDescription');
     const projectTags = interaction.fields.getStringSelectValues('projectTags');
     const projectMedia = interaction.fields.getUploadedFiles('projectMedia');
 
-    const channel = interaction.guild?.channels.cache.get(config.channelIds.showcase);
+    const channel = interaction.guild?.channels.cache.get(
+      config.channelIds.showcase
+    );
     if (channel === undefined || channel.type !== ChannelType.GuildForum) {
       await interaction.editReply({
-        content: 'Showcase channel is not properly configured. Please contact an administrator.',
+        content:
+          'Showcase channel is not properly configured. Please contact an administrator.',
       });
       return;
     }
@@ -142,7 +152,11 @@ const modalHandler: ModalSubmitInteraction = {
           .setTitle('Showcase Created')
           .addFields(
             { name: 'Project Name', value: projectName || '—', inline: false },
-            { name: 'Author', value: `<@${interaction.user.id}>`, inline: true },
+            {
+              name: 'Author',
+              value: `<@${interaction.user.id}>`,
+              inline: true,
+            },
             { name: 'Thread', value: thread.url ?? '—', inline: true }
           )
           .setColor(Colors.Green)
@@ -163,7 +177,8 @@ const modalHandler: ModalSubmitInteraction = {
     } catch (error) {
       console.error('Error creating showcase thread:', error);
       await interaction.editReply({
-        content: 'There was an error showcasing your project. Please try again later.',
+        content:
+          'There was an error showcasing your project. Please try again later.',
       });
     }
   },

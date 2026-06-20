@@ -2,7 +2,7 @@ import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { isAskingToAsk } from './just-ask.js';
 
-describe('justAsk Regex', () => {
+void describe('justAsk Regex', () => {
   const testCases = [
     { input: 'Anyone knows js?', expected: true },
     { input: 'Somebody can help with Python?', expected: true },
@@ -14,7 +14,7 @@ describe('justAsk Regex', () => {
     { input: 'This is a question without the pattern.', expected: false },
   ];
   testCases.forEach(({ input, expected }) => {
-    it(`should return ${expected} for input: "${input}"`, () => {
+    void it(`should return ${expected} for input: "${input}"`, () => {
       const result = isAskingToAsk(input);
       assert.strictEqual(result, expected);
     });

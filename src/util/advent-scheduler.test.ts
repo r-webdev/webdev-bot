@@ -9,17 +9,20 @@ const { loadTracker, saveTracker } = await import('./advent-scheduler.js');
 async function cleanupTestTracker() {
   try {
     await fs.unlink(config.adventOfCodeTrackerPath);
-  } catch (_error) {
+  } catch {
     // File might not exist, that's fine
   }
 }
 
-test('advent scheduler: tracker file operations', async (t) => {
-  await t.test('should create empty tracker if file does not exist', async () => {
-    await cleanupTestTracker();
-    const tracker = await loadTracker();
-    assert.deepEqual(tracker, {});
-  });
+void test('advent scheduler: tracker file operations', async (t) => {
+  await t.test(
+    'should create empty tracker if file does not exist',
+    async () => {
+      await cleanupTestTracker();
+      const tracker = await loadTracker();
+      assert.deepEqual(tracker, {});
+    }
+  );
 
   await t.test('should save and load tracker data correctly', async () => {
     const testData = {

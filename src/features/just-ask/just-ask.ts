@@ -48,7 +48,8 @@ const shouldCheck = (message: Message) => {
   // check roles/permissions
   if (
     message.member !== null &&
-    (message.member.roles.highest.comparePositionTo(config.roleIds.repel) >= 0 ||
+    (message.member.roles.highest.comparePositionTo(config.roleIds.repel) >=
+      0 ||
       message.member.permissions.has(PermissionFlagsBits.ModerateMembers))
   ) {
     return false;

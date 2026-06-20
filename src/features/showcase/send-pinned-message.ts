@@ -23,7 +23,9 @@ export const sendShowcasePinnedMessage = createSlashCommand({
   },
   execute: async (interaction) => {
     await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-    const showcaseChannel = interaction.guild?.channels.cache.get(config.channelIds.showcase);
+    const showcaseChannel = interaction.guild?.channels.cache.get(
+      config.channelIds.showcase
+    );
     if (showcaseChannel === undefined || !showcaseChannel.isThreadOnly()) {
       await interaction.editReply({
         content: 'Showcase channel not found or is not a forum channel.',
@@ -51,12 +53,13 @@ export const sendShowcasePinnedMessage = createSlashCommand({
       'Press the button below to create a new post and share your project with the community!',
     ].join('\n');
 
-    const actionRow = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-      new ButtonBuilder()
-        .setCustomId('create_showcase')
-        .setLabel('Create Showcase Post')
-        .setStyle(ButtonStyle.Primary)
-    );
+    const actionRow =
+      new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
+        new ButtonBuilder()
+          .setCustomId('create_showcase')
+          .setLabel('Create Showcase Post')
+          .setStyle(ButtonStyle.Primary)
+      );
 
     if (pinnedThread) {
       if (!pinnedThread.locked) {
@@ -83,8 +86,8 @@ export const sendShowcasePinnedMessage = createSlashCommand({
         components: [actionRow],
       },
     });
-    thread.pin();
-    thread.setLocked(true);
+    void thread.pin();
+    void thread.setLocked(true);
 
     await interaction.editReply({
       content: 'Showcase pinned message sent successfully.',

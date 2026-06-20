@@ -12,7 +12,11 @@ export const autoRoleEvent = createEvent(
   async (_, newMember) => {
     const hasRoleC = hasAllRoles(newMember, config.roleIds.c);
     if (!hasRoleC) {
-      const hasRequiredRoles = hasAllRoles(newMember, config.roleIds.a, config.roleIds.b);
+      const hasRequiredRoles = hasAllRoles(
+        newMember,
+        config.roleIds.a,
+        config.roleIds.b
+      );
       if (hasRequiredRoles) {
         try {
           await newMember.roles.add(config.roleIds.c);
