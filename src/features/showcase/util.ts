@@ -91,12 +91,12 @@ export const buildShowcaseModal = ({
         ),
       new LabelBuilder()
         .setLabel('Tags')
-        .setDescription('Select the tags that best describe your project')
+        .setDescription('Select up to 5 tags that best describe your project')
         .setStringSelectMenuComponent(
           new StringSelectMenuBuilder()
             .setCustomId('projectTags')
             .setMinValues(1)
-            .setMaxValues(tags.length > 0 ? tags.length : 1)
+            .setMaxValues(5)
             .setRequired(true)
             .addOptions(
               tags.map((tag) => {
