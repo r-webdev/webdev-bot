@@ -18,33 +18,21 @@ export type ShowcaseMessageData = {
   authorId: string;
 };
 
+const FOOTER_REGEX = /\n+\*\*Author:\*\* <@(\d+)>(?:\n\*\*Link:\*\* (.+))?\s*$/;
+
 export const parseShowcaseMessage = (content: string): ShowcaseMessageData => {
-  const isOldStructure = content.startsWith('## Project Name:');
-  if (isOldStructure) {
-    const [header = '', ...descriptionParts] = content.split(/\n\n+/);
-    const headerLines = header.split('\n');
+  const footerMatch = content.match(FOOTER_REGEX);
 
-    const authorLine = headerLines.find((line) =>
-      line.startsWith('**Author:** ')
-    );
-    const authorId = authorLine?.match(/<@(\d+)>/)?.[1] ?? '';
-    const linkLine = headerLines.find((line) => line.startsWith('**Link:** '));
-    const link = linkLine?.replace(/^\*\*Link:\*\*\s*/, '') ?? '';
-    const description = descriptionParts.join('\n\n').trim();
-
-    return { link, description, authorId };
+  if (!footerMatch) {
+    return { authorId: '', link: '', description: content.trim() };
   }
 
-  const authorMatch = content.match(/\*\*Author:\*\* <@(\d+)>/);
-  const linkMatch = content.match(/\*\*Link:\*\* (.+)/);
-  const description = content
-    .replace(/\*\*Author:\*\* <@\d+>/, '')
-    .replace(/\*\*Link:\*\* .+/, '')
-    .trim();
+  const [, authorId, link] = footerMatch;
+  const description = content.slice(0, footerMatch.index).trim();
 
   return {
-    authorId: authorMatch?.[1] ?? '',
-    link: linkMatch?.[1] ?? '',
+    authorId: authorId ?? '',
+    link: link?.trim() ?? '',
     description,
   };
 };
