@@ -247,13 +247,6 @@ const modalHandler: ModalSubmitInteraction = {
       }
 
       await message.edit({
-        // content: [
-        //   `## Project Name: ${newProjectName}`,
-        //   `**Author:** <@${effectiveAuthorId}>`,
-        //   newProjectLink ? `**Link:** ${newProjectLink}` : '',
-        //   '',
-        //   newProjectDescription,
-        // ].join('\n'),
         content: createShowcaseMessageContent({
           link: newProjectLink,
           authorId: effectiveAuthorId,
