@@ -67,26 +67,26 @@ export const createShowcaseMessageContent = ({
 
 export type BuildShowcaseModalOptions = {
   id: string;
-  title: string;
   tags: GuildForumTag[];
   projectName?: string;
   link?: string;
   description?: string;
   appliedTagIds?: string[];
+  isEdit?: boolean;
 };
 
 export const buildShowcaseModal = ({
   id,
-  title,
   tags,
   projectName = '',
   link = '',
   description = '',
   appliedTagIds = [],
+  isEdit = false,
 }: BuildShowcaseModalOptions): ModalBuilder => {
   return new ModalBuilder()
     .setCustomId(id)
-    .setTitle(title)
+    .setTitle(isEdit ? 'Edit Showcase' : 'Create Showcase')
     .addLabelComponents(
       new LabelBuilder()
         .setLabel('Project Name')
@@ -107,17 +107,6 @@ export const buildShowcaseModal = ({
             .setStyle(TextInputStyle.Short)
             .setRequired(false)
             .setValue(link)
-        ),
-      new LabelBuilder()
-        .setLabel('Project Description')
-        .setDescription('Enter a detailed description of your project')
-        .setTextInputComponent(
-          new TextInputBuilder()
-            .setCustomId('projectDescription')
-            .setStyle(TextInputStyle.Paragraph)
-            .setMaxLength(3000)
-            .setRequired(true)
-            .setValue(description)
         ),
       new LabelBuilder()
         .setLabel('Tags')
@@ -146,9 +135,22 @@ export const buildShowcaseModal = ({
             )
         ),
       new LabelBuilder()
+        .setLabel('Project Description')
+        .setDescription('Enter a detailed description of your project')
+        .setTextInputComponent(
+          new TextInputBuilder()
+            .setCustomId('projectDescription')
+            .setStyle(TextInputStyle.Paragraph)
+            .setMaxLength(3000)
+            .setRequired(true)
+            .setValue(description)
+        ),
+      new LabelBuilder()
         .setLabel('Media')
         .setDescription(
-          'Attach images or videos showcasing your project (optional)'
+          isEdit
+            ? 'Overwrite the existing media attachments (optional)'
+            : 'Attach images or videos showcasing your project (optional)'
         )
         .setFileUploadComponent(
           new FileUploadBuilder()

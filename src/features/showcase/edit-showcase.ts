@@ -89,12 +89,12 @@ export const editShowcaseInteraction: ButtonSubmitInteraction = {
 
       const modal = buildShowcaseModal({
         id: customId('edit_showcase_modal', ownerId, forumPost.id),
-        title: 'Edit Showcase',
         tags,
         projectName: forumPost.name,
         link,
         description,
         appliedTagIds: appliedTags,
+        isEdit: true,
       });
 
       await interaction.showModal(modal);

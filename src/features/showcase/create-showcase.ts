@@ -48,7 +48,6 @@ export const showModal = async (
 
     const modal = buildShowcaseModal({
       id: customId('showcase', interaction.user.id),
-      title: 'Showcase your project',
       tags: channel.availableTags,
     });
 
