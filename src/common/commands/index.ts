@@ -8,7 +8,6 @@ import { createShowcaseCommand } from '@/features/showcase/create-showcase.js';
 import { sendShowcasePinnedMessage } from '@/features/showcase/send-pinned-message.js';
 import { tipsCommands } from '@/features/tips/index.js';
 import type { Command } from './types.js';
-import { showcaseTempRestructureCommand } from '@/features/showcase/temp-restructure.js';
 
 export const commands = new Map<string, Command>(
   [
@@ -21,7 +20,6 @@ export const commands = new Map<string, Command>(
     publicGuidesCommand,
     createShowcaseCommand,
     sendShowcasePinnedMessage,
-    showcaseTempRestructureCommand,
   ]
     .flat()
     .map((command) => [command.data.name, command])
