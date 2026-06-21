@@ -13,26 +13,56 @@ import {
 import { config } from '@/env.js';
 
 export type ShowcaseMessageData = {
-  projectName: string;
   link: string;
   description: string;
   authorId: string;
 };
 
 export const parseShowcaseMessage = (content: string): ShowcaseMessageData => {
-  const [header = '', ...descriptionParts] = content.split(/\n\n+/);
-  const headerLines = header.split('\n');
+  const isOldStructure = content.startsWith('## Project Name:');
+  if (isOldStructure) {
+    const [header = '', ...descriptionParts] = content.split(/\n\n+/);
+    const headerLines = header.split('\n');
 
-  const projectName = headerLines[0]?.replace(/^## Project Name:\s*/, '') ?? '';
-  const authorLine = headerLines.find((line) =>
-    line.startsWith('**Author:** ')
-  );
-  const authorId = authorLine?.match(/<@(\d+)>/)?.[1] ?? '';
-  const linkLine = headerLines.find((line) => line.startsWith('**Link:** '));
-  const link = linkLine?.replace(/^\*\*Link:\*\*\s*/, '') ?? '';
-  const description = descriptionParts.join('\n\n').trim();
+    const authorLine = headerLines.find((line) =>
+      line.startsWith('**Author:** ')
+    );
+    const authorId = authorLine?.match(/<@(\d+)>/)?.[1] ?? '';
+    const linkLine = headerLines.find((line) => line.startsWith('**Link:** '));
+    const link = linkLine?.replace(/^\*\*Link:\*\*\s*/, '') ?? '';
+    const description = descriptionParts.join('\n\n').trim();
 
-  return { projectName, link, description, authorId };
+    return { link, description, authorId };
+  }
+
+  const authorMatch = content.match(/\*\*Author:\*\* <@(\d+)>/);
+  const linkMatch = content.match(/\*\*Link:\*\* (.+)/);
+  const description = content
+    .replace(/\*\*Author:\*\* <@\d+>/, '')
+    .replace(/\*\*Link:\*\* .+/, '')
+    .trim();
+
+  return {
+    authorId: authorMatch?.[1] ?? '',
+    link: linkMatch?.[1] ?? '',
+    description,
+  };
+};
+
+export const createShowcaseMessageContent = ({
+  link,
+  description,
+  authorId,
+}: ShowcaseMessageData): string => {
+  return [
+    description,
+    '',
+    '',
+    `**Author:** <@${authorId}>`,
+    link ? `**Link:** ${link}` : undefined,
+  ]
+    .filter((line) => line !== undefined)
+    .join('\n');
 };
 
 export type BuildShowcaseModalOptions = {
