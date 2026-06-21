@@ -17,6 +17,7 @@ import { clampText, wrapInDiffBlock } from '@/util/text.js';
 import type { ShowcaseEditChange } from './types.js';
 import {
   buildShowcaseModal,
+  createShowcaseMessageContent,
   getAttachmentsCount,
   getShowcaseLogChannel,
   parseShowcaseMessage,
@@ -82,20 +83,18 @@ export const editShowcaseInteraction: ButtonSubmitInteraction = {
         return;
       }
 
-      const { projectName, link, description } = parseShowcaseMessage(
-        message.content
-      );
+      const { link, description } = parseShowcaseMessage(message.content);
       const appliedTags = forumPost.appliedTags;
       const tags = parentChannel.availableTags;
 
       const modal = buildShowcaseModal({
         id: customId('edit_showcase_modal', ownerId, forumPost.id),
-        title: 'Edit Showcase',
         tags,
-        projectName,
+        projectName: forumPost.name,
         link,
         description,
         appliedTagIds: appliedTags,
+        isEdit: true,
       });
 
       await interaction.showModal(modal);
@@ -175,7 +174,7 @@ const modalHandler: ModalSubmitInteraction = {
 
       const prev = parseShowcaseMessage(message.content);
       const effectiveAuthorId = prev.authorId || ownerId;
-      const prevTitle = prev.projectName;
+      const prevTitle = forumPost.name;
       const prevLink = prev.link;
       const prevDescription = prev.description;
       const prevTagIds = forumPost.appliedTags ?? [];
@@ -248,13 +247,11 @@ const modalHandler: ModalSubmitInteraction = {
       }
 
       await message.edit({
-        content: [
-          `## Project Name: ${newProjectName}`,
-          `**Author:** <@${effectiveAuthorId}>`,
-          newProjectLink ? `**Link:** ${newProjectLink}` : '',
-          '',
-          newProjectDescription,
-        ].join('\n'),
+        content: createShowcaseMessageContent({
+          link: newProjectLink,
+          authorId: effectiveAuthorId,
+          description: newProjectDescription,
+        }),
       });
 
       await forumPost.setName(newProjectName);

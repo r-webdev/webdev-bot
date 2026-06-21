@@ -24,7 +24,11 @@ import { logToChannel } from '@/util/channel-logging.js';
 import { customId } from '@/util/custom-id.js';
 import { deleteShowcase } from './delete-showcase.js';
 import { editShowcaseInteraction } from './edit-showcase.js';
-import { buildShowcaseModal, getShowcaseLogChannel } from './util.js';
+import {
+  buildShowcaseModal,
+  createShowcaseMessageContent,
+  getShowcaseLogChannel,
+} from './util.js';
 
 export const showModal = async (
   interaction: ButtonInteraction | ChatInputCommandInteraction
@@ -44,7 +48,6 @@ export const showModal = async (
 
     const modal = buildShowcaseModal({
       id: customId('showcase', interaction.user.id),
-      title: 'Showcase your project',
       tags: channel.availableTags,
     });
 
@@ -101,13 +104,11 @@ const modalHandler: ModalSubmitInteraction = {
         name: projectName,
         appliedTags: projectTags,
         message: {
-          content: [
-            `## Project Name: ${projectName}`,
-            `**Author:** <@${interaction.user.id}>`,
-            projectLink && `**Link:** ${projectLink}`,
-            '',
-            projectDescription,
-          ].join('\n'),
+          content: createShowcaseMessageContent({
+            link: projectLink,
+            authorId: interaction.user.id,
+            description: projectDescription,
+          }),
           files: projectMedia?.map((file) => file.url) ?? [],
           allowedMentions: { users: [interaction.user.id] },
         },
