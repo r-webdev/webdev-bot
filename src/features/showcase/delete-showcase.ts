@@ -3,7 +3,7 @@ import type { ButtonSubmitInteraction } from '@/common/interactions/button-inter
 import { logToChannel } from '@/util/channel-logging.js';
 import { parseCustomId } from '@/util/custom-id.js';
 import { isUserInServer, isUserModerator } from '@/util/member.js';
-import { getShowcaseLogChannel, parseShowcaseMessage } from './util.js';
+import { getShowcaseLogChannel } from './util.js';
 
 export const deleteShowcase: ButtonSubmitInteraction = {
   commandName: 'delete_showcase',
@@ -59,7 +59,7 @@ export const deleteShowcase: ButtonSubmitInteraction = {
         return;
       }
 
-      const { projectName } = parseShowcaseMessage(message.content);
+      const projectName = forumPost.name;
       await interaction.channel?.delete();
       const logChannel = getShowcaseLogChannel(interaction.guild);
       await logToChannel({
