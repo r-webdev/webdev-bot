@@ -29,22 +29,22 @@
   },
   "dependencies": {
     "discord.js": "^14.26.4",
-    "node-cron": "^4.2.1",
+    "node-cron": "^4.6.0",
     "typescript": "^6.0.3",
-    "web-features": "^3.9.2"
+    "web-features": "^3.32.0"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.0",
-    "@types/node": "^24.5.2",
+    "@types/node": "^24.13.2",
     "@types/node-cron": "^3.0.11",
     "husky": "^9.1.7",
-    "lint-staged": "^16.2.1",
-    "oxfmt": "^0.55.0",
-    "oxlint": "^1.70.0",
-    "oxlint-tsgolint": "^0.23.0",
-    "tsc-alias": "^1.8.17",
-    "tsup": "^8.5.0",
-    "tsx": "^4.20.6"
+    "lint-staged": "^17.0.8",
+    "oxfmt": "^0.58.0",
+    "oxlint": "^1.73.0",
+    "oxlint-tsgolint": "^0.24.0",
+    "tsc-alias": "^1.9.0",
+    "tsup": "^8.5.1",
+    "tsx": "^4.23.0"
   },
   "lint-staged": {
     "*.{js,ts}": "pnpm run lint",
