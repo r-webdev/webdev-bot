@@ -11,6 +11,7 @@
     "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
     "deploy": "tsx src/scripts/deploy-commands.ts",
+    "deploy:win": "tsx src/scripts/deploy-commands-win.ts",
     "docker:build": "NODE_VERSION=$(cat .nvmrc | tr -d 'v') docker compose build",
     "docker:dev": "NODE_VERSION=$(cat .nvmrc | tr -d 'v') docker compose --profile dev up",
     "docker:prod": "NODE_VERSION=$(cat .nvmrc | tr -d 'v') docker compose --profile prod up -d",
