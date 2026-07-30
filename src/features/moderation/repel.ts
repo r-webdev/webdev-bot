@@ -1,3 +1,4 @@
+import path from 'node:path';
 import {
   ApplicationCommandOptionType,
   ChannelType,
@@ -7,6 +8,7 @@ import {
   EmbedBuilder,
   type GuildMember,
   type Message,
+  type MessageContextMenuCommandInteraction,
   MessageFlags,
   PermissionFlagsBits,
   type Role,
@@ -15,15 +17,30 @@ import {
   type User,
 } from 'discord.js';
 import { isUserInServer } from '@/util/member.js';
-import { createSlashCommand } from '../../common/commands/create-commands.js';
+import {
+  createMessageContextMenuCommand,
+  createSlashCommand,
+} from '../../common/commands/create-commands.js';
 import { HOUR, MINUTE, timeToString } from '../../constants/time.js';
 import { config } from '../../env.js';
 import { buildCommandString } from '../../util/build-command-string.js';
 import { getPublicChannels } from '../../util/channel.js';
 import { logToChannel } from '../../util/channel-logging.js';
+import { loadMarkdownOptions } from '../../util/markdown.js';
 
 const DEFAULT_LOOK_BACK_MS = 10 * MINUTE;
 const DEFAULT_TIMEOUT_DURATION_MS = 1 * HOUR;
+
+type RepelPreset = {
+  name: string;
+  lookBack?: string;
+  timeoutDuration?: string;
+  dmUser?: string;
+  messageForMods?: string;
+};
+
+const presetsDir = path.join(process.cwd(), 'assets/repel-presets');
+const presets = await loadMarkdownOptions<RepelPreset>(presetsDir);
 
 const isUserTimedOut = (target: GuildMember) => {
   return target.communicationDisabledUntilTimestamp
@@ -177,7 +194,11 @@ const handleTimeout = async ({
   }
 };
 
-const getTextChannels = (interaction: ChatInputCommandInteraction) => {
+const getTextChannels = (
+  interaction:
+    | ChatInputCommandInteraction
+    | MessageContextMenuCommandInteraction
+) => {
   if (!interaction.inGuild() || !interaction.guild) {
     console.error('Interaction is not in a guild');
     return [];
@@ -279,14 +300,18 @@ const logRepelAction = async ({
   reason,
   failedChannels,
   dm,
+  messageForMods,
 }: {
-  interaction: ChatInputCommandInteraction;
+  interaction:
+    | ChatInputCommandInteraction
+    | MessageContextMenuCommandInteraction;
   member: GuildMember;
   target: User | GuildMember;
   reason: string;
   duration?: number;
   deleteCount: number;
   failedChannels: string[];
+  messageForMods?: string;
   dm: {
     sent: boolean;
     shouldSend: boolean;
@@ -309,11 +334,12 @@ const logRepelAction = async ({
       : target.displayAvatarURL(),
   };
 
+  const commandName = interaction.isChatInputCommand()
+    ? buildCommandString(interaction)
+    : `Repel: ${interaction.commandName}`;
   const commandEmbed = new EmbedBuilder()
     .setAuthor(memberAuthor)
-    .setDescription(
-      `Used \`repel\` command in ${channelInfo}.\n${buildCommandString(interaction)}`
-    )
+    .setDescription(`Used \`repel\` command in ${channelInfo}.\n${commandName}`)
     .setColor('Green')
     .setTimestamp();
   const resultEmbed = new EmbedBuilder()
@@ -366,7 +392,10 @@ const logRepelAction = async ({
       : null;
 
   const modMessage =
-    interaction.options.getString(RepelOptions.MESSAGE_FOR_MODS) ?? false;
+    messageForMods ??
+    (interaction.isChatInputCommand()
+      ? (interaction.options.getString(RepelOptions.MESSAGE_FOR_MODS) ?? false)
+      : false);
   const mentionText = modMessage
     ? `${config.roleIds.moderators.map((id) => `<@&${id}>`).join(' ')} - ${modMessage}`
     : undefined;
@@ -558,6 +587,9 @@ export const repelCommand = createSlashCommand({
         duration: timeout,
         deleteCount: deleted,
         failedChannels,
+        messageForMods:
+          interaction.options.getString(RepelOptions.MESSAGE_FOR_MODS) ??
+          undefined,
         dm: {
           sent: dmSent,
           shouldSend: shouldDMUser,
@@ -572,3 +604,106 @@ export const repelCommand = createSlashCommand({
     }
   },
 });
+
+const presetCommands = presets.flatMap(({ frontmatter, content }) => {
+  if (!frontmatter.name) {
+    return [];
+  }
+
+  return [
+    createMessageContextMenuCommand({
+      data: {
+        name: `Repel: ${frontmatter.name}`,
+      },
+      execute: async (interaction) => {
+        if (
+          !interaction.isMessageContextMenuCommand() ||
+          !interaction.inGuild() ||
+          !interaction.guild
+        ) {
+          return;
+        }
+
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
+        const repelRole = interaction.guild.roles.cache.get(
+          config.roleIds.repel
+        );
+        if (!repelRole) {
+          await interaction.editReply({
+            content:
+              '❌ Repel role is not configured correctly. Please contact an administrator.',
+          });
+          return;
+        }
+
+        const commandUser = interaction.member as GuildMember;
+        const botMember = interaction.guild.members.me;
+        if (!botMember) {
+          await interaction.editReply({
+            content: '❌ Unable to verify my permissions in the server.',
+          });
+          return;
+        }
+
+        let target: GuildMember | User = interaction.targetMessage.author;
+        try {
+          target = await interaction.guild.members.fetch(target.id);
+        } catch {
+          // The author may have already left the server.
+        }
+
+        const canRepel = checkCanRepel({ commandUser, repelRole });
+        const canRepelTarget = checkCanRepelTarget({
+          target,
+          commandUser,
+          botMember,
+        });
+        if (!canRepel.ok || !canRepelTarget.ok) {
+          await interaction.editReply({
+            content: `❌ ${canRepel.message ?? canRepelTarget.message}`,
+          });
+          return;
+        }
+
+        const timeout = await handleTimeout({
+          target,
+          durationInMilliseconds:
+            Number(frontmatter.timeoutDuration ?? 1) * HOUR,
+        });
+        const { deleted, failedChannels } = await handleDeleteMessages({
+          channels: getTextChannels(interaction),
+          target,
+          lookBack: Number(frontmatter.lookBack ?? 10) * MINUTE,
+        });
+        const shouldDMUser = frontmatter.dmUser !== 'false';
+        const dmSent = shouldDMUser
+          ? await sendReasonToTarget({
+              target,
+              reason: content,
+              guildName: interaction.guild.name,
+              timeoutDuration: timeout,
+            })
+          : false;
+
+        void logRepelAction({
+          interaction,
+          member: commandUser,
+          target,
+          reason: content,
+          duration: timeout,
+          deleteCount: deleted,
+          failedChannels,
+          messageForMods: frontmatter.messageForMods,
+          dm: { sent: dmSent, shouldSend: shouldDMUser },
+        });
+
+        await interaction.editReply({
+          content: `Deleted ${deleted} message(s).`,
+        });
+      },
+    }),
+  ];
+});
+
+export const repelCommands = [repelCommand, ...presetCommands];
