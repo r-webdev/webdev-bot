@@ -1,10 +1,11 @@
-import { Events } from 'discord.js';
+import { ChannelType, Events } from 'discord.js';
 import { createEvent } from '@/common/events/create-event.js';
 import { config } from '@/env.js';
 import { initializeAdventScheduler } from '@/util/advent-scheduler.js';
 import { fetchAndCachePublicChannelsMessages } from '@/util/cache.js';
 import { syncGuidesToChannel } from '@/util/post-guides.js';
 import { leaveIfNotAllowedServer } from '@/util/server-guard.js';
+import { archiveChannel } from '../archive-channels/index.js';
 
 export const readyEvent = createEvent(
   {
@@ -20,11 +21,17 @@ export const readyEvent = createEvent(
       await leaveIfNotAllowedServer(guild);
     }
 
+    const guild = client.guilds.cache.get(config.discord.serverId);
+    if (!guild) {
+      console.error(
+        `❌ Bot is not in the configured server with ID ${config.discord.serverId}`
+      );
+      console.error('Please check your .env file or CI/CD configuration');
+      process.exit(1);
+    }
+
     if (config.fetchAndSyncMessages) {
-      const guild = client.guilds.cache.get(config.discord.serverId);
-      if (guild) {
-        await fetchAndCachePublicChannelsMessages(guild, true);
-      }
+      await fetchAndCachePublicChannelsMessages(guild, true);
 
       // Sync guides to channel
       try {
@@ -53,6 +60,24 @@ export const readyEvent = createEvent(
       initializeAdventScheduler(client, config.channelIds.adventOfCode);
     } catch (error) {
       console.error('❌ Failed to initialize Advent of Code scheduler:', error);
+    }
+
+    // Make sure all channels in the archived category are properly archived on startup
+    try {
+      const archivedCategory = guild.channels.cache.get(
+        config.channelIds.archivedCategory
+      );
+      if (archivedCategory?.type !== ChannelType.GuildCategory) {
+        console.error(
+          `❌ Archived category with ID ${config.channelIds.archivedCategory} not found in the guild.`
+        );
+        return;
+      }
+
+      const archivedChannels = archivedCategory.children.cache;
+      await Promise.all(archivedChannels.map(archiveChannel));
+    } catch (error) {
+      console.error('❌ Failed to archive channels on startup:', error);
     }
   }
 );
