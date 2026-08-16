@@ -24,10 +24,9 @@ export async function syncArchiveCategoryChannels(guild: Guild) {
   );
 
   if (archiveCategory?.type !== ChannelType.GuildCategory) {
-    console.error(
-      `❌ Archive category with ID ${config.channelIds.archiveCategory} not found in the guild.`
+    throw new Error(
+      `Archive category with ID ${config.channelIds.archiveCategory} not found in the guild.`
     );
-    return;
   }
 
   const archivedChannels = archiveCategory.children.cache;
@@ -35,10 +34,19 @@ export async function syncArchiveCategoryChannels(guild: Guild) {
     archivedChannels.map(archiveChannel)
   );
 
+  const failedReasons = [];
   for (const result of results) {
     if (result.status === 'rejected') {
-      console.error('Error archiving channel:', result.reason);
+      failedReasons.push(result.reason);
     }
+  }
+
+  if (failedReasons.length > 0) {
+    const errorMessages = failedReasons
+      .map((reason) => reason.message || reason)
+      .join('; ');
+    console.error(`Failed to archive some channels: ${errorMessages}`);
+    throw new Error(`Failed to archive some channels: ${errorMessages}`);
   }
 }
 export async function setArchivedPermissions(
@@ -111,7 +119,10 @@ export async function archiveChannel(channel: GuildChannel) {
     const renamedChannel = await channel.setName(archivedChannelName);
     await setArchivedPermissions(renamedChannel, true);
   } catch (error) {
-    console.error(`Error archiving channel ${channelName}:`, error);
+    // console.error(`Error archiving channel ${channelName}:`, error);
+    throw new Error(
+      `Error archiving channel ${channelName}: ${(error as Error).message}`
+    );
   } finally {
     processingChannels.delete(channel.id);
   }
