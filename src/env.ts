@@ -30,6 +30,7 @@ export const config = {
       : [],
     repel: requireEnv('REPEL_ROLE_ID'),
     regular: requireEnv('REGULAR_ROLE_ID'),
+    member: requireEnv('MEMBER_ROLE_ID'),
     a: optionalEnv('ROLE_A_ID'),
     b: optionalEnv('ROLE_B_ID'),
     c: optionalEnv('ROLE_C_ID'),
