@@ -2,7 +2,7 @@ import { Events } from 'discord.js';
 import { createEvent } from '@/common/events/create-event.js';
 import { config } from '@/env.js';
 import { initializeAdventScheduler } from '@/util/advent-scheduler.js';
-import { fetchAndCachePublicChannelsMessages } from '@/util/cache/channel-prefetch.js';
+import { fetchAndCachePublicChannelsMessages } from '@/util/channel-prefetch.js';
 import { syncGuidesToChannel } from '@/util/post-guides.js';
 import { leaveIfNotAllowedServer } from '@/util/server-guard.js';
 import { syncArchiveCategoryChannels } from '../archive-channels/util.js';
