@@ -1,7 +1,4 @@
-// start: HEAD
 export const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
-// end: HEAD
-// migrate: moderation tool
 import { type Message, MessageType, type PartialMessage } from 'discord.js';
 
 export type GuildMessage = Message<true>;
@@ -53,5 +50,3 @@ const normalizeText = (text: string) => {
     .split(/\s+/)
     .filter(Boolean);
 };
-
-// migrate end

@@ -1,5 +1,3 @@
-// @ts-nocheck
-// WARN: Await on describe??
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import type { Message } from 'discord.js';
