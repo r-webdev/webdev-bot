@@ -29,7 +29,7 @@ void describe('spam-detection/logs -> createLogTextContent', () => {
     } satisfies LogFunctionOptions<ContentBasedRule>;
 
     const logContent = createLogTextContent(options);
-    console.log(logContent);
+    // console.log(logContent);
 
     // Basic assertions to check if the log content includes expected information
     assert(logContent.includes('**Rule Broken:** Contains banned tag'));
