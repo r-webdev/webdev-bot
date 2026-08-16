@@ -65,11 +65,11 @@ export const readyEvent = createEvent(
     // Make sure all channels in the archived category are properly archived on startup
     try {
       const archivedCategory = guild.channels.cache.get(
-        config.channelIds.archivedCategory
+        config.channelIds.archiveCategory
       );
       if (archivedCategory?.type !== ChannelType.GuildCategory) {
         console.error(
-          `❌ Archived category with ID ${config.channelIds.archivedCategory} not found in the guild.`
+          `❌ Archived category with ID ${config.channelIds.archiveCategory} not found in the guild.`
         );
         return;
       }

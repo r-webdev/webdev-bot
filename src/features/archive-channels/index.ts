@@ -10,6 +10,8 @@ const PUBLIC_PERMISSIONS = [
   PermissionFlagsBits.Connect,
 ];
 
+const ARCHIVED_REGEX = /^archived-/;
+
 const processingChannels = new Set<string>();
 
 export default createEvent(
@@ -23,8 +25,8 @@ export default createEvent(
 
     // We only care about channels that are being moved to or out of the archived category
     if (
-      newChannel.parentId !== config.channelIds.archivedCategory &&
-      oldChannel.parentId !== config.channelIds.archivedCategory
+      newChannel.parentId !== config.channelIds.archiveCategory &&
+      oldChannel.parentId !== config.channelIds.archiveCategory
     ) {
       return;
     }
@@ -34,7 +36,7 @@ export default createEvent(
       return;
     }
 
-    if (newChannel.parentId === config.channelIds.archivedCategory) {
+    if (newChannel.parentId === config.channelIds.archiveCategory) {
       await archiveChannel(newChannel);
     } else {
       await unarchiveChannel(newChannel);
@@ -45,7 +47,7 @@ export default createEvent(
 export async function archiveChannel(channel: GuildChannel) {
   const channelName = channel.name;
 
-  const archivedChannelName = channelName.match(/^archived-/)
+  const archivedChannelName = channelName.match(ARCHIVED_REGEX)
     ? channelName
     : `archived-${channelName}`;
 
@@ -68,13 +70,11 @@ export async function archiveChannel(channel: GuildChannel) {
 async function unarchiveChannel(channel: GuildChannel) {
   const channelName = channel.name;
 
-  const regex = /^archived-/;
-
-  if (!channelName.match(regex)) {
+  if (!channelName.match(ARCHIVED_REGEX)) {
     return;
   }
 
-  const newChannelName = channelName.replace(regex, '');
+  const newChannelName = channelName.replace(ARCHIVED_REGEX, '');
 
   processingChannels.add(channel.id);
 
