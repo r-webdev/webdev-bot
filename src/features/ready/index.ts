@@ -1,11 +1,11 @@
-import { ChannelType, Events } from 'discord.js';
+import { Events } from 'discord.js';
 import { createEvent } from '@/common/events/create-event.js';
 import { config } from '@/env.js';
 import { initializeAdventScheduler } from '@/util/advent-scheduler.js';
 import { fetchAndCachePublicChannelsMessages } from '@/util/cache.js';
 import { syncGuidesToChannel } from '@/util/post-guides.js';
 import { leaveIfNotAllowedServer } from '@/util/server-guard.js';
-import { archiveChannel } from '../archive-channels/index.js';
+import { ensureArchivedChannelsAreProperlyArchived } from '../archive-channels/index.js';
 
 export const readyEvent = createEvent(
   {
@@ -64,20 +64,12 @@ export const readyEvent = createEvent(
 
     // Make sure all channels in the archived category are properly archived on startup
     try {
-      const archivedCategory = guild.channels.cache.get(
-        config.channelIds.archiveCategory
-      );
-      if (archivedCategory?.type !== ChannelType.GuildCategory) {
-        console.error(
-          `❌ Archived category with ID ${config.channelIds.archiveCategory} not found in the guild.`
-        );
-        return;
-      }
-
-      const archivedChannels = archivedCategory.children.cache;
-      await Promise.all(archivedChannels.map(archiveChannel));
+      await ensureArchivedChannelsAreProperlyArchived(guild);
     } catch (error) {
-      console.error('❌ Failed to archive channels on startup:', error);
+      console.error(
+        '❌ Failed to ensure archived channels are properly archived:',
+        error
+      );
     }
   }
 );

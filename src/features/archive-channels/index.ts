@@ -1,6 +1,12 @@
 import { createEvent } from '@/common/events/create-event.js';
 import { config } from '@/env.js';
-import { Events, PermissionFlagsBits, type GuildChannel } from 'discord.js';
+import {
+  ChannelType,
+  Events,
+  Guild,
+  PermissionFlagsBits,
+  type GuildChannel,
+} from 'discord.js';
 
 const PUBLIC_PERMISSIONS = [
   PermissionFlagsBits.SendMessages,
@@ -121,4 +127,28 @@ async function setArchivedPermissions(
       reason: `${archived ? 'Archiving' : 'Unarchiving'} channel ${channel.name}`,
     }
   );
+}
+
+export async function ensureArchivedChannelsAreProperlyArchived(guild: Guild) {
+  const archiveCategory = guild.channels.cache.get(
+    config.channelIds.archiveCategory
+  );
+
+  if (archiveCategory?.type !== ChannelType.GuildCategory) {
+    console.error(
+      `❌ Archive category with ID ${config.channelIds.archiveCategory} not found in the guild.`
+    );
+    return;
+  }
+
+  const archivedChannels = archiveCategory.children.cache;
+  const results = await Promise.allSettled(
+    archivedChannels.map(archiveChannel)
+  );
+
+  for (const result of results) {
+    if (result.status === 'rejected') {
+      console.error('Error archiving channel:', result.reason);
+    }
+  }
 }
