@@ -5,6 +5,7 @@ import { initializeAdventScheduler } from '@/util/advent-scheduler.js';
 import { fetchAndCachePublicChannelsMessages } from '@/util/cache/channel-prefetch.js';
 import { syncGuidesToChannel } from '@/util/post-guides.js';
 import { leaveIfNotAllowedServer } from '@/util/server-guard.js';
+import { syncArchiveCategoryChannels } from '../archive-channels/util.js';
 
 export const readyEvent = createEvent(
   {
@@ -20,11 +21,17 @@ export const readyEvent = createEvent(
       await leaveIfNotAllowedServer(guild);
     }
 
+    const guild = client.guilds.cache.get(config.discord.serverId);
+    if (!guild) {
+      console.error(
+        `❌ Bot is not in the configured server with ID ${config.discord.serverId}`
+      );
+      console.error('Please check your .env file or CI/CD configuration');
+      process.exit(1);
+    }
+
     if (config.fetchAndSyncMessages) {
-      const guild = client.guilds.cache.get(config.discord.serverId);
-      if (guild) {
-        await fetchAndCachePublicChannelsMessages(guild, true);
-      }
+      await fetchAndCachePublicChannelsMessages(guild, true);
 
       // Sync guides to channel
       try {
@@ -53,6 +60,16 @@ export const readyEvent = createEvent(
       initializeAdventScheduler(client, config.channelIds.adventOfCode);
     } catch (error) {
       console.error('❌ Failed to initialize Advent of Code scheduler:', error);
+    }
+
+    // Make sure all channels in the archived category are properly archived on startup
+    try {
+      await syncArchiveCategoryChannels(guild);
+    } catch (error) {
+      console.error(
+        '❌ Failed to ensure archived channels are properly archived:',
+        error
+      );
     }
   }
 );
