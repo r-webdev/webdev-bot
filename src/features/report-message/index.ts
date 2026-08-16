@@ -1,4 +1,5 @@
-import { createMessageContextMenuCommand } from '../../common/commands/create-commands.js';
+import { createMessageContextMenuCommand } from '@/common/commands/create-commands.js';
+import { config } from '@/env.js';
 import { ChannelType, Colors, EmbedBuilder, MessageFlags } from 'discord.js';
 
 export const reportMessage = createMessageContextMenuCommand({
@@ -10,9 +11,7 @@ export const reportMessage = createMessageContextMenuCommand({
       flags: MessageFlags.Ephemeral,
     });
 
-    const targetMessage = interaction.targetMessage;
     const guild = interaction.guild;
-    const reporter = interaction.user;
 
     if (!guild) {
       await interaction.editReply({
@@ -21,10 +20,12 @@ export const reportMessage = createMessageContextMenuCommand({
       return;
     }
 
-    try {
-      const channelId = '1430210468693282948';
-      const channel = guild.channels.cache.get(channelId);
+    const targetMessage = interaction.targetMessage;
+    const reporter = interaction.user;
+    const channelId = config.channelIds.spamDetection;
+    const channel = guild.channels.cache.get(channelId);
 
+    try {
       if (!channel || channel.type !== ChannelType.GuildText) {
         await interaction.editReply({
           content: 'Moderator channel not found or is not a text channel.',
