@@ -1,10 +1,5 @@
 import type { Message } from 'discord.js';
-
-// TODO: find a good place for this
-// import { MAX_RULE_TIMEFRAME } from "../events/spam-detection/constants.js";
-
-// WARN: This is incorrect and has a placeholder to temporarily satisfy the lsp
-const MAX_RULE_TIMEFRAME = 0;
+import { MAX_RULE_TIMEFRAME } from '@/features/spam-detection/constants.js';
 
 // O(1) Priority Queue implementation for LRU eviction
 class MinHeap {
