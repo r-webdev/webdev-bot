@@ -5,7 +5,7 @@ import { initializeAdventScheduler } from '@/util/advent-scheduler.js';
 import { fetchAndCachePublicChannelsMessages } from '@/util/cache.js';
 import { syncGuidesToChannel } from '@/util/post-guides.js';
 import { leaveIfNotAllowedServer } from '@/util/server-guard.js';
-import { ensureArchivedChannelsAreProperlyArchived } from '../archive-channels/index.js';
+import { syncArchiveCategoryChannels } from '../archive-channels/util.js';
 
 export const readyEvent = createEvent(
   {
@@ -64,7 +64,7 @@ export const readyEvent = createEvent(
 
     // Make sure all channels in the archived category are properly archived on startup
     try {
-      await ensureArchivedChannelsAreProperlyArchived(guild);
+      await syncArchiveCategoryChannels(guild);
     } catch (error) {
       console.error(
         '❌ Failed to ensure archived channels are properly archived:',
