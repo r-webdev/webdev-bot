@@ -1,5 +1,5 @@
 import type { Guild } from 'discord.js';
-import { getPublicChannels } from './channel.js';
+import { getPublicChannels } from '../channel.js';
 
 const PER_CHANNEL_CACHE_LIMIT = 100;
 export const cachedChannelsMap = new Set<string>();

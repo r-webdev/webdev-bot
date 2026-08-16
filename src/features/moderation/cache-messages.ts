@@ -4,7 +4,7 @@ import {
   PermissionsBitField,
 } from 'discord.js';
 import { createSlashCommand } from '../../common/commands/create-commands.js';
-import { fetchAndCachePublicChannelsMessages } from '../../util/cache.js';
+import { fetchAndCachePublicChannelsMessages } from '../../util/cache/channel-prefetch.js';
 
 export default createSlashCommand({
   data: {
