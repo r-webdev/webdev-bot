@@ -41,6 +41,7 @@ export const config = {
     showcase: requireEnv('SHOWCASE_CHANNEL_ID'),
     showcaseLogs: requireEnv('SHOWCASE_LOG_CHANNEL_ID'),
     showcaseRules: requireEnv('SHOWCASE_RULES_CHANNEL_ID'),
+    archiveCategory: requireEnv('ARCHIVE_CATEGORY_ID'),
   },
   onboarding: {
     channelId: optionalEnv('ONBOARDING_CHANNEL_ID'),
