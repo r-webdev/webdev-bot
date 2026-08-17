@@ -31,3 +31,11 @@ docker-compose.yml
 **/.terraform/
 *.tfstate
 *.tfstate.*
+
+# prisma
+/generated/prisma
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3

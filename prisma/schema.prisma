@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum OptionKey {
+  TAG_PREFIX
+  MAX_TAGS_PER_MESSAGE
+}
+
+model Options {
+  id    Int       @id @default(autoincrement())
+  key   OptionKey @unique
+  value String
+
+  @@map("options")
+}
+
+model Tag {
+  id             Int      @id @default(autoincrement())
+  content        String
+  desc           String
+  lastModifiedBy String
+  uses           Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now())
+  lastUsedAt     DateTime?
+
+  aliases TagAlias[]
+
+  @@index([desc])
+  @@index([uses])
+  @@map("tags")
+}
+
+model TagAlias {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  tagId     Int
+  tag       Tag      @relation(fields: [tagId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@index([tagId])
+  @@map("tag_aliases")
+}
+
+model UserBotMessages {
+  id        String   @id
+  userId    String
+  channelId String
+  expiresAt DateTime @default(dbgenerated("(datetime('now', '+7 days'))"))
+
+  @@index([expiresAt])
+  @@index([userId, channelId])
+  @@map("user_bot_messages")
+}
