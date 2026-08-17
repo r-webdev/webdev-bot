@@ -31,7 +31,7 @@ CREATE TABLE "user_bot_messages" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "userId" TEXT NOT NULL,
     "channelId" TEXT NOT NULL,
-    "expiresAt" DATETIME NOT NULL DEFAULT (datetime('now', '+7 days'))
+    "expiresAt" DATETIME NOT NULL
 );
 
 -- CreateIndex

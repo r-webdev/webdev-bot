@@ -1,6 +1,7 @@
 import type { GuildMember } from 'discord.js';
 import { prisma } from '@/db/prisma.js';
 import { isStaff } from '@/util/permissions.js';
+import { DAY } from '@/constants/time.js';
 
 const CLEANUP_INTERVAL_MS = 60 * 60 * 1000; // every hour
 
@@ -47,6 +48,7 @@ export const UserBotMessagesService = {
           channelId,
           id: messageId,
           userId,
+          expiresAt: new Date(Date.now() + 7 * DAY),
         },
       });
     } catch {}

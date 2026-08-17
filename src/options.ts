@@ -18,6 +18,11 @@ const OptionsDefaults = {
     type: 'number',
     displayName: 'Max Tags Per Message',
   },
+  [OptionKey.DAYS_TO_KEEP_TAGS]: {
+    value: '90',
+    type: 'number',
+    displayName: 'Days to Keep Tags',
+  },
 } as const satisfies Record<OptionKey, OptionValue>;
 
 export type OptionTypeOf<K extends OptionKey> =

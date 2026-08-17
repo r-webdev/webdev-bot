@@ -15,6 +15,7 @@ datasource db {
 enum OptionKey {
   TAG_PREFIX
   MAX_TAGS_PER_MESSAGE
+  DAYS_TO_KEEP_TAGS
 }
 
 model Options {
@@ -57,7 +58,7 @@ model UserBotMessages {
   id        String   @id
   userId    String
   channelId String
-  expiresAt DateTime @default(dbgenerated("(datetime('now', '+7 days'))"))
+  expiresAt DateTime
 
   @@index([expiresAt])
   @@index([userId, channelId])
