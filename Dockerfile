@@ -1,72 +1,52 @@
-# Base stage - Setup Node.js and pnpm
-# Node version is read from .nvmrc at build time via NODE_VERSION build arg
 ARG NODE_VERSION=22.20.0
 FROM node:${NODE_VERSION}-alpine AS base
-
-# Install pnpm
 RUN corepack enable && corepack prepare pnpm@10.17.1 --activate
-
 WORKDIR /app
 
-# Dependencies stage - Install production dependencies only
+# --- Production dependencies only ---
 FROM base AS deps
-
+RUN apk add --no-cache python3 make g++
+ENV PRISMA_SKIP_POSTINSTALL_GENERATE=1
 COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile --production
 
-RUN pnpm install --frozen-lockfile --production --ignore-scripts
-
-# Dev dependencies stage - Install all dependencies
+# --- Full dependencies (build tools included) ---
 FROM base AS deps-dev
-
+RUN apk add --no-cache python3 make g++
+ENV PRISMA_SKIP_POSTINSTALL_GENERATE=1
 COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 
-RUN pnpm install --frozen-lockfile --ignore-scripts
-
-# Build stage - Compile TypeScript
+# --- Build ---
 FROM deps-dev AS build
-
 COPY . .
-
+ENV DATABASE_URL="file:/tmp/build.db"
+RUN pnpm exec prisma generate
 RUN pnpm run build
 
-# Production stage - Minimal runtime image
+# --- Production runtime ---
 FROM base AS production
-
 ENV NODE_ENV=production
 
-# Copy production dependencies from deps stage
 COPY --from=deps /app/node_modules ./node_modules
+COPY --from=build /app/node_modules/.prisma ./node_modules/.prisma
 
-# Copy built application
 COPY --from=build /app/dist ./dist
 COPY package.json ./
-
-# Copy environment config file (public, non-secret)
 COPY .env.production ./
-
-# Copy static assets (guides, tips, etc.) from the build stage
 COPY --from=build /app/assets ./assets
+COPY --from=build /app/prisma ./prisma
+COPY --from=build /app/prisma.config.ts ./prisma.config.ts
 
-# Create data directory and set permissions for node user
 RUN mkdir -p /app/data && chown -R node:node /app/data
-
-# Run as non-root user for security
 USER node
-
 CMD ["node", "dist/index.js"]
 
-# Development stage - Full dev environment with hot reload
+# --- Development ---
 FROM deps-dev AS development
-
 ENV NODE_ENV=development
-
 COPY . .
-
-# Create data directory and set permissions for node user
+RUN pnpm exec prisma generate
 RUN mkdir -p /app/data && chown -R node:node /app/data
-
-# Run as non-root user for security
 USER node
-
 CMD ["pnpm", "run", "dev"]
-

@@ -1,58 +1,178 @@
-name: Build, Test and Deploy Discord Bot to VPS
-
+name: Deploy
 on:
   push:
-    branches: ['main']
-  workflow_dispatch: # Allow manual deployment
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      rollback_tag:
+        description: 'Image tag to redeploy (e.g. sha-abc1234). Leave blank for latest.'
+        required: false
+        default: ''
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  deploy:
+  lint:
+    name: Lint & Format Check
     runs-on: ubuntu-latest
-
+    if: github.event.inputs.rollback_tag == '' || github.event.inputs.rollback_tag == null
     steps:
-      - name: Checkout code
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Prisma generate (sanity check schema)
+        run: pnpm run prisma:generate
+        env:
+          DATABASE_URL: file:/tmp/ci.db
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Format
+        run: pnpm fmt:check
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+  build-and-push:
+    name: Build & Push Image
+    if: github.event.inputs.rollback_tag == '' || github.event.inputs.rollback_tag == null
+    needs: [lint]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Read Node version
-        run: |
-          NODE_VERSION=$(cat .nvmrc | sed 's/v//')
-          echo "NODE_VERSION=$NODE_VERSION" >> $GITHUB_ENV
+        id: node_version
+        run: echo "version=$(cat .nvmrc | tr -d 'v')" >> "$GITHUB_OUTPUT"
 
-      - name: Deploy to VPS
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_PAT }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,prefix=sha-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          target: production
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          build-args: |
+            NODE_VERSION=${{ steps.node_version.outputs.version }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    name: Deploy to VPS
+    runs-on: ubuntu-latest
+    needs: [build-and-push]
+    if: always() && (needs.build-and-push.result == 'success' || needs.build-and-push.result == 'skipped')
+    permissions:
+      packages: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Ensure deploy directory exists
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: mkdir -p /opt/webdev-bot/backups
+
+      - name: Copy config to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: 'docker-compose.yml,.env.production'
+          target: /opt/webdev-bot
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            cd /home/${{ secrets.VPS_USER }}/webdev-bot-deploy
+            set -eu
+            export IMAGE_NAME="${{ env.IMAGE_NAME }}"
+            export IMAGE_TAG="${{ github.event.inputs.rollback_tag != '' && github.event.inputs.rollback_tag || 'latest' }}"
+            mkdir -p /opt/webdev-bot/backups
+            cd /opt/webdev-bot
 
-            # Stash any local changes
-            git stash push -m "Auto-deploy $(date)" 2>/dev/null || true
-
-            # Pull latest changes
-            git checkout main
-            git pull origin main
-
-            # Read NODE_VERSION from .nvmrc
-            export NODE_VERSION=$(cat .nvmrc | sed 's/v//')
-            echo "Using Node version: $NODE_VERSION"
-
-            # Create .env file with secrets
-            # Public config comes from .env.production (committed to repo)
-            # NODE_ENV=production is set in docker-compose.yml
-            cat > .env << EOF
+            cat > .env <<'EOF'
             DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}
             CLIENT_ID=${{ secrets.CLIENT_ID }}
             EOF
+            chmod 600 .env
 
-            # Stop any existing containers
-            docker compose down || true
+            echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-            # Build and start production container with profile
-            # NODE_ENV=production is explicitly set in docker-compose.yml bot-prod service
-            docker compose --profile prod up -d --build
+            # Backup the SQLite DB before touching anything
+            if docker volume inspect webdev-bot_guides-data >/dev/null 2>&1; then
+              docker run --rm \
+                -v webdev-bot_guides-data:/data \
+                -v /opt/webdev-bot/backups:/backup \
+                alpine sh -c "if [ -f /data/db.sqlite ]; then cp /data/db.sqlite /backup/db-\$(date +%Y%m%d%H%M%S).sqlite; fi"
+              ls -1t /opt/webdev-bot/backups/*.sqlite 2>/dev/null | tail -n +15 | xargs -r rm --
+            fi
 
-            # Check status
-            echo "Deployment completed. Container status:"
+            docker compose config >/dev/null
+            docker compose pull bot migrate
+
+            if ! docker compose run --rm migrate; then
+              echo "Migration failed — leaving existing bot container untouched."
+              exit 1
+            fi
+
+            docker compose up -d --remove-orphans bot
+
+            sleep 8
+            if ! docker compose ps bot --status running | grep -q bot; then
+              echo "Bot container is not running after deploy!"
+              docker compose logs --tail=50 bot
+              exit 1
+            fi
+
             docker compose ps
+            docker image prune -f
