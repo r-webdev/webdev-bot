@@ -131,7 +131,7 @@ export const listTagsCommandHandler = async (
 
   await interaction.reply({
     components,
-    flags: MessageFlags.IsComponentsV2,
+    flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
   });
 };
 
