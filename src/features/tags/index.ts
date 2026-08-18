@@ -13,6 +13,7 @@ import { deleteTagCommandHandler } from './delete-tag.js';
 import { editTagCommandHandler } from './edit-tag.js';
 import { getTagInfoCommandHandler } from './get-tag-info.js';
 import { listTagsCommandHandler } from './list-tags.js';
+import { pruneTagsCommandHandler } from './prune-tags.js';
 import { topTagsCommandHandler } from './top-tags.js';
 
 export const tagCommand = createSlashCommand({
@@ -86,6 +87,22 @@ export const tagCommand = createSlashCommand({
           },
         ],
       },
+      {
+        name: 'prune',
+        type: ApplicationCommandOptionType.Subcommand,
+        description: 'List unused tags that can be pruned',
+        options: [
+          {
+            name: 'per_page',
+            type: ApplicationCommandOptionType.Integer,
+            description:
+              'How many prunable tags to show per page (default: 10, max: 25)',
+            required: false,
+            min_value: 1,
+            max_value: 25,
+          },
+        ],
+      },
     ],
   },
   async execute(interaction) {
@@ -97,6 +114,7 @@ export const tagCommand = createSlashCommand({
       top: topTagsCommandHandler,
       delete: deleteTagCommandHandler,
       info: getTagInfoCommandHandler,
+      prune: pruneTagsCommandHandler,
     };
 
     if (subCommand in handlersMap) {
