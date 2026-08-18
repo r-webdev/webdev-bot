@@ -40,6 +40,8 @@ model Tag {
 
   @@index([desc])
   @@index([uses])
+  @@index([lastUsedAt])
+  @@index([createdAt])
   @@map("tags")
 }
 
