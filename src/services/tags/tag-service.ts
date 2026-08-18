@@ -1,6 +1,13 @@
-import type { Tag, TagAlias } from '@generated/prisma/client.js';
+import {
+  OptionKey,
+  type Tag,
+  type TagAlias,
+} from '@generated/prisma/client.js';
+import type { TagWhereInput } from '@generated/prisma/models.js';
 import { prisma } from '@/db/prisma.js';
 import { TagsCache } from './tag-cache.js';
+import { getBotOption } from '@/options.js';
+import { DAY } from '@/constants/time.js';
 
 type FullTag = Tag & { aliases: TagAlias[] };
 
@@ -146,5 +153,63 @@ export const TagService = {
       TagsCache.addTag(tag);
     }
     return tags;
+  },
+
+  async getUnusedTags(perPage = 10): Promise<FullTag[]> {
+    const { tags } = await this.getPrunableTags(1, perPage);
+    return tags;
+  },
+
+  async getPrunableTags(
+    page: number,
+    perPage: number
+  ): Promise<{ tags: FullTag[]; totalCount: number }> {
+    const daysToKeepTags = getBotOption(OptionKey.DAYS_TO_KEEP_TAGS).value;
+    const where: TagWhereInput = {
+      OR: [
+        {
+          uses: 0,
+          lastUsedAt: null,
+          createdAt: { gt: new Date(Date.now() - daysToKeepTags * DAY) },
+        },
+        {
+          lastUsedAt: {
+            lt: new Date(Date.now() - daysToKeepTags * DAY),
+          },
+        },
+      ],
+    };
+
+    const [tags, totalCount] = await Promise.all([
+      prisma.tag.findMany({
+        where,
+        take: perPage,
+        skip: (page - 1) * perPage,
+        orderBy: { lastUsedAt: 'asc' },
+        include,
+      }),
+      prisma.tag.count({ where }),
+    ]);
+
+    for (const tag of tags) {
+      TagsCache.addTag(tag);
+    }
+    return { tags, totalCount };
+  },
+
+  async deleteMany(ids: number[]): Promise<number> {
+    if (ids.length === 0) {
+      return 0;
+    }
+
+    for (const id of ids) {
+      TagsCache.removeTagById(id);
+    }
+
+    await prisma.tagAlias.deleteMany({ where: { tagId: { in: ids } } });
+    const { count } = await prisma.tag.deleteMany({
+      where: { id: { in: ids } },
+    });
+    return count;
   },
 };
