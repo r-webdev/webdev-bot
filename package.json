@@ -22,7 +22,7 @@
     "fmt:check": "oxfmt --check",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test '**/*.test.ts'",
-    "test:ci": "NODE_ENV=test node --test dist/**/*.test.js",
+    "test:ci": "NODE_ENV=test node --test \"dist/**/*.test.js\"",
     "prepare": "husky || true",
     "pre-commit": "lint-staged",
     "sync-guides": "tsx src/scripts/sync-guides.ts",
