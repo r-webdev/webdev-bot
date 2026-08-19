@@ -33,7 +33,7 @@ docker-compose.yml
 *.tfstate.*
 
 # prisma
-/generated/prisma
+src/generated
 
 # Database files
 *.db

@@ -12,7 +12,7 @@
     "strict": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@generated/*": ["./generated/*"]
+      "@generated/*": ["./src/generated/*"]
     }
   },
   "include": ["src/**/*", "scripts/**/*", "prisma.config.ts"]
