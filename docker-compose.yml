@@ -1,6 +1,11 @@
 services:
   bot:
-    image: ghcr.io/${IMAGE_NAME}:${IMAGE_TAG:-latest}
+    image: webdev-bot:latest
+    build:
+      context: .
+      target: production
+      args:
+        NODE_VERSION: ${NODE_VERSION}
     container_name: webdev-bot
     restart: unless-stopped
     depends_on:
@@ -16,7 +21,7 @@ services:
       - guides-data:/app/data
 
   migrate:
-    image: ghcr.io/${IMAGE_NAME}:${IMAGE_TAG:-latest}
+    image: webdev-bot:latest
     environment:
       - DATABASE_URL=file:/app/data/db.sqlite
     env_file:
@@ -25,6 +30,7 @@ services:
     restart: 'no'
     volumes:
       - guides-data:/app/data
+    user: 'node'
 
 volumes:
   guides-data:
