@@ -148,7 +148,7 @@ const buildPruneTagsMessage = async ({
   return { components, totalCount, totalPages };
 };
 
-const parseHeader = (
+export const parseHeader = (
   components: readonly TopLevelComponent[]
 ): { page: number; perPage: number } | undefined => {
   const container = components[0];
@@ -166,7 +166,7 @@ const parseHeader = (
   return { page: Number(match[1]), perPage: Number(match[3]) };
 };
 
-const getCandidateAndKeepIds = (
+export const getCandidateAndKeepIds = (
   components: readonly TopLevelComponent[]
 ): { candidateIds: number[]; keepIds: number[] } => {
   const selectRow = components[1];
