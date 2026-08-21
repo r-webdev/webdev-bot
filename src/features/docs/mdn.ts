@@ -11,6 +11,7 @@ import { CHAIN_EMOJI } from '@/constants/emoji.js';
 import { clampText } from '@/util/text.js';
 import type { ProviderConfig } from './types.js';
 import { createBaseConfig, getSearchUrl, SEARCH_TERM, TERM } from './utils.js';
+import { customId } from '@/util/custom-id.js';
 
 type SearchItem = {
   mdn_url: string;
@@ -21,6 +22,8 @@ type SearchItem = {
 type SearchResult = {
   documents: SearchItem[];
 };
+
+const BASE_NAME = 'mdn';
 
 const baseConfig = createBaseConfig({
   color: 0x83_d0_f2,
@@ -54,7 +57,7 @@ export const mdnProvider: ProviderConfig<SearchItem> = {
     const selectRow =
       new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
         new StringSelectMenuBuilder()
-          .setCustomId('mdn-select')
+          .setCustomId(customId(BASE_NAME, 'select'))
           .setPlaceholder('Select 1 to 5 results')
           .setMinValues(1)
           .setMaxValues(Math.min(5, data.size))
@@ -72,7 +75,7 @@ export const mdnProvider: ProviderConfig<SearchItem> = {
         new ButtonBuilder()
           .setLabel('Cancel')
           .setStyle(ButtonStyle.Danger)
-          .setCustomId('mdn-cancel')
+          .setCustomId(customId(BASE_NAME, 'cancel'))
       );
 
     return { selectRow, buttonRow };

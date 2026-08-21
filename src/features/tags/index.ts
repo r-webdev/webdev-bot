@@ -16,9 +16,10 @@ import { listTagsCommandHandler } from './list-tags.js';
 import { pruneTagsCommandHandler } from './prune-tags.js';
 import { topTagsCommandHandler } from './top-tags.js';
 
+const BASE_NAME = 'tags';
 export const tagCommand = createSlashCommand({
   data: {
-    name: 'tags',
+    name: BASE_NAME,
     description: 'Manage tags in the server',
     options: [
       {
@@ -126,7 +127,7 @@ export const tagCommand = createSlashCommand({
 });
 
 const autoCompleteHandler: AutoCompleteSubmitInteraction = {
-  commandName: 'tags',
+  commandName: BASE_NAME,
   handler: async (interaction) => {
     const focusedOption = interaction.options.getFocused(true);
     if (focusedOption.name !== 'name') {

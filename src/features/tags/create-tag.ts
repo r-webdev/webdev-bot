@@ -20,6 +20,7 @@ import { getTagPrimaryAlias, isValidTagName } from '@/util/tags.js';
 import { canAccessTags } from './permissions.js';
 import { getCommandUser } from '@/util/member.js';
 
+const BASE_NAME = 'create-tag';
 export const createTagCommandHandler = async (
   interaction: ChatInputCommandInteraction
 ) => {
@@ -33,7 +34,7 @@ export const createTagCommandHandler = async (
   }
 
   const modal = new ModalBuilder()
-    .setCustomId(customId('create-tag', interaction.user.id, Date.now()))
+    .setCustomId(customId(BASE_NAME, interaction.user.id, Date.now()))
     .setTitle('Create Tag')
     .addLabelComponents(
       new LabelBuilder()
@@ -70,7 +71,7 @@ export const createTagCommandHandler = async (
 };
 
 const submissionHandler: ModalSubmitInteraction = {
-  commandName: 'create-tag',
+  commandName: BASE_NAME,
   handler: async (interaction) => {
     const commandUser = getCommandUser(interaction);
     if (!canAccessTags(commandUser)) {
