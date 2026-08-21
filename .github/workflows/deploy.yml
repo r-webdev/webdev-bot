@@ -15,7 +15,7 @@ concurrency:
 
 env:
   MAX_BACKUPS: 4
-  DIR: /opt/webdev-bot
+  DIR: /home/${{ secrets.VPS_USER }}/webdev-bot-deploy
 
 jobs:
   lint:
