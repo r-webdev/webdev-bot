@@ -97,7 +97,7 @@ const modalHandler: ModalSubmitInteraction = {
     const aliasesRaw = interaction.fields.getTextInputValue('aliases');
     const newAliases = aliasesRaw
       .split(',')
-      .map((s) => s.trim())
+      .map((string) => string.trim())
       .filter(Boolean);
     const content = interaction.fields.getTextInputValue('content');
     const desc = interaction.fields.getTextInputValue('desc');
