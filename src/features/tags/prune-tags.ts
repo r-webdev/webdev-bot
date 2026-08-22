@@ -167,7 +167,7 @@ export const parseHeader = (
   return { page: Number(match[1]), perPage: Number(match[3]) };
 };
 
-export const getCandidateAndPruneIds = (
+export const getPruneIds = (
   components: readonly TopLevelComponent[]
 ): number[] => {
   const selectRow = components[1];
@@ -212,9 +212,7 @@ const handlePruneExecution = async (
   buttonInteraction: ButtonInteraction,
   perPage: number
 ): Promise<void> => {
-  const pruneIds = getCandidateAndPruneIds(
-    buttonInteraction.message.components
-  );
+  const pruneIds = getPruneIds(buttonInteraction.message.components);
   const deleteIds = pruneIds;
 
   await buttonInteraction.deferUpdate();
