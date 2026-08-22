@@ -32,18 +32,22 @@ export type FullTag = Tag & { aliases: TagAlias[] };
 
 const PAGE_SIZE = 10;
 
-const buildTagWhere = (search?: string | null): TagWhereInput | undefined =>
-  search
-    ? {
-        OR: [
-          { aliases: { some: { name: { contains: search } } } },
-          { desc: { contains: search } },
-        ],
-      }
-    : undefined;
+const buildWhereCondition = (
+  search?: string | null
+): TagWhereInput | undefined => {
+  if (search === undefined || search === null || search.trim() === '') {
+    return undefined;
+  }
+  return {
+    OR: [
+      { aliases: { some: { name: { contains: search } } } },
+      { desc: { contains: search } },
+    ],
+  };
+};
 
 const fetchTags = async (page: number, search?: string | null) => {
-  const where = buildTagWhere(search);
+  const where = buildWhereCondition(search);
   const [tags, totalCount] = await Promise.all([
     prisma.tag.findMany({
       where,
