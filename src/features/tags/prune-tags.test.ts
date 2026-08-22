@@ -1,11 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { ComponentType, type TopLevelComponent } from 'discord.js';
-import {
-  clampPrunePerPage,
-  getCandidateAndKeepIds,
-  parseHeader,
-} from './prune-tags.js';
+import { clampPrunePerPage, getPruneIds, parseHeader } from './prune-tags.js';
 
 const asComponents = (value: unknown): readonly TopLevelComponent[] =>
   value as readonly TopLevelComponent[];
@@ -72,7 +68,7 @@ void describe('parseHeader', () => {
   });
 });
 
-void describe('getCandidateAndKeepIds', () => {
+void describe('getPruneIds', () => {
   const withSelectOptions = (options: { value: string; default?: boolean }[]) =>
     asComponents([
       { type: ComponentType.Container, components: [] },
@@ -82,43 +78,34 @@ void describe('getCandidateAndKeepIds', () => {
       },
     ]);
 
-  void it('returns all candidate ids and only the kept ids as keepIds', () => {
+  void it('returns only the pruned ids (selected options)', () => {
     const components = withSelectOptions([
       { value: '1', default: false },
       { value: '2', default: true },
       { value: '3', default: true },
     ]);
 
-    assert.deepEqual(getCandidateAndKeepIds(components), {
-      candidateIds: [1, 2, 3],
-      keepIds: [2, 3],
-    });
+    assert.deepEqual(getPruneIds(components), [2, 3]);
   });
 
-  void it('returns empty arrays when the select row is missing', () => {
+  void it('returns empty array when the select row is missing', () => {
     const components = asComponents([
       { type: ComponentType.Container, components: [] },
     ]);
 
-    assert.deepEqual(getCandidateAndKeepIds(components), {
-      candidateIds: [],
-      keepIds: [],
-    });
+    assert.deepEqual(getPruneIds(components), []);
   });
 
-  void it('returns empty arrays when the second component is not an action row', () => {
+  void it('returns empty array when the second component is not an action row', () => {
     const components = asComponents([
       { type: ComponentType.Container, components: [] },
       { type: ComponentType.TextDisplay, content: 'not a row' },
     ]);
 
-    assert.deepEqual(getCandidateAndKeepIds(components), {
-      candidateIds: [],
-      keepIds: [],
-    });
+    assert.deepEqual(getPruneIds(components), []);
   });
 
-  void it('returns empty arrays when the action row does not contain a select menu', () => {
+  void it('returns empty array when the action row does not contain a select menu', () => {
     const components = asComponents([
       { type: ComponentType.Container, components: [] },
       {
@@ -127,9 +114,6 @@ void describe('getCandidateAndKeepIds', () => {
       },
     ]);
 
-    assert.deepEqual(getCandidateAndKeepIds(components), {
-      candidateIds: [],
-      keepIds: [],
-    });
+    assert.deepEqual(getPruneIds(components), []);
   });
 });
