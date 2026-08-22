@@ -97,7 +97,7 @@ const buildPruneTagsMessage = async ({
     .addSeparatorComponents(new SeparatorBuilder())
     .addTextDisplayComponents(
       new TextDisplayBuilder().setContent(
-        `-# Total prunable: ${totalCount} | Select tags to KEEP below, then press Prune`
+        `-# Total prunable: ${totalCount} | Select tags to PRUNE below, then press Prune`
       )
     )
     .addActionRowComponents(
@@ -120,11 +120,11 @@ const buildPruneTagsMessage = async ({
   const components: PruneTagsMessageOutput['components'] = [container];
 
   if (tags.length > 0) {
-    const keepRow =
+    const selectRow =
       new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
         new StringSelectMenuBuilder()
-          .setCustomId(customId(PRUNE_TAGS_COMMAND_NAME, 'keep'))
-          .setPlaceholder('Select tags to KEEP (excludes them from pruning)')
+          .setCustomId(customId(PRUNE_TAGS_COMMAND_NAME, 'prune'))
+          .setPlaceholder('Select tags to PRUNE')
           .setMinValues(0)
           .setMaxValues(tags.length)
           .addOptions(
@@ -135,7 +135,7 @@ const buildPruneTagsMessage = async ({
             )
           )
       );
-    const pruneRow =
+    const executeRow =
       new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
         new ButtonBuilder()
           .setCustomId(customId(PRUNE_TAGS_COMMAND_NAME, 'execute'))
@@ -143,7 +143,7 @@ const buildPruneTagsMessage = async ({
           .setEmoji('🗑️')
           .setStyle(ButtonStyle.Danger)
       );
-    components.push(keepRow, pruneRow);
+    components.push(selectRow, executeRow);
   }
 
   return { components, totalCount, totalPages };
@@ -167,22 +167,21 @@ export const parseHeader = (
   return { page: Number(match[1]), perPage: Number(match[3]) };
 };
 
-export const getCandidateAndKeepIds = (
+export const getCandidateAndPruneIds = (
   components: readonly TopLevelComponent[]
-): { candidateIds: number[]; keepIds: number[] } => {
+): number[] => {
   const selectRow = components[1];
   if (selectRow?.type !== ComponentType.ActionRow) {
-    return { candidateIds: [], keepIds: [] };
+    return [];
   }
   const select = selectRow.components[0];
   if (select?.type !== ComponentType.StringSelect) {
-    return { candidateIds: [], keepIds: [] };
+    return [];
   }
-  const candidateIds = select.options.map((option) => Number(option.value));
-  const keepIds = select.options
+  const pruneIds = select.options
     .filter((option) => option.default)
     .map((option) => Number(option.value));
-  return { candidateIds, keepIds };
+  return pruneIds;
 };
 
 export const pruneTagsCommandHandler = async (
@@ -213,11 +212,10 @@ const handlePruneExecution = async (
   buttonInteraction: ButtonInteraction,
   perPage: number
 ): Promise<void> => {
-  const { candidateIds, keepIds } = getCandidateAndKeepIds(
+  const pruneIds = getCandidateAndPruneIds(
     buttonInteraction.message.components
   );
-  const keepSet = new Set(keepIds);
-  const deleteIds = candidateIds.filter((id) => !keepSet.has(id));
+  const deleteIds = pruneIds;
 
   await buttonInteraction.deferUpdate();
 
@@ -306,10 +304,10 @@ const handleSelectSubmission: SelectMenuSubmitInteraction = {
       return;
     }
 
-    const keepSet = new Set(selectInteraction.values);
+    const pruneSet = new Set(selectInteraction.values);
     const updatedSelect = new StringSelectMenuBuilder()
       .setCustomId(selectInteraction.customId)
-      .setPlaceholder('Select tags to KEEP (excludes them from pruning)')
+      .setPlaceholder('Select tags to PRUNE')
       .setMinValues(0)
       .setMaxValues(selectInteraction.component.options.length)
       .addOptions(
@@ -317,7 +315,7 @@ const handleSelectSubmission: SelectMenuSubmitInteraction = {
           new StringSelectMenuOptionBuilder()
             .setLabel(option.label)
             .setValue(option.value)
-            .setDefault(keepSet.has(option.value))
+            .setDefault(pruneSet.has(option.value))
         )
       );
 
