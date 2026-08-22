@@ -51,20 +51,24 @@ export const clampPrunePerPage = (perPage: number | null): number => {
   return Math.min(Math.max(perPage, 1), MAX_PER_PAGE);
 };
 
-const buildPruneTagsMessage = async ({
-  page,
-  perPage,
-}: {
+type PruneTagsMessageInput = {
   page: number;
   perPage: number;
-}): Promise<{
+};
+
+type PruneTagsMessageOutput = {
   components: (
     | ContainerBuilder
     | ActionRowBuilder<MessageActionRowComponentBuilder>
   )[];
   totalCount: number;
   totalPages: number;
-}> => {
+};
+
+const buildPruneTagsMessage = async ({
+  page,
+  perPage,
+}: PruneTagsMessageInput): Promise<PruneTagsMessageOutput> => {
   const { tags, totalCount } = await TagService.getPrunableTags(page, perPage);
   const totalPages = Math.max(1, Math.ceil(totalCount / perPage));
   const offset = (page - 1) * perPage;
@@ -113,10 +117,7 @@ const buildPruneTagsMessage = async ({
       )
     );
 
-  const components: (
-    | ContainerBuilder
-    | ActionRowBuilder<MessageActionRowComponentBuilder>
-  )[] = [container];
+  const components: PruneTagsMessageOutput['components'] = [container];
 
   if (tags.length > 0) {
     const keepRow =
