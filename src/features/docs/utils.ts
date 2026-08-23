@@ -101,9 +101,18 @@ export const executeDocCommand = async (
 };
 
 export const NON_BASELINE_FEATURES = [
+  'display-grid-lanes',
+  'grid-lanes',
+  'navigator-modelcontext',
   'numeric-seperators',
   'open-closed',
+  'rect-xywx',
   'single-color-gradients',
+  'text-wrap-mode',
+  'text-wrap-nowrap',
+  'text-wrap-stable',
+  'text-wrap-style',
+  'web-install',
 ];
 export const getBaselineFeatures = (
   originalFeatures: Record<string, unknown>,
