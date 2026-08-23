@@ -40,7 +40,7 @@ FROM deps-dev AS build
 # Keeping them separate allows Prisma generate to be cached
 # when only application source code changes.
 COPY prisma ./prisma
-COPY prisma.config.ts ./
+COPY prisma.config.ts tsconfig.json ./
 COPY src/loadEnvFile.ts ./src/loadEnvFile.ts
 
 ENV DATABASE_URL="file:/tmp/build.db"
