@@ -6,8 +6,9 @@ import {
 import { commands } from '@/common/commands/index.js';
 import { config } from '@/env.js';
 import { pathToFileURL } from 'node:url';
-console.log('Deploying commands...');
+
 export async function deployCommands() {
+  console.log('Deploying commands...');
   const commandData = [...commands.values()].map((command) => command.data);
 
   const rest = new REST({ version: '10' }).setToken(config.discord.token);
