@@ -1,72 +1,94 @@
-# Base stage - Setup Node.js and pnpm
-# Node version is read from .nvmrc at build time via NODE_VERSION build arg
 ARG NODE_VERSION=22.20.0
 FROM node:${NODE_VERSION}-alpine AS base
 
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@10.17.1 --activate
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+
+RUN corepack enable
 
 WORKDIR /app
 
-# Dependencies stage - Install production dependencies only
+# --- Production dependencies only ---
 FROM base AS deps
 
+RUN apk add --no-cache python3 make g++
+
+ENV PRISMA_SKIP_POSTINSTALL_GENERATE=1
+
 COPY package.json pnpm-lock.yaml ./
 
-RUN pnpm install --frozen-lockfile --production --ignore-scripts
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile --production
 
-# Dev dependencies stage - Install all dependencies
+# --- Full dependencies ---
 FROM base AS deps-dev
 
+RUN apk add --no-cache python3 make g++
+
+ENV PRISMA_SKIP_POSTINSTALL_GENERATE=1
+
 COPY package.json pnpm-lock.yaml ./
 
-RUN pnpm install --frozen-lockfile --ignore-scripts
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile
 
-# Build stage - Compile TypeScript
+# --- Build ---
 FROM deps-dev AS build
+
+# These files are required by prisma.config.ts.
+# Keeping them separate allows Prisma generate to be cached
+# when only application source code changes.
+COPY prisma ./prisma
+COPY prisma.config.ts ./
+COPY src/loadEnvFile.ts ./src/loadEnvFile.ts
+
+ENV DATABASE_URL="file:/tmp/build.db"
+
+RUN pnpm exec prisma generate
 
 COPY . .
 
 RUN pnpm run build
 
-# Production stage - Minimal runtime image
+# --- Production runtime ---
 FROM base AS production
 
 ENV NODE_ENV=production
 
-# Copy production dependencies from deps stage
-COPY --from=deps /app/node_modules ./node_modules
+# Production dependencies
+COPY --from=deps --chown=node:node \
+    /app/node_modules ./node_modules
 
-# Copy built application
+COPY --from=build --chown=node:node \
+    /app/src/generated/prisma ./src/generated/prisma
+
 COPY --from=build /app/dist ./dist
 COPY package.json ./
-
-# Copy environment config file (public, non-secret)
 COPY .env.production ./
 
-# Copy static assets (guides, tips, etc.) from the build stage
 COPY --from=build /app/assets ./assets
+COPY --from=build /app/prisma ./prisma
+COPY --from=build /app/prisma.config.ts ./prisma.config.ts
+COPY --from=build /app/src/loadEnvFile.ts ./src/loadEnvFile.ts
 
-# Create data directory and set permissions for node user
 RUN mkdir -p /app/data && chown -R node:node /app/data
 
-# Run as non-root user for security
 USER node
 
 CMD ["node", "dist/index.js"]
 
-# Development stage - Full dev environment with hot reload
+# --- Development ---
 FROM deps-dev AS development
 
 ENV NODE_ENV=development
 
 COPY . .
 
-# Create data directory and set permissions for node user
+RUN pnpm exec prisma generate
+
 RUN mkdir -p /app/data && chown -R node:node /app/data
 
-# Run as non-root user for security
 USER node
 
 CMD ["pnpm", "run", "dev"]
-

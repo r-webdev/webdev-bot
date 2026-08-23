@@ -12,6 +12,7 @@ import { CHAIN_EMOJI } from '@/constants/emoji.js';
 import { clampText } from '@/util/text.js';
 import type { ProviderConfig } from './types.js';
 import { createBaseConfig, getSearchUrl, SEARCH_TERM, TERM } from './utils.js';
+import { customId } from '@/util/custom-id.js';
 
 type SearchItem = {
   name: string;
@@ -30,6 +31,8 @@ type SearchResult = {
     package: SearchItem;
   }>;
 };
+
+const BASE_NAME = 'npm';
 
 const baseConfig = createBaseConfig({
   color: 0xfb_3e_44,
@@ -63,7 +66,7 @@ export const npmProvider: ProviderConfig<SearchItem> = {
     const selectRow =
       new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
         new StringSelectMenuBuilder()
-          .setCustomId('npm-select')
+          .setCustomId(customId(BASE_NAME, 'select'))
           .setPlaceholder('Select a package')
           .setMinValues(1)
           .setMaxValues(1)
@@ -79,7 +82,7 @@ export const npmProvider: ProviderConfig<SearchItem> = {
     const buttonRow =
       new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
         new ButtonBuilder()
-          .setCustomId('npm-cancel')
+          .setCustomId(customId(BASE_NAME, 'cancel'))
           .setLabel('Cancel')
           .setStyle(ButtonStyle.Danger)
       );
