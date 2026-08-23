@@ -15,6 +15,8 @@ export const setOptionHandler = async (
       components: [ErrorMessages.User.MissingPermissions],
       flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
     });
+
+    return;
   }
 
   const optionKey = interaction.options.getString('option', true) as OptionKey;
