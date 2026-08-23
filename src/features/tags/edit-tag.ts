@@ -73,7 +73,7 @@ export const editTagCommandHandler = async (
             .setCustomId('desc')
             .setStyle(TextInputStyle.Short)
             .setRequired(true)
-            .setValue(tag.desc)
+            .setValue(tag.description)
         ),
       new LabelBuilder()
         .setLabel('Content')

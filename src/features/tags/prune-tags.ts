@@ -79,7 +79,7 @@ const buildPruneTagsMessage = async ({
       const lastUsed = tag.lastUsedAt
         ? time(tag.lastUsedAt, 'R')
         : 'never used';
-      return `${index + offset + 1}) **${primaryName}** • ${clampText(tag.desc, 100)} • ${tag.uses} use${tag.uses === 1 ? '' : 's'} • last used ${lastUsed}`;
+      return `${index + offset + 1}) **${primaryName}** • ${clampText(tag.description, 100)} • ${tag.uses} use${tag.uses === 1 ? '' : 's'} • last used ${lastUsed}`;
     })
     .join('\n');
 

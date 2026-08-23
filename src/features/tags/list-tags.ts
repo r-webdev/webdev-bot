@@ -41,7 +41,7 @@ const buildWhereCondition = (
   return {
     OR: [
       { aliases: { some: { name: { contains: search } } } },
-      { desc: { contains: search } },
+      { description: { contains: search } },
     ],
   };
 };
@@ -80,7 +80,7 @@ export const buildListTagsComponents = (
   const tagLines = tags
     .map((tag, index) => {
       const primaryName = getTagPrimaryAlias(tag);
-      return `${index + offset + 1}) **${primaryName}** • ${clampText(tag.desc, 120)} ${tag.uses > 0 ? `• Used **${tag.uses}x**` : ''}`;
+      return `${index + offset + 1}) **${primaryName}** • ${clampText(tag.description, 120)} ${tag.uses > 0 ? `• Used **${tag.uses}x**` : ''}`;
     })
     .join('\n');
 

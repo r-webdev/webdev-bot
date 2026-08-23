@@ -56,7 +56,7 @@ export const TagService = {
     const tag = await prisma.tag.create({
       data: {
         content: data.content,
-        desc: data.desc,
+        description: data.desc,
         lastModifiedBy: data.userId,
         aliases: {
           create: data.aliases.map((name) => ({ name })),

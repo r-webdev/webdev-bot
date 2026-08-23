@@ -36,7 +36,7 @@ export const getTagInfoCommandHandler = async (
     .addSeparatorComponents((separator) => separator.setDivider(true))
     .addTextDisplayComponents((textDisplay) =>
       textDisplay.setContent(
-        [`**uses:** ${tag.uses}`, ` `, tag.desc].join('\n')
+        [`**uses:** ${tag.uses}`, ` `, tag.description].join('\n')
       )
     )
     .addSeparatorComponents((separator) => separator.setDivider(true))
