@@ -25,7 +25,9 @@
     "prepare": "husky",
     "pre-commit": "lint-staged",
     "sync-guides": "tsx src/scripts/sync-guides.ts",
-    "sync-guides:init": "tsx src/scripts/sync-guides.ts --initialize"
+    "sync-guides:init": "tsx src/scripts/sync-guides.ts --initialize",
+    "agent-ready": "bash scripts/agent-ready.sh",
+    "link-agent-skills": "bash scripts/link-agent-skills.sh"
   },
   "dependencies": {
     "discord.js": "^14.26.4",

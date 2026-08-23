@@ -202,13 +202,19 @@ Package manager is **pnpm** (see `packageManager` field in `package.json`). Do n
 
 Project skills live in `.agents/skills/`. Each skill is a `SKILL.md` file with step-by-step workflow instructions. These are tool-agnostic — any agent should read and follow them when relevant.
 
-Some agents only discover skills from their own directory. After cloning, link skills for your agent:
+After cloning, prepare the repository for your agent:
 
 ```bash
-pnpm link-agent-skills claude   # .claude/skills -> .agents/skills
-pnpm link-agent-skills cursor   # .cursor/skills -> .agents/skills
-pnpm link-agent-skills copilot  # .github/skills -> .agents/skills
-pnpm link-agent-skills codex    # .codex/skills -> .agents/skills
+pnpm agent-ready claude
+pnpm agent-ready cursor
+pnpm agent-ready copilot
+pnpm agent-ready codex
+```
+
+Pass `--skills` to link skills only, skipping other setup steps:
+
+```bash
+pnpm agent-ready claude --skills   # .claude/skills -> .agents/skills
 ```
 
 Agent-specific skill directories are gitignored; `.agents/skills/` is the canonical source committed to the repository. Cursor and Codex also read `.agents/skills/` directly — linking for those agents is optional and the script will ask for confirmation.

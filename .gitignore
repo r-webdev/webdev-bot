@@ -27,6 +27,12 @@ advent-of-code-tracker.json
 # Docker
 docker-compose.yml
 
+# Agent-specific skill symlinks (canonical source: .agents/skills/)
+.claude/
+.cursor/
+.github/skills/
+.codex/
+
 # terraform
 **/.terraform/
 *.tfstate
