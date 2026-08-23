@@ -195,6 +195,14 @@ pnpm deploy        # deploy Discord slash commands
 
 Package manager is **pnpm** (see `packageManager` field in `package.json`). Do not use npm or yarn.
 
+## Skills
+
+Project skills live in `.agent/skills/`. Each skill is a `SKILL.md` file with step-by-step workflow instructions. These are tool-agnostic — any agent should read and follow them when relevant.
+
+| Skill | Use when |
+|-------|----------|
+| [plan-github-issue](.agent/skills/plan-github-issue/SKILL.md) | Planning work from a GitHub issue (provide issue number or URL) |
+
 ## General Guidelines
 
 - Read existing code in the area you are changing before writing new code.
