@@ -9,7 +9,7 @@ CREATE TABLE "options" (
 CREATE TABLE "tags" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "content" TEXT NOT NULL,
-    "desc" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
     "lastModifiedBy" TEXT NOT NULL,
     "uses" INTEGER NOT NULL DEFAULT 0,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -38,10 +38,16 @@ CREATE TABLE "user_bot_messages" (
 CREATE UNIQUE INDEX "options_key_key" ON "options"("key");
 
 -- CreateIndex
-CREATE INDEX "tags_desc_idx" ON "tags"("desc");
+CREATE INDEX "tags_description_idx" ON "tags"("description");
 
 -- CreateIndex
 CREATE INDEX "tags_uses_idx" ON "tags"("uses");
+
+-- CreateIndex
+CREATE INDEX "tags_lastUsedAt_idx" ON "tags"("lastUsedAt");
+
+-- CreateIndex
+CREATE INDEX "tags_createdAt_idx" ON "tags"("createdAt");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "tag_aliases_name_key" ON "tag_aliases"("name");

@@ -24,18 +24,18 @@ model Options {
 
 // Tags that can be used in messages. Each tag has a description and a usage count.
 model Tag {
-  id             Int      @id @default(autoincrement())
+  id             Int       @id @default(autoincrement())
   content        String
-  desc           String
+  description    String
   lastModifiedBy String
-  uses           Int      @default(0)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @default(now())
+  uses           Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @default(now())
   lastUsedAt     DateTime?
 
   aliases TagAlias[]
 
-  @@index([desc])
+  @@index([description])
   @@index([uses])
   @@index([lastUsedAt])
   @@index([createdAt])
