@@ -147,9 +147,12 @@ If something seems missing from config, ask a maintainer rather than adding a ne
 
 ### Environment Variables
 
-- Do **not** open, read, or reference `.env`, `.env.*`, or similar secret files.
-- Use `src/env.ts` as the single source of truth for environment configuration.
-- If a needed variable is not defined there, ask to add it to `src/env.ts` instead of reading `.env` files.
+- Do **not** open, read, or reference any files matching:
+  - `.env`
+  - `.env.*`
+  - `.env*`
+- Treat `src/env.ts` as the only allowed source of environment configuration. Use it whenever environment info is required.
+- If a needed value appears only in a `.env*` file, stop and ask to add it to `src/env.ts` instead of reading the `.env*` file.
 
 ## Code Quality
 
@@ -197,11 +200,22 @@ Package manager is **pnpm** (see `packageManager` field in `package.json`). Do n
 
 ## Skills
 
-Project skills live in `.agent/skills/`. Each skill is a `SKILL.md` file with step-by-step workflow instructions. These are tool-agnostic — any agent should read and follow them when relevant.
+Project skills live in `.agents/skills/`. Each skill is a `SKILL.md` file with step-by-step workflow instructions. These are tool-agnostic — any agent should read and follow them when relevant.
+
+Some agents only discover skills from their own directory. After cloning, link skills for your agent:
+
+```bash
+pnpm link-agent-skills claude   # .claude/skills -> .agents/skills
+pnpm link-agent-skills cursor   # .cursor/skills -> .agents/skills
+pnpm link-agent-skills copilot  # .github/skills -> .agents/skills
+pnpm link-agent-skills codex    # .codex/skills -> .agents/skills
+```
+
+Agent-specific skill directories are gitignored; `.agents/skills/` is the canonical source committed to the repository. Cursor and Codex also read `.agents/skills/` directly — linking for those agents is optional and the script will ask for confirmation.
 
 | Skill | Use when |
 |-------|----------|
-| [plan-github-issue](.agent/skills/plan-github-issue/SKILL.md) | Planning work from a GitHub issue (provide issue number or URL) |
+| [plan-github-issue](.agents/skills/plan-github-issue/SKILL.md) | Planning work from a GitHub issue (provide issue number or URL) |
 
 ## General Guidelines
 
