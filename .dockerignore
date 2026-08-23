@@ -4,6 +4,9 @@ node_modules/
 # Build output
 dist/
 
+# Prisma generated client (regenerated fresh during build; a stale host copy would clobber it via `COPY . .`)
+src/generated/
+
 # Environment files
 .env
 .env.*
