@@ -41,15 +41,15 @@ Planning Progress:
 Run the fetch script from the repository root:
 
 ```bash
-.agent/skills/plan-github-issue/scripts/fetch-github-issue.sh <issue-number-or-url> [issue-url-or-number]
+.agents/skills/plan-github-issue/scripts/fetch-github-issue.sh <issue-number-or-url> [issue-url-or-number]
 ```
 
 Examples:
 
 ```bash
-.agent/skills/plan-github-issue/scripts/fetch-github-issue.sh 86
-.agent/skills/plan-github-issue/scripts/fetch-github-issue.sh https://github.com/r-webdev/webdev-bot/issues/86
-.agent/skills/plan-github-issue/scripts/fetch-github-issue.sh 86 https://github.com/r-webdev/webdev-bot/issues/86
+.agents/skills/plan-github-issue/scripts/fetch-github-issue.sh 86
+.agents/skills/plan-github-issue/scripts/fetch-github-issue.sh https://github.com/r-webdev/webdev-bot/issues/86
+.agents/skills/plan-github-issue/scripts/fetch-github-issue.sh 86 https://github.com/r-webdev/webdev-bot/issues/86
 ```
 
 Read the full script output. Do not guess issue content.
