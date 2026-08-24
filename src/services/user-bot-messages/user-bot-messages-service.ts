@@ -2,8 +2,8 @@ import type { GuildMember } from 'discord.js';
 import { prisma } from '@/db/prisma.js';
 import { isStaff } from '@/util/permissions.js';
 import { DAY } from '@/constants/time.js';
-
-const CLEANUP_INTERVAL_MS = 60 * 60 * 1000; // every hour
+import { getBotOption } from '@/options.js';
+import { OptionKey } from '@/generated/prisma/enums.js';
 
 export const UserBotMessagesService = {
   async deleteUserBotMessage({
@@ -65,6 +65,9 @@ export const UserBotMessagesService = {
     };
 
     void cleanup();
-    setInterval(cleanup, CLEANUP_INTERVAL_MS);
+    const daysToKeep = getBotOption(
+      OptionKey.DAYS_TO_KEEP_USER_BOT_MESSAGES
+    ).value;
+    setInterval(cleanup, daysToKeep * DAY);
   },
 };
