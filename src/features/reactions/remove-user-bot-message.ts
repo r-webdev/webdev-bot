@@ -12,13 +12,16 @@ export const removeUserBotMessage: (
   ) {
     return;
   }
+
   if (reaction.message.author?.id !== user.client.user.id) {
     return;
   }
+
   const guild = reaction.message.guild;
   if (guild === null) {
     return;
   }
+
   let member: GuildMember;
   try {
     member =
@@ -26,11 +29,13 @@ export const removeUserBotMessage: (
   } catch {
     return;
   }
+
   try {
     const deleted = await UserBotMessagesService.deleteUserBotMessage({
       messageId: reaction.message.id,
       user: member,
     });
+
     if (deleted) {
       await reaction.message.delete();
     }
