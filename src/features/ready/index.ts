@@ -6,6 +6,7 @@ import { fetchAndCachePublicChannelsMessages } from '@/util/cache.js';
 import { syncGuidesToChannel } from '@/util/post-guides.js';
 import { leaveIfNotAllowedServer } from '@/util/server-guard.js';
 import { syncArchiveCategoryChannels } from '../archive-channels/util.js';
+import { UserBotMessagesService } from '@/services/user-bot-messages/user-bot-messages-service.js';
 
 export const readyEvent = createEvent(
   {
@@ -71,5 +72,8 @@ export const readyEvent = createEvent(
         error
       );
     }
+
+    // Start the cleanup interval for expired user bot messages
+    void UserBotMessagesService.startExpiredMessageCleanup();
   }
 );
