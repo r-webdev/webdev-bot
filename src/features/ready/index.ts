@@ -73,7 +73,6 @@ export const readyEvent = createEvent(
       );
     }
 
-    // Start the cleanup interval for expired user bot messages
     void UserBotMessagesService.startExpiredMessageCleanup();
   }
 );
