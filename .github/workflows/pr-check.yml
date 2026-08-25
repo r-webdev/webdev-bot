@@ -10,7 +10,7 @@ on:
 
 jobs:
   main:
-    name: Validate PR title
+    name: Validate Pull Request Title
     runs-on: ubuntu-slim
     permissions:
       pull-requests: read
