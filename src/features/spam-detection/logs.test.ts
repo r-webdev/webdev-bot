@@ -27,9 +27,7 @@ const options = {
 void describe('spam-detection/logs -> createLogTextContent', () => {
   void it('should create log content for a content-based rule', () => {
     const logContent = createLogTextContent(options);
-    // console.log(logContent);
 
-    // Basic assertions to check if the log content includes expected information
     assert(logContent.includes('**Rule Broken:** Contains banned tag'));
     assert(logContent.includes('**User:** <@1>'));
     assert(logContent.includes('**Flagged Message:**'));
