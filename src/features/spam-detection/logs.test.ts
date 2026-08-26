@@ -5,27 +5,27 @@ import { HOUR } from '../../constants/time.js';
 import { createLogTextContent, type LogFunctionOptions } from './logs.js';
 import type { ContentBasedRule } from './rules-config.js';
 
+// Mock options for a content-based rule
+const options = {
+  rule: {
+    type: 'contentBased',
+    isBrokenBy: () => true,
+    action: async () => {},
+  },
+  messages: [
+    {
+      content: 'This message contains a banned tag',
+      channelId: '123',
+      author: { id: '1' },
+    },
+  ] as Message[],
+  deletedMessagesCount: 1,
+  reason: 'Contains banned tag',
+  muteDuration: 1 * HOUR,
+} satisfies LogFunctionOptions<ContentBasedRule>;
+
 void describe('spam-detection/logs -> createLogTextContent', () => {
   void it('should create log content for a content-based rule', () => {
-    // Mock options for a content-based rule
-    const options = {
-      rule: {
-        type: 'contentBased',
-        isBrokenBy: () => true,
-        action: async () => {},
-      },
-      messages: [
-        {
-          content: 'This message contains a banned tag',
-          channelId: '123',
-          author: { id: '1' },
-        },
-      ] as Message[],
-      deletedMessagesCount: 1,
-      reason: 'Contains banned tag',
-      muteDuration: 1 * HOUR,
-    } satisfies LogFunctionOptions<ContentBasedRule>;
-
     const logContent = createLogTextContent(options);
     // console.log(logContent);
 
