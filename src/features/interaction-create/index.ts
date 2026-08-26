@@ -4,6 +4,7 @@ import { createEvent } from '@/common/events/create-event.js';
 import { handleAutoCompleteInteraction } from '@/common/interactions/autocomplete-interaction.js';
 import { handleButtonInteraction } from '@/common/interactions/button-interaction.js';
 import { handleModalInteraction } from '@/common/interactions/modal-interaction.js';
+import { handleSelectMenuInteraction } from '@/common/interactions/select-menu-interaction.js';
 import { isAllowedServer } from '@/util/server-guard.js';
 
 export const interactionCreateEvent = createEvent(
@@ -36,6 +37,14 @@ export const interactionCreateEvent = createEvent(
         `Received modal submit interaction with custom ID: ${interaction.customId}`
       );
       await handleModalInteraction(interaction);
+      return;
+    }
+
+    if (interaction.isStringSelectMenu()) {
+      console.log(
+        `Received select menu interaction with custom ID: ${interaction.customId}`
+      );
+      await handleSelectMenuInteraction(interaction);
       return;
     }
 

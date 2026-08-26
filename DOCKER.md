@@ -36,7 +36,7 @@ pnpm run docker:dev
 Or using docker-compose directly:
 
 ```bash
-docker compose --profile dev up
+docker compose -f docker-compose.dev.yml up
 ```
 
 In development mode:
@@ -48,9 +48,9 @@ In development mode:
 To stop the development container:
 
 ```bash
-pnpm run docker:stop
+pnpm run docker:dev:stop
 # or
-docker compose --profile dev down
+docker compose -f docker-compose.dev.yml down
 ```
 
 ### Production Mode
@@ -64,7 +64,7 @@ pnpm run docker:prod
 Or using docker-compose directly:
 
 ```bash
-docker compose --profile prod up -d
+docker compose up -d
 ```
 
 In production mode:
@@ -76,7 +76,7 @@ In production mode:
 To stop the production container:
 
 ```bash
-docker compose --profile prod down
+docker compose down
 ```
 
 ## Manual Docker Commands
@@ -128,12 +128,12 @@ docker run -it \
 1. Check if environment variables are set correctly:
 
    ```bash
-   docker compose --profile dev run --rm bot-dev env | grep DISCORD
+   docker compose -f docker-compose.dev.yml run --rm bot-dev env | grep DISCORD
    ```
 
 2. View container logs:
    ```bash
-   docker compose --profile dev logs bot-dev
+   docker compose -f docker-compose.dev.yml logs bot-dev
    # or
    docker logs webdev-bot-dev
    ```
@@ -159,7 +159,7 @@ If code changes aren't being detected in development mode:
 
 2. Restart the container:
    ```bash
-   docker compose --profile dev restart
+   docker compose -f docker-compose.dev.yml restart
    ```
 
 ### Image Size Concerns
@@ -189,8 +189,8 @@ docker compose build --no-cache
 ## Best Practices
 
 1. **Never commit `.env`** - Keep your secrets secure
-2. **Use production profile for deployment** - Smaller, more secure images
-3. **Keep development profile for local testing** - Faster iteration with hot reload
+2. **Use production compose for deployment** - Smaller, more secure images
+3. **Keep development compose for local testing** - Faster iteration with hot reload
 4. **Node version is managed in `.nvmrc`** - Update `.nvmrc` to change Node version for Docker
 5. **Regularly update the base image** - Rebuild images after updating `.nvmrc`
 6. **Monitor container resources** - Use `docker stats` to check resource usage
@@ -218,11 +218,11 @@ docker compose down -v
 View container logs in real-time:
 
 ```bash
-docker compose --profile dev logs -f bot-dev
+docker compose -f docker-compose.dev.yml logs -f bot-dev
 ```
 
 Execute commands inside the container:
 
 ```bash
-docker compose --profile dev exec bot-dev sh
+docker compose -f docker-compose.dev.yml exec bot-dev sh
 ```

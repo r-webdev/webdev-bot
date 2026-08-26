@@ -1,54 +1,36 @@
 services:
-  # Production service - optimized runtime
-  bot-prod:
+  bot:
+    image: webdev-bot:latest
     build:
       context: .
       target: production
       args:
         NODE_VERSION: ${NODE_VERSION}
-    container_name: webdev-bot-prod
+    container_name: webdev-bot
     restart: unless-stopped
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
     env_file:
       - .env
     environment:
       - NODE_ENV=production
+      - DATABASE_URL=file:/app/data/db.sqlite
     volumes:
-      # Mount environment config file
       - ./.env.production:/app/.env.production:ro
-      # Persist tracker data
       - guides-data:/app/data
-    profiles:
-      - prod
 
-  # Development service - hot reload enabled
-  bot-dev:
-    build:
-      context: .
-      target: development
-      args:
-        NODE_VERSION: ${NODE_VERSION}
-    container_name: webdev-bot-dev
-    restart: unless-stopped
+  migrate:
+    image: webdev-bot:latest
+    environment:
+      - DATABASE_URL=file:/app/data/db.sqlite
     env_file:
       - .env
-    environment:
-      - NODE_ENV=development
-      - GUIDES_TRACKER_PATH=/app/data/guides-tracker.json
+    command: ['pnpm', 'run', 'migrate:deploy']
+    restart: 'no'
     volumes:
-      # Mount source code for hot reload
-      - ./src:/app/src:ro
-      # Mount config files
-      - ./tsconfig.json:/app/tsconfig.json:ro
-      - ./biome.json:/app/biome.json:ro
-      # Mount package files (in case dependencies change)
-      - ./package.json:/app/package.json:ro
-      - ./pnpm-lock.yaml:/app/pnpm-lock.yaml:ro
-      # Mount environment config files
-      - ./.env.production:/app/.env.production:ro
-      # Persist guides tracker data
       - guides-data:/app/data
-    profiles:
-      - dev
+    user: 'node'
 
 volumes:
   guides-data:

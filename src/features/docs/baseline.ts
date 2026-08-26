@@ -12,6 +12,7 @@ import { fuzzySearch } from '@/util/fuzzy-search.js';
 import { clampText } from '@/util/text.js';
 import type { ProviderConfig } from './types.js';
 import { createBaseConfig, getBaselineFeatures } from './utils.js';
+import { customId } from '@/util/custom-id.js';
 
 export type FeatureData = {
   name: string;
@@ -57,6 +58,7 @@ const baseConfig = createBaseConfig({
     'Get baseline support information for web platform features',
 });
 
+const BASE_NAME = 'baseline';
 export const baselineProvider: ProviderConfig<FeatureItem> = {
   ...baseConfig,
   getFilteredData: (query: string) => {
@@ -73,7 +75,7 @@ export const baselineProvider: ProviderConfig<FeatureItem> = {
     const selectRow =
       new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
         new StringSelectMenuBuilder()
-          .setCustomId('baseline-select')
+          .setCustomId(customId(BASE_NAME, 'select'))
           .setPlaceholder('Select one feature')
           .setMinValues(1)
           .setMaxValues(1)
@@ -91,7 +93,7 @@ export const baselineProvider: ProviderConfig<FeatureItem> = {
         new ButtonBuilder()
           .setLabel('Cancel')
           .setStyle(ButtonStyle.Danger)
-          .setCustomId('baseline-cancel')
+          .setCustomId(customId(BASE_NAME, 'cancel'))
       );
 
     return { selectRow, buttonRow };
