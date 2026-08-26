@@ -11,9 +11,10 @@
     "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
     "deploy": "tsx src/scripts/deploy-commands.ts",
-    "docker:build": "NODE_VERSION=$(cat .nvmrc | tr -d 'v') docker compose build",
-    "docker:dev": "NODE_VERSION=$(cat .nvmrc | tr -d 'v') docker compose --profile dev up",
-    "docker:prod": "NODE_VERSION=$(cat .nvmrc | tr -d 'v') docker compose --profile prod up -d",
+    "docker:build": "NODE_VERSION=$(cat .nvmrc | tr -d 'v') docker compose -f docker-compose.dev.yml build",
+    "docker:dev": "NODE_VERSION=$(cat .nvmrc | tr -d 'v') docker compose -f docker-compose.dev.yml up -d",
+    "docker:dev:stop": "docker compose -f docker-compose.dev.yml down",
+    "docker:prod": "NODE_VERSION=$(cat .nvmrc | tr -d 'v') docker compose build bot && docker compose run --rm migrate && docker compose up -d bot",
     "docker:stop": "docker compose down",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
@@ -21,20 +22,28 @@
     "fmt:check": "oxfmt --check",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test '**/*.test.ts'",
-    "test:ci": "NODE_ENV=test node --test dist/**/*.test.js",
-    "prepare": "husky",
+    "test:ci": "NODE_ENV=test node --test \"dist/**/*.test.js\"",
+    "prepare": "husky || true",
     "pre-commit": "lint-staged",
     "sync-guides": "tsx src/scripts/sync-guides.ts",
-    "sync-guides:init": "tsx src/scripts/sync-guides.ts --initialize"
+    "sync-guides:init": "tsx src/scripts/sync-guides.ts --initialize",
+    "prisma:generate": "prisma generate",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy"
   },
   "dependencies": {
+    "@prisma/adapter-better-sqlite3": "^7.8.0",
+    "@prisma/client": "^7.8.0",
     "discord.js": "^14.26.4",
+    "lru-cache": "^11.5.2",
     "node-cron": "^4.6.0",
+    "prisma": "^7.8.0",
     "typescript": "^6.0.3",
     "web-features": "^3.32.0"
   },
   "devDependencies": {
-    "@types/node": "^24.13.2",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^24.13.3",
     "@types/node-cron": "^3.0.11",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.8",
@@ -49,5 +58,10 @@
     "*.{js,ts}": "pnpm run lint",
     "*.{js,ts,json}": "oxfmt --no-error-on-unmatched-pattern"
   },
-  "packageManager": "pnpm@10.17.1"
+  "packageManager": "pnpm@10.17.1",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "better-sqlite3"
+    ]
+  }
 }

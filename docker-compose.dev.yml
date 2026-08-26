@@ -1,0 +1,29 @@
+services:
+  bot-dev:
+    build:
+      context: .
+      target: development
+      args:
+        NODE_VERSION: ${NODE_VERSION}
+    container_name: webdev-bot-dev
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+      - GUIDES_TRACKER_PATH=/app/data/guides-tracker.json
+      - DATABASE_URL=file:/app/data/db.sqlite
+    volumes:
+      - ./src:/app/src:ro
+      - ./scripts:/app/scripts:ro
+      - ./prisma:/app/prisma:ro
+      - ./prisma.config.ts:/app/prisma.config.ts:ro
+      - ./tsconfig.json:/app/tsconfig.json:ro
+      - ./package.json:/app/package.json:ro
+      - ./pnpm-lock.yaml:/app/pnpm-lock.yaml:ro
+      - ./.env.production:/app/.env.production:ro
+      - guides-data:/app/data
+
+volumes:
+  guides-data:
+    driver: local

@@ -9,6 +9,8 @@ import { sendShowcasePinnedMessage } from '@/features/showcase/send-pinned-messa
 import { tipsCommands } from '@/features/tips/index.js';
 import type { Command } from './types.js';
 import { reportMessage } from '@/features/report-message/index.js';
+import { tagCommand } from '@/features/tags/index.js';
+import { botOptionsCommand } from '@/features/bot-options/index.js';
 
 export const commands = new Map<string, Command>(
   [
@@ -22,6 +24,8 @@ export const commands = new Map<string, Command>(
     createShowcaseCommand,
     sendShowcasePinnedMessage,
     reportMessage,
+    tagCommand,
+    botOptionsCommand,
   ]
     .flat()
     .map((command) => [command.data.name, command])

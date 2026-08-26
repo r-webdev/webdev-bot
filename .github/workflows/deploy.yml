@@ -1,58 +1,126 @@
-name: Build, Test and Deploy Discord Bot to VPS
-
+name: Deploy
 on:
   push:
-    branches: ['main']
-  workflow_dispatch: # Allow manual deployment
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Git ref (commit SHA or tag) to deploy. Leave blank for latest main.'
+        required: false
+        default: ''
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  MAX_BACKUPS: 4
+  DIR: /home/${{ secrets.VPS_USER }}/webdev-bot-deploy
 
 jobs:
-  deploy:
+  lint:
+    name: Lint & Format Check
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Read Node version
-        run: |
-          NODE_VERSION=$(cat .nvmrc | sed 's/v//')
-          echo "NODE_VERSION=$NODE_VERSION" >> $GITHUB_ENV
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
 
-      - name: Deploy to VPS
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Prisma generate (sanity check schema)
+        run: pnpm run prisma:generate
+        env:
+          DATABASE_URL: file:/tmp/ci.db
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Format
+        run: pnpm fmt:check
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+  deploy:
+    name: Deploy to VPS
+    runs-on: ubuntu-latest
+    needs: [lint]
+    permissions:
+      contents: read
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          envs: REPO_URL,REF
           script: |
-            cd /home/${{ secrets.VPS_USER }}/webdev-bot-deploy
+            set -eu
+            mkdir -p ${{ env.DIR }}
+            cd ${{ env.DIR }}
 
-            # Stash any local changes
-            git stash push -m "Auto-deploy $(date)" 2>/dev/null || true
+            if [ -d .git ]; then
+              git stash push -m "Auto-deploy $(date)" 2>/dev/null || true
+              git fetch origin
+              git checkout "$REF"
+              git reset --hard "origin/$REF" 2>/dev/null || git reset --hard "$REF"
+            else
+              git clone "$REPO_URL" .
+              git checkout "$REF"
+            fi
 
-            # Pull latest changes
-            git checkout main
-            git pull origin main
+            mkdir -p ${{ env.DIR }}/backups
 
-            # Read NODE_VERSION from .nvmrc
-            export NODE_VERSION=$(cat .nvmrc | sed 's/v//')
+            export NODE_VERSION=$(cat .nvmrc | tr -d 'v')
             echo "Using Node version: $NODE_VERSION"
 
-            # Create .env file with secrets
-            # Public config comes from .env.production (committed to repo)
-            # NODE_ENV=production is set in docker-compose.yml
-            cat > .env << EOF
+            cat > .env <<'EOF'
             DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}
             CLIENT_ID=${{ secrets.CLIENT_ID }}
             EOF
+            chmod 600 .env
 
-            # Stop any existing containers
-            docker compose down || true
+            # Backup the SQLite DB before touching anything
+            if docker volume inspect webdev-bot_guides-data >/dev/null 2>&1; then
+              docker run --rm \
+                -v webdev-bot_guides-data:/data \
+                -v ${{ env.DIR }}/backups:/backup \
+                alpine sh -c "if [ -f /data/db.sqlite ]; then cp /data/db.sqlite /backup/db-\$(date +%Y%m%d%H%M%S).sqlite; fi"
+              ls -1t ${{ env.DIR }}/backups/*.sqlite 2>/dev/null \
+                | tail -n +$((env.MAX_BACKUPS+1)) \
+                | xargs -r rm --
+            fi
 
-            # Build and start production container with profile
-            # NODE_ENV=production is explicitly set in docker-compose.yml bot-prod service
-            docker compose --profile prod up -d --build
+            docker compose config >/dev/null
+            docker compose build bot
 
-            # Check status
-            echo "Deployment completed. Container status:"
+            if ! docker compose run --rm migrate; then
+              echo "Migration failed — leaving existing bot container untouched."
+              exit 1
+            fi
+
+            docker compose up -d --remove-orphans bot
+
+            sleep 8
+            if ! docker compose ps bot --status running | grep -q bot; then
+              echo "Bot container is not running after deploy!"
+              docker compose logs --tail=50 bot
+              exit 1
+            fi
+
             docker compose ps
+            docker image prune -f
+        env:
+          REPO_URL: https://github.com/${{ github.repository }}.git
+          REF: ${{ github.event.inputs.ref != '' && github.event.inputs.ref || 'main' }}
