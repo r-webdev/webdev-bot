@@ -129,7 +129,7 @@ const submissionHandler: ModalSubmitInteraction = {
           await interaction.reply({
             components: [
               ErrorMessages.Tags.TagAlreadyExists(
-                existingTags.map((t) => t.name).join(', ')
+                existingTags.map((tag) => tag.name).join(', ')
               ),
             ],
             flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { promises as fs } from 'node:fs';
-import test from 'node:test';
+import test, { it } from 'node:test';
 import { config } from '@/env.js';
 
 const { loadTracker, saveTracker } = await import('./advent-scheduler.js');
@@ -13,17 +13,14 @@ async function cleanupTestTracker() {
   }
 }
 
-void test('advent scheduler: tracker file operations', async (t) => {
-  await t.test(
-    'should create empty tracker if file does not exist',
-    async () => {
-      await cleanupTestTracker();
-      const tracker = await loadTracker();
-      assert.deepEqual(tracker, {});
-    }
-  );
+void test('advent scheduler: tracker file operations', async () => {
+  await it('should create empty tracker if file does not exist', async () => {
+    await cleanupTestTracker();
+    const tracker = await loadTracker();
+    assert.deepEqual(tracker, {});
+  });
 
-  await t.test('should save and load tracker data correctly', async () => {
+  await it('should save and load tracker data correctly', async () => {
     const testData = {
       '2025': [1, 2, 3],
       '2026': [1],
@@ -33,7 +30,7 @@ void test('advent scheduler: tracker file operations', async (t) => {
     assert.deepEqual(loaded, testData);
   });
 
-  await t.test('should track multiple days per year', async () => {
+  await it('should track multiple days per year', async () => {
     const tracker = {
       '2025': [1, 5, 10, 15, 20, 25],
     };

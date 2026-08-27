@@ -223,8 +223,8 @@ const modalHandler: ModalSubmitInteraction = {
         if (prevTagIds.length !== newProjectTags.length) {
           return false;
         }
-        const s = new Set(prevTagIds);
-        return newProjectTags.every((t) => s.has(t));
+        const previousTagIdsSet = new Set(prevTagIds);
+        return newProjectTags.every((tag) => previousTagIdsSet.has(tag));
       };
       if (!tagsEqual()) {
         changes.push({

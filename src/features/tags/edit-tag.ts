@@ -63,7 +63,7 @@ export const editTagCommandHandler = async (
             .setCustomId('aliases')
             .setStyle(TextInputStyle.Short)
             .setRequired(true)
-            .setValue(tag.aliases.map((a) => a.name).join(', '))
+            .setValue(tag.aliases.map((alias) => alias.name).join(', '))
         ),
       new LabelBuilder()
         .setLabel('Short Description')
@@ -142,7 +142,7 @@ const modalHandler: ModalSubmitInteraction = {
         await interaction.reply({
           components: [
             ErrorMessages.Tags.TagAlreadyExists(
-              existingTags.map((t) => t.name).join(', ')
+              existingTags.map((tag) => tag.name).join(', ')
             ),
           ],
           flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
