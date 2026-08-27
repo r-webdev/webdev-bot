@@ -87,30 +87,37 @@ Present the plan using this template:
 # Plan: Issue #<number> — <title>
 
 ## Issue Summary
+
 <One short paragraph>
 
 ## Acceptance Criteria
+
 - [ ] <criterion from issue>
 - [ ] <criterion from issue>
 
 ## Proposed Approach
+
 <High-level strategy>
 
 ## Files to Change
-| File | Change |
-|------|--------|
+
+| File           | Change         |
+| -------------- | -------------- |
 | `path/to/file` | <what and why> |
 
 ## Testing Plan
+
 - <what to test>
 - Commands: `pnpm test`, `pnpm lint`, `pnpm fmt:check`, etc.
 
 ## Branch and PR
+
 - Branch: `<type>/<issue-number>/<short-description>` (see AGENTS.md)
 - PR title includes `(#<issue-number>)`
 - PR body includes `Closes #<issue-number>`
 
 ## Risks and Unknowns
+
 - <anything that could block or expand scope>
 ```
 

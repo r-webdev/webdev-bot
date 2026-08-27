@@ -128,20 +128,20 @@ Root-level config files define how this project is built, linted, formatted, and
 
 Treat these as authoritative:
 
-| File | Purpose |
-|------|---------|
-| `package.json` | Scripts, dependencies, lint-staged hooks |
-| `pnpm-lock.yaml` | Locked dependency versions |
-| `tsconfig.json` | TypeScript compiler options |
-| `tsup.config.ts` | Build/bundle configuration |
-| `oxlint.config.ts` | Linter rules |
-| `oxfmt.config.ts` | Formatter rules |
-| `docker-compose.yml` | Local Docker services |
-| `Dockerfile` | Container image |
-| `.nvmrc` | Node.js version |
-| `.gitignore` | Ignored paths |
-| `.dockerignore` | Docker build exclusions |
-| `src/env.ts` | Environment variable schema and access (do not read `.env*` files directly) |
+| File                 | Purpose                                                                     |
+| -------------------- | --------------------------------------------------------------------------- |
+| `package.json`       | Scripts, dependencies, lint-staged hooks                                    |
+| `pnpm-lock.yaml`     | Locked dependency versions                                                  |
+| `tsconfig.json`      | TypeScript compiler options                                                 |
+| `tsup.config.ts`     | Build/bundle configuration                                                  |
+| `oxlint.config.ts`   | Linter rules                                                                |
+| `oxfmt.config.ts`    | Formatter rules                                                             |
+| `docker-compose.yml` | Local Docker services                                                       |
+| `Dockerfile`         | Container image                                                             |
+| `.nvmrc`             | Node.js version                                                             |
+| `.gitignore`         | Ignored paths                                                               |
+| `.dockerignore`      | Docker build exclusions                                                     |
+| `src/env.ts`         | Environment variable schema and access (do not read `.env*` files directly) |
 
 If something seems missing from config, ask a maintainer rather than adding a new config file.
 
@@ -219,8 +219,8 @@ pnpm agent-ready claude --skills   # .claude/skills -> .agents/skills
 
 Agent-specific skill directories are gitignored; `.agents/skills/` is the canonical source committed to the repository. Cursor and Codex also read `.agents/skills/` directly — linking for those agents is optional and the script will ask for confirmation.
 
-| Skill | Use when |
-|-------|----------|
+| Skill                                                          | Use when                                                        |
+| -------------------------------------------------------------- | --------------------------------------------------------------- |
 | [plan-github-issue](.agents/skills/plan-github-issue/SKILL.md) | Planning work from a GitHub issue (provide issue number or URL) |
 
 ## General Guidelines
