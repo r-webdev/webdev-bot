@@ -1,9 +1,7 @@
 import type { Message } from 'discord.js';
-import {
-  jaccardSimilarity,
-  replaceSpoilerHack,
-  stripCode,
-} from '@/util/messages.js';
+import { jaccardSimilarity } from '@/util/text.js';
+import { replaceSpoilerHack } from '@/util/text.js';
+import { stripCode } from '@/util/text.js';
 import { MESSAGE_SIMILARITY_THRESHOLD } from './constants.js';
 
 export const containsLink = (message: Message): boolean => {

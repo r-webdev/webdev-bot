@@ -1,11 +1,9 @@
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
-import {
-  replaceSpoilerHack,
-  stripCode,
-  stripEmoji,
-  jaccardSimilarity,
-} from './messages.js';
+import { jaccardSimilarity } from './text.js';
+import { replaceSpoilerHack } from './text.js';
+import { stripEmoji } from './text.js';
+import { stripCode } from './text.js';
 
 void describe('util/messages.ts', () => {
   void describe('stripCode', () => {
