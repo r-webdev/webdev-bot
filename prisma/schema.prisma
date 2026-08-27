@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum OptionKey {
+  TAG_PREFIX
+  MAX_TAGS_PER_MESSAGE
+  DAYS_TO_KEEP_TAGS
+}
+
+// Options for the bot, stored in the database.
+model Options {
+  id    Int       @id @default(autoincrement())
+  key   OptionKey @unique
+  value String
+
+  @@map("options")
+}
+
+// Tags that can be used in messages. Each tag has a description and a usage count.
+model Tag {
+  id             Int       @id @default(autoincrement())
+  content        String
+  description    String
+  lastModifiedBy String
+  uses           Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @default(now())
+  lastUsedAt     DateTime?
+
+  aliases TagAlias[]
+
+  @@index([description])
+  @@index([uses])
+  @@index([lastUsedAt])
+  @@index([createdAt])
+  @@map("tags")
+}
+
+// Aliases for tags, allowing multiple names to refer to the same tag.
+model TagAlias {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  tagId     Int
+  tag       Tag      @relation(fields: [tagId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@index([tagId])
+  @@map("tag_aliases")
+}
+
+// Bot-sent messages, triggered a user.
+// Stored for a limited time to allow users to delete them if they want to.
+model UserBotMessages {
+  id        String   @id
+  userId    String
+  channelId String
+  expiresAt DateTime
+
+  @@index([expiresAt])
+  @@index([userId, channelId])
+  @@map("user_bot_messages")
+}
