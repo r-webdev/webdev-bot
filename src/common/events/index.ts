@@ -5,6 +5,7 @@ import { readyEvent } from '@/features/ready/index.js';
 import type { DiscordEvent } from './types.js';
 import archiveChannels from '@/features/archive-channels/index.js';
 import { tagReceivedEvent } from '@/features/tags/tag-received.js';
+import { reactionAddEvent } from '@/features/reactions/index.js';
 
 export const events: DiscordEvent[] = [
   readyEvent,
@@ -13,4 +14,5 @@ export const events: DiscordEvent[] = [
   interactionCreateEvent,
   archiveChannels,
   tagReceivedEvent,
+  reactionAddEvent,
 ].flat();

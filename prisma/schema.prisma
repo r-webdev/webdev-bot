@@ -11,6 +11,7 @@ enum OptionKey {
   TAG_PREFIX
   MAX_TAGS_PER_MESSAGE
   DAYS_TO_KEEP_TAGS
+  DAYS_TO_KEEP_USER_BOT_MESSAGES
 }
 
 // Options for the bot, stored in the database.
