@@ -5,7 +5,6 @@ import { HOUR } from '../../constants/time.js';
 import { createLogTextContent, type LogFunctionOptions } from './logs.js';
 import type { ContentBasedRule } from './rules-config.js';
 
-// Mock options for a content-based rule
 const options = {
   rule: {
     type: 'contentBased',
