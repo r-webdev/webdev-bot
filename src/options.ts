@@ -23,6 +23,11 @@ const OptionsDefaults = {
     type: 'number',
     displayName: 'Days to Keep Tags',
   },
+  [OptionKey.DAYS_TO_KEEP_USER_BOT_MESSAGES]: {
+    value: '7',
+    type: 'number',
+    displayName: 'Days to Keep User Bot Messages',
+  },
 } as const satisfies Record<OptionKey, OptionValue>;
 
 export type OptionTypeOf<K extends OptionKey> =

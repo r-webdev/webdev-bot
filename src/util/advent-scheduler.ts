@@ -39,7 +39,7 @@ async function markDayAsPosted(year: number, day: number): Promise<void> {
 
   if (!tracker[yearKey].includes(day)) {
     tracker[yearKey].push(day);
-    tracker[yearKey].sort((a, b) => a - b);
+    tracker[yearKey].sort((firstDay, secondDay) => firstDay - secondDay);
     await saveTracker(tracker);
   }
 }

@@ -27,6 +27,8 @@
     "pre-commit": "lint-staged",
     "sync-guides": "tsx src/scripts/sync-guides.ts",
     "sync-guides:init": "tsx src/scripts/sync-guides.ts --initialize",
+    "agent-ready": "bash scripts/agent-ready.sh",
+    "link-agent-skills": "bash scripts/link-agent-skills.sh",
     "prisma:generate": "prisma generate",
     "migrate:dev": "prisma migrate dev",
     "migrate:deploy": "prisma migrate deploy"

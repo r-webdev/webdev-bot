@@ -1,3 +1,4 @@
+// oxlint-disable id-length
 import '@/loadEnvFile.js';
 
 function optionalEnv(key: string): string | undefined {

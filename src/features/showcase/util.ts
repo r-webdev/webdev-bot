@@ -160,7 +160,9 @@ export const resolveTagNames = (
   tagIds: readonly string[],
   availableTags: GuildForumTag[]
 ): string[] => {
-  return tagIds.map((id) => availableTags.find((t) => t.id === id)?.name ?? id);
+  return tagIds.map(
+    (id) => availableTags.find((tag) => tag.id === id)?.name ?? id
+  );
 };
 
 export const getShowcaseLogChannel = (guild: Guild | null) => {

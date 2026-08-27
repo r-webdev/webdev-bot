@@ -6,6 +6,8 @@ import type { DiscordEvent } from './types.js';
 import { spamDetection } from '@/features/spam-detection/index.js';
 import archiveChannels from '@/features/archive-channels/index.js';
 import { tagReceivedEvent } from '@/features/tags/tag-received.js';
+import { reactionAddEvent } from '@/features/reactions/index.js';
+import { quoteEvent } from '@/features/quote/index.js';
 
 export const events: DiscordEvent[] = [
   readyEvent,
@@ -15,4 +17,6 @@ export const events: DiscordEvent[] = [
   spamDetection,
   archiveChannels,
   tagReceivedEvent,
+  reactionAddEvent,
+  quoteEvent,
 ].flat();
