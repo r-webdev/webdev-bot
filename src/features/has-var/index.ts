@@ -2,7 +2,7 @@ import { Events } from 'discord.js';
 import ts from 'typescript';
 import { createEvent } from '@/common/events/create-event.js';
 import { MINUTE } from '../../constants/time.js';
-import { codeBlockRegex } from '../../util/message.js';
+import { codeBlockRegex } from '@/util/text.js';
 import { rateLimit } from '../../util/rate-limit.js';
 
 const { canRun, reset } = rateLimit(5 * MINUTE);
