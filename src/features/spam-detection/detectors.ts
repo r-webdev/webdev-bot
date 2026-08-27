@@ -32,13 +32,13 @@ export const containsSpoilerHack = (message: Message) => {
 
 export const isDuplicate = (message: Message, oldMessage: Message) => {
   // cheaper comparison first
-  const a = message.content.toLowerCase().trim();
-  const b = oldMessage.content.toLowerCase().trim();
-  if (a === b) {
+  const content = message.content.toLowerCase().trim();
+  const oldContent = oldMessage.content.toLowerCase().trim();
+  if (content === oldContent) {
     return true;
   }
   // followed by jaccard for catching reordered/slightly altered messages with high similarity
-  return jaccardSimilarity(a, b) > MESSAGE_SIMILARITY_THRESHOLD;
+  return jaccardSimilarity(content, oldContent) > MESSAGE_SIMILARITY_THRESHOLD;
 };
 
 export const isCrossPost = (message: Message, oldMessage: Message) => {
