@@ -17,8 +17,7 @@ import {
 const EMBED_DESC_LIMIT = 4096;
 const FIELD_VALUE_LIMIT = 1024;
 const JUMP_BUTTON_LABEL = 'Jump to message';
-export const DELETE_HINT_EMOJI = '❌';
-const DELETE_HINT = `React with ${DELETE_HINT_EMOJI} to delete`;
+const DELETE_HINT = `React with ❌ to delete`;
 const DELETE_HINT_LINE = `-# ${DELETE_HINT}`;
 
 const applyDeleteHint = (embed: EmbedBuilder): void => {

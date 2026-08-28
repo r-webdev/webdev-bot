@@ -1,7 +1,7 @@
 import { Client, Events, type Message } from 'discord.js';
 import { createEvent } from '@/common/events/create-event.js';
 import { UserBotMessagesService } from '@/services/user-bot-messages/user-bot-messages-service.js';
-import { createQuoteEmbed, DELETE_HINT_EMOJI } from './embed.js';
+import { createQuoteEmbed } from './embed.js';
 
 export const quoteEvent = createEvent(
   {
@@ -81,7 +81,6 @@ export const quoteEvent = createEvent(
             ? { ...options, reply: { messageReference: referenceMessageId } }
             : options
         );
-        void sentMessage.react(DELETE_HINT_EMOJI);
         void UserBotMessagesService.addUserBotMessage({
           messageId: sentMessage.id,
           userId: message.author.id,
