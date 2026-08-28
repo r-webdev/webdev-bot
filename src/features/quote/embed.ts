@@ -14,10 +14,13 @@ import {
   type User,
 } from 'discord.js';
 
+import { DELETE_EMOJIS } from '../reactions/remove-user-bot-message.js';
+
 const EMBED_DESC_LIMIT = 4096;
 const FIELD_VALUE_LIMIT = 1024;
 const JUMP_BUTTON_LABEL = 'Jump to message';
-const DELETE_HINT = `React with ❌/🗑️ to delete`;
+const EMOJIS = DELETE_EMOJIS.join('/');
+const DELETE_HINT = `React with ${EMOJIS} to delete`;
 const DELETE_HINT_LINE = `-# ${DELETE_HINT}`;
 
 const applyDeleteHint = (embed: EmbedBuilder): void => {
