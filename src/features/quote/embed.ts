@@ -17,6 +17,15 @@ import {
 const EMBED_DESC_LIMIT = 4096;
 const FIELD_VALUE_LIMIT = 1024;
 const JUMP_BUTTON_LABEL = 'Jump to message';
+export const DELETE_HINT_EMOJI = '❌';
+const DELETE_HINT = `React with ${DELETE_HINT_EMOJI} to delete`;
+const DELETE_HINT_LINE = `-# ${DELETE_HINT}`;
+
+const applyDeleteHint = (embed: EmbedBuilder): void => {
+  if (!embed.data.footer?.text) {
+    embed.setFooter({ text: DELETE_HINT });
+  }
+};
 
 type OriginalQuoteInfo = {
   authorMention: string;
@@ -130,6 +139,17 @@ export const createQuoteEmbed = ({
       components.push(attributionLine);
     }
 
+    const hasDeleteHint = components.some(
+      (component) =>
+        component.type === ComponentType.TextDisplay &&
+        (component as { content: string }).content === DELETE_HINT_LINE
+    );
+    if (!hasDeleteHint) {
+      components.push(
+        new TextDisplayBuilder().setContent(DELETE_HINT_LINE).toJSON()
+      );
+    }
+
     return {
       allowedMentions: { parse: [] },
       components,
@@ -152,12 +172,14 @@ export const createQuoteEmbed = ({
 
   // Find an existing "Quoted by" field, if quotedMessage is itself a quote.
   let existingField: APIEmbedField | null = null;
+  let existingFieldEmbed: EmbedBuilder | null = null;
   for (const embed of embeds) {
     const found = embed.data.fields?.find(
       (field) => /^quoted by$/i.test(field.name) && parseQuoteLine(field.value)
     );
     if (found) {
       existingField = found;
+      existingFieldEmbed = embed;
       break;
     }
   }
@@ -188,6 +210,9 @@ export const createQuoteEmbed = ({
     // Already a quote: swap the field's value in place, keep everything
     // else (original author/description/image/timestamp) untouched.
     existingField.value = quotedByField.value;
+    if (existingFieldEmbed) {
+      applyDeleteHint(existingFieldEmbed);
+    }
   } else {
     // First-time quote: build the wrapper/annotation.
     const authorOptions = {
@@ -195,8 +220,11 @@ export const createQuoteEmbed = ({
       iconURL: quotedMessage.author.displayAvatarURL({ size: 64 }),
     };
 
-    const stampAsQuote = (embed: EmbedBuilder) =>
+    const stampAsQuote = (embed: EmbedBuilder) => {
       embed.setAuthor(authorOptions).addFields(quotedByField).setTimestamp();
+      applyDeleteHint(embed);
+      return embed;
+    };
 
     const hasContent = quotedMessage.content.length > 0;
     const hasEmbeds = embeds.length > 0;
