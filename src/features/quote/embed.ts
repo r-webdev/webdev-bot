@@ -17,12 +17,14 @@ import {
 const EMBED_DESC_LIMIT = 4096;
 const FIELD_VALUE_LIMIT = 1024;
 const JUMP_BUTTON_LABEL = 'Jump to message';
-const DELETE_HINT = `React with ❌ to delete`;
+const DELETE_HINT = `React with ❌/🗑️ to delete`;
 const DELETE_HINT_LINE = `-# ${DELETE_HINT}`;
 
 const applyDeleteHint = (embed: EmbedBuilder): void => {
   if (!embed.data.footer?.text) {
     embed.setFooter({ text: DELETE_HINT });
+  } else if (!embed.data.footer.text.includes(DELETE_HINT)) {
+    embed.setFooter({ text: `${embed.data.footer.text} | ${DELETE_HINT}` });
   }
 };
 
