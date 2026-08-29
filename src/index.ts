@@ -1,10 +1,14 @@
 import { ActivityType, Client, GatewayIntentBits } from 'discord.js';
 import { loadEvents } from './common/events/load-events.js';
 import { config } from './env.js';
+import { isArchiveRateLimit } from './util/rate-limits.js';
 
 const client = new Client({
   rest: {
     timeout: 60_000,
+    rejectOnRateLimit: (rateLimitData) => {
+      return isArchiveRateLimit(rateLimitData);
+    },
   },
   intents: [
     GatewayIntentBits.Guilds,

@@ -45,7 +45,6 @@ export async function syncArchiveCategoryChannels(guild: Guild) {
     const errorMessages = failedReasons
       .map((reason) => reason.message || reason)
       .join('; ');
-    console.error(`Failed to archive some channels: ${errorMessages}`);
     throw new Error(`Failed to archive some channels: ${errorMessages}`);
   }
 }
@@ -75,7 +74,14 @@ export function hasArchivedPermissions(channel: GuildChannel) {
     return false;
   }
 
-  return PUBLIC_PERMISSIONS.every((permission) =>
+  // non-vc channels don't have the Connect permission, so we filter it out for those channels
+  const relevantPermissions = PUBLIC_PERMISSIONS.filter((permission) =>
+    channel.type === ChannelType.GuildVoice
+      ? true
+      : permission !== PermissionFlagsBits.Connect
+  );
+
+  return relevantPermissions.every((permission) =>
     overwrite.deny.has(permission)
   );
 }
@@ -92,12 +98,9 @@ export async function unarchiveChannel(channel: GuildChannel) {
 
   try {
     await setArchivedPermissions(channel, false);
-    await channel.setName(newChannelName);
-  } catch (error) {
-    console.error(
-      `Error unarchiving channel ${channelName}:`,
-      (error as Error).message
-    );
+    if (newChannelName !== channelName) {
+      await channel.setName(newChannelName);
+    }
   } finally {
     processingChannels.delete(channel.id);
   }
@@ -116,13 +119,10 @@ export async function archiveChannel(channel: GuildChannel) {
   processingChannels.add(channel.id);
 
   try {
-    const renamedChannel = await channel.setName(archivedChannelName);
-    await setArchivedPermissions(renamedChannel, true);
-  } catch (error) {
-    // console.error(`Error archiving channel ${channelName}:`, error);
-    throw new Error(
-      `Error archiving channel ${channelName}: ${(error as Error).message}`
-    );
+    if (archivedChannelName !== channelName) {
+      await channel.setName(archivedChannelName);
+    }
+    await setArchivedPermissions(channel, true);
   } finally {
     processingChannels.delete(channel.id);
   }
