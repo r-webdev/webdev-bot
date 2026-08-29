@@ -7,10 +7,7 @@ const client = new Client({
   rest: {
     timeout: 60_000,
     rejectOnRateLimit: (rateLimitData) => {
-      if (isArchiveRateLimit(rateLimitData)) {
-        return true;
-      }
-      return false;
+      return isArchiveRateLimit(rateLimitData);
     },
   },
   intents: [
