@@ -22,7 +22,7 @@ export const config = {
     clientId: requireEnv('CLIENT_ID'),
     serverId: requireEnv('SERVER_ID'),
   },
-  fetchAndSyncMessages: true,
+  fetchAndSyncMessages: optionalEnv('FETCH_AND_SYNC_MESSAGES') !== 'false',
   guidesTrackerPath: optionalEnv('GUIDES_TRACKER_PATH'),
   adventOfCodeTrackerPath: requireEnv('ADVENT_OF_CODE_TRACKER_PATH'),
   roleIds: {
