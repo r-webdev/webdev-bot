@@ -219,10 +219,10 @@ pnpm agent-ready claude --skills   # .claude/skills -> .agents/skills
 
 Agent-specific skill directories are gitignored; `.agents/skills/` is the canonical source committed to the repository. Cursor and Codex also read `.agents/skills/` directly — linking for those agents is optional and the script will ask for confirmation.
 
-| Skill                                                                  | Use when                                                                     |
-| ---------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| [create-github-issue](.agents/skills/create-github-issue/SKILL.md)     | Creating a GitHub issue or ticket (provide a short problem or goal)           |
-| [plan-github-issue](.agents/skills/plan-github-issue/SKILL.md)         | Planning work from a GitHub issue (provide issue number or URL)               |
+| Skill                                                              | Use when                                                            |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| [create-github-issue](.agents/skills/create-github-issue/SKILL.md) | Creating a GitHub issue or ticket (provide a short problem or goal) |
+| [plan-github-issue](.agents/skills/plan-github-issue/SKILL.md)     | Planning work from a GitHub issue (provide issue number or URL)     |
 
 ## General Guidelines
 
