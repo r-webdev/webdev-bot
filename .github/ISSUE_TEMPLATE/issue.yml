@@ -1,0 +1,81 @@
+name: Issue
+description: Describe the work, acceptance criteria, questions, and scope
+body:
+  - type: textarea
+    id: why
+    attributes:
+      label: Why
+      description: Short description of the problem or goal.
+      placeholder: Short description why.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: At least one criterion. More are better.
+      value: |
+        - at least one criteria
+        - more are better
+    validations:
+      required: true
+  - type: textarea
+    id: open-questions
+    attributes:
+      label: Open Questions
+      description: Questions that need to be answered before work can start.
+      value: |
+        - any questions that need to be answered before work can start
+    validations:
+      required: false
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: Out of Scope
+      description: Explain what is out of scope for this issue.
+      placeholder: Explain what is out of scope for this issue.
+    validations:
+      required: false
+  - type: markdown
+    attributes:
+      value: |
+        ## Bug details
+
+        Fill the fields below only when reporting a bug. Skip them for features
+        and chores.
+  - type: textarea
+    id: current-behavior
+    attributes:
+      label: Current behavior
+      description: What happens today.
+    validations:
+      required: false
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: What should happen instead.
+    validations:
+      required: false
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Numbered steps that reproduce the bug.
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: false
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Fill in if this is a bug.
+      value: |
+        - OS:
+        - Node:
+        - pnpm:
+    validations:
+      required: false
