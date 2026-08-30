@@ -207,7 +207,7 @@ check_github_cli() {
   fi
 
   echo "warning: gh is not installed"
-  echo "         Install it for the plan-github-issue skill: https://cli.github.com/"
+  echo "         Install it for the GitHub-related skills: https://cli.github.com/"
 }
 
 link_agent_skills() {
