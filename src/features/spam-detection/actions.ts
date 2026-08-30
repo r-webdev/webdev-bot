@@ -2,6 +2,7 @@ import type { Channel, Message } from 'discord.js';
 import { cachedMessages } from '@/util/cache/recent-message-store.js';
 import { DAY, HOUR } from '../../constants/time.js';
 import { defaultLogFunction, type LogFunction } from './logs.js';
+import { finishModeration, startModeration } from './moderation-state.js';
 import type { Rule } from './rules-config.js';
 
 type ActionConfig = {
@@ -9,6 +10,17 @@ type ActionConfig = {
   deleteMessages?: boolean;
   muteDuration?: number;
   log?: LogFunction;
+};
+
+export const deleteMessageDuringModeration = async (
+  message: Message
+): Promise<void> => {
+  if (!message.deletable) {
+    return;
+  }
+
+  cachedMessages.delete(message.id);
+  await message.delete();
 };
 
 const handleBulkDeleteMessages = async (messages: Message[]) => {
@@ -52,35 +64,41 @@ const handleAction = (config: ActionConfig) => {
       return;
     }
 
-    let muted = false;
-    if (config.muteDuration) {
-      try {
-        const guildMember = await firstMessage.guild?.members.fetch(author.id);
-        if (guildMember?.moderatable) {
-          await guildMember.timeout(config.muteDuration, config.reason);
-          muted = true;
+    startModeration(author.id);
+    try {
+      let muted = false;
+      if (config.muteDuration) {
+        try {
+          const guildMember = await firstMessage.guild?.members.fetch(
+            author.id
+          );
+          if (guildMember?.moderatable) {
+            await guildMember.timeout(config.muteDuration, config.reason);
+            muted = true;
+          }
+        } catch (error) {
+          console.error('Failed to mute user:', error);
         }
-      } catch (error) {
-        console.error('Failed to mute user:', error);
       }
+
+      let deletedMessagesCount = 0;
+
+      if (config.deleteMessages) {
+        deletedMessagesCount = await handleBulkDeleteMessages(messages);
+      }
+
+      const logFunction = config.log || defaultLogFunction;
+      await logFunction({
+        messages,
+        reason: config.reason,
+        logChannel,
+        deletedMessagesCount,
+        muteDuration: muted ? config.muteDuration : undefined,
+        rule,
+      });
+    } finally {
+      finishModeration(author.id);
     }
-
-    let deletedMessagesCount = 0;
-
-    if (config.deleteMessages) {
-      deletedMessagesCount = await handleBulkDeleteMessages(messages);
-    }
-
-    // Use custom log function if provided, otherwise use default
-    const logFunction = config.log || defaultLogFunction;
-    await logFunction({
-      messages,
-      reason: config.reason,
-      logChannel,
-      deletedMessagesCount,
-      muteDuration: muted ? config.muteDuration : undefined,
-      rule,
-    });
   };
 };
 

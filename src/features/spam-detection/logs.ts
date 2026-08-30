@@ -63,7 +63,7 @@ export const createLogTextContent = <T extends Rule>(
       break;
     }
     case 'crossChannel': {
-      if (options.rule.isBrokenBy.name === 'isCrossPost') {
+      if (options.rule.logType === 'crossPost') {
         content.push(
           `Posted in **${options.rule.channelCount}** channels within **${timeToString(options.rule.timeframe)} **\n`
         );
