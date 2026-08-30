@@ -27,6 +27,7 @@ export type ContentBasedRule = {
 
 export type CrossChannelRule = {
   isBrokenBy: (newMessage: Message, oldMessage: Message) => boolean;
+  logType?: 'crossPost';
   timeframe: number;
   channelCount: number;
   action: (
@@ -70,6 +71,7 @@ export const rules: Rule[] = [
   {
     type: 'crossChannel',
     isBrokenBy: isCrossPost,
+    logType: 'crossPost',
     timeframe: 15 * SECOND,
     channelCount: 3,
     action: handleCrossPostingAction,
@@ -77,6 +79,7 @@ export const rules: Rule[] = [
   {
     type: 'crossChannel',
     isBrokenBy: isCrossPost,
+    logType: 'crossPost',
     timeframe: 25 * SECOND,
     channelCount: 4,
     action: handleCrossPostingAction,
@@ -84,6 +87,7 @@ export const rules: Rule[] = [
   {
     type: 'crossChannel',
     isBrokenBy: isCrossPost,
+    logType: 'crossPost',
     timeframe: 40 * SECOND,
     channelCount: 5,
     action: handleCrossPostingAction,
@@ -91,6 +95,7 @@ export const rules: Rule[] = [
   {
     type: 'crossChannel',
     isBrokenBy: isCrossPost,
+    logType: 'crossPost',
     timeframe: 1 * MINUTE,
     channelCount: 6,
     action: handleCrossPostingAction,
@@ -98,6 +103,7 @@ export const rules: Rule[] = [
   {
     type: 'crossChannel',
     isBrokenBy: isCrossPost,
+    logType: 'crossPost',
     timeframe: 2 * MINUTE,
     channelCount: 7,
     action: handleCrossPostingAction,
