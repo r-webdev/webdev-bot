@@ -2,6 +2,8 @@ import { clampText } from '@/util/text.js';
 import {
   ActionRowBuilder,
   type APIEmbedField,
+  type APIMessageTopLevelComponent,
+  type APITextDisplayComponent,
   ButtonBuilder,
   ButtonStyle,
   ComponentType,
@@ -22,6 +24,11 @@ const JUMP_BUTTON_LABEL = 'Jump to message';
 const EMOJIS = DELETE_EMOJIS.join('/');
 const DELETE_HINT = `React with ${EMOJIS} to delete`;
 const DELETE_HINT_LINE = `-# ${DELETE_HINT}`;
+
+const isTextDisplayComponent = (
+  component: APIMessageTopLevelComponent
+): component is APITextDisplayComponent =>
+  component.type === ComponentType.TextDisplay;
 
 const applyDeleteHint = (embed: EmbedBuilder): void => {
   if (!embed.data.footer?.text) {
@@ -117,9 +124,10 @@ export const createQuoteEmbed = ({
     const existingLineIndex = components.findIndex(
       (component) => component.type === ComponentType.TextDisplay
     );
+    const existingComponent = components[existingLineIndex];
     const existingContent =
-      existingLineIndex !== -1
-        ? (components[existingLineIndex] as { content: string }).content
+      existingComponent && isTextDisplayComponent(existingComponent)
+        ? existingComponent.content
         : null;
 
     const parsed =
@@ -145,8 +153,8 @@ export const createQuoteEmbed = ({
 
     const hasDeleteHint = components.some(
       (component) =>
-        component.type === ComponentType.TextDisplay &&
-        (component as { content: string }).content === DELETE_HINT_LINE
+        isTextDisplayComponent(component) &&
+        component.content === DELETE_HINT_LINE
     );
     if (!hasDeleteHint) {
       components.push(
