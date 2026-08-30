@@ -6,15 +6,17 @@ import {
   startModeration,
 } from './moderation-state.js';
 
-void describe('spam-detection/moderation-state', () => {
-  void it('tracks a user until all active moderation actions finish', () => {
-    startModeration('user-1');
-    startModeration('user-1');
+void describe('spam-detection', () => {
+  void describe('moderation-state', () => {
+    void it('tracks a user until all active moderation actions finish', () => {
+      startModeration('user-1');
+      startModeration('user-1');
 
-    finishModeration('user-1');
-    assert(isUserBeingModerated('user-1'));
+      finishModeration('user-1');
+      assert(isUserBeingModerated('user-1'));
 
-    finishModeration('user-1');
-    assert(!isUserBeingModerated('user-1'));
+      finishModeration('user-1');
+      assert(!isUserBeingModerated('user-1'));
+    });
   });
 });
