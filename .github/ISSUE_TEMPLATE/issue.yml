@@ -5,8 +5,8 @@ body:
     id: why
     attributes:
       label: Why
-      description: Short description of the problem or goal.
-      placeholder: Short description why.
+      description: What problem does this solve?
+      placeholder: Describe the problem or limitation you're trying to solve.
     validations:
       required: true
   - type: textarea
