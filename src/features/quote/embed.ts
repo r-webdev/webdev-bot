@@ -2,6 +2,8 @@ import { clampText } from '@/util/text.js';
 import {
   ActionRowBuilder,
   type APIEmbedField,
+  type APIMessageTopLevelComponent,
+  type APITextDisplayComponent,
   ButtonBuilder,
   ButtonStyle,
   ComponentType,
@@ -14,9 +16,27 @@ import {
   type User,
 } from 'discord.js';
 
+import { DELETE_EMOJIS } from '../reactions/remove-user-bot-message.js';
+
 const EMBED_DESC_LIMIT = 4096;
 const FIELD_VALUE_LIMIT = 1024;
 const JUMP_BUTTON_LABEL = 'Jump to message';
+const EMOJIS = DELETE_EMOJIS.join('/');
+const DELETE_HINT = `React with ${EMOJIS} to delete`;
+const DELETE_HINT_LINE = `-# ${DELETE_HINT}`;
+
+const isTextDisplayComponent = (
+  component: APIMessageTopLevelComponent
+): component is APITextDisplayComponent =>
+  component.type === ComponentType.TextDisplay;
+
+const applyDeleteHint = (embed: EmbedBuilder): void => {
+  if (!embed.data.footer?.text) {
+    embed.setFooter({ text: DELETE_HINT });
+  } else if (!embed.data.footer.text.includes(DELETE_HINT)) {
+    embed.setFooter({ text: `${embed.data.footer.text} | ${DELETE_HINT}` });
+  }
+};
 
 type OriginalQuoteInfo = {
   authorMention: string;
@@ -104,9 +124,10 @@ export const createQuoteEmbed = ({
     const existingLineIndex = components.findIndex(
       (component) => component.type === ComponentType.TextDisplay
     );
+    const existingComponent = components[existingLineIndex];
     const existingContent =
-      existingLineIndex !== -1
-        ? (components[existingLineIndex] as { content: string }).content
+      existingComponent && isTextDisplayComponent(existingComponent)
+        ? existingComponent.content
         : null;
 
     const parsed =
@@ -128,6 +149,17 @@ export const createQuoteEmbed = ({
       components[existingLineIndex] = attributionLine;
     } else {
       components.push(attributionLine);
+    }
+
+    const hasDeleteHint = components.some(
+      (component) =>
+        isTextDisplayComponent(component) &&
+        component.content === DELETE_HINT_LINE
+    );
+    if (!hasDeleteHint) {
+      components.push(
+        new TextDisplayBuilder().setContent(DELETE_HINT_LINE).toJSON()
+      );
     }
 
     return {
@@ -152,12 +184,14 @@ export const createQuoteEmbed = ({
 
   // Find an existing "Quoted by" field, if quotedMessage is itself a quote.
   let existingField: APIEmbedField | null = null;
+  let existingFieldEmbed: EmbedBuilder | null = null;
   for (const embed of embeds) {
     const found = embed.data.fields?.find(
       (field) => /^quoted by$/i.test(field.name) && parseQuoteLine(field.value)
     );
     if (found) {
       existingField = found;
+      existingFieldEmbed = embed;
       break;
     }
   }
@@ -188,6 +222,9 @@ export const createQuoteEmbed = ({
     // Already a quote: swap the field's value in place, keep everything
     // else (original author/description/image/timestamp) untouched.
     existingField.value = quotedByField.value;
+    if (existingFieldEmbed) {
+      applyDeleteHint(existingFieldEmbed);
+    }
   } else {
     // First-time quote: build the wrapper/annotation.
     const authorOptions = {
@@ -195,8 +232,11 @@ export const createQuoteEmbed = ({
       iconURL: quotedMessage.author.displayAvatarURL({ size: 64 }),
     };
 
-    const stampAsQuote = (embed: EmbedBuilder) =>
+    const stampAsQuote = (embed: EmbedBuilder) => {
       embed.setAuthor(authorOptions).addFields(quotedByField).setTimestamp();
+      applyDeleteHint(embed);
+      return embed;
+    };
 
     const hasContent = quotedMessage.content.length > 0;
     const hasEmbeds = embeds.length > 0;
