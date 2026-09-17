@@ -3,7 +3,7 @@ import type { ButtonSubmitInteraction } from '@/common/interactions/button-inter
 import { logToChannel } from '@/util/channel-logging.js';
 import { parseCustomId } from '@/util/custom-id.js';
 import { isUserInServer, isUserModerator } from '@/util/member.js';
-import { getShowcaseLogChannel } from './util.js';
+import { SERVER_CHANNELS } from '@/constants/channels.js';
 
 export const deleteShowcase: ButtonSubmitInteraction = {
   commandName: 'delete_showcase',
@@ -61,9 +61,8 @@ export const deleteShowcase: ButtonSubmitInteraction = {
 
       const projectName = forumPost.name;
       await interaction.channel?.delete();
-      const logChannel = getShowcaseLogChannel(interaction.guild);
       await logToChannel({
-        channel: logChannel,
+        channel: SERVER_CHANNELS.showcaseLogs,
         content: {
           type: 'embed',
           embed: new EmbedBuilder()

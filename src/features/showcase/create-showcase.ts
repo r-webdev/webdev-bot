@@ -2,7 +2,6 @@ import {
   ButtonBuilder,
   type ButtonInteraction,
   ButtonStyle,
-  ChannelType,
   type ChatInputCommandInteraction,
   Colors,
   ContainerBuilder,
@@ -19,36 +18,20 @@ import {
   type ModalSubmitInteraction,
   registerModalSubmitInteraction,
 } from '@/common/interactions/modal-interaction.js';
-import { config } from '@/env.js';
 import { logToChannel } from '@/util/channel-logging.js';
 import { customId } from '@/util/custom-id.js';
 import { deleteShowcase } from './delete-showcase.js';
 import { editShowcaseInteraction } from './edit-showcase.js';
-import {
-  buildShowcaseModal,
-  createShowcaseMessageContent,
-  getShowcaseLogChannel,
-} from './util.js';
+import { buildShowcaseModal, createShowcaseMessageContent } from './util.js';
+import { SERVER_CHANNELS } from '@/constants/channels.js';
 
 export const showModal = async (
   interaction: ButtonInteraction | ChatInputCommandInteraction
 ) => {
   try {
-    const channel = interaction.guild?.channels.cache.get(
-      config.channelIds.showcase
-    );
-    if (channel === undefined || channel.type !== ChannelType.GuildForum) {
-      await interaction.reply({
-        content:
-          'Showcase channel is not properly configured. Please contact an administrator.',
-        flags: MessageFlags.Ephemeral,
-      });
-      return;
-    }
-
     const modal = buildShowcaseModal({
       id: customId('showcase', interaction.user.id),
-      tags: channel.availableTags,
+      tags: SERVER_CHANNELS.showcase.availableTags,
     });
 
     await interaction.showModal(modal);
@@ -88,19 +71,8 @@ const modalHandler: ModalSubmitInteraction = {
     const projectTags = interaction.fields.getStringSelectValues('projectTags');
     const projectMedia = interaction.fields.getUploadedFiles('projectMedia');
 
-    const channel = interaction.guild?.channels.cache.get(
-      config.channelIds.showcase
-    );
-    if (channel === undefined || channel.type !== ChannelType.GuildForum) {
-      await interaction.editReply({
-        content:
-          'Showcase channel is not properly configured. Please contact an administrator.',
-      });
-      return;
-    }
-
     try {
-      const thread = await channel.threads.create({
+      const thread = await SERVER_CHANNELS.showcase.threads.create({
         name: projectName,
         appliedTags: projectTags,
         message: {
@@ -142,7 +114,6 @@ const modalHandler: ModalSubmitInteraction = {
       });
 
       try {
-        const logChannel = getShowcaseLogChannel(interaction.guild);
         const author = {
           name: interaction.user.tag,
           iconURL: interaction.user.displayAvatarURL(),
@@ -164,7 +135,7 @@ const modalHandler: ModalSubmitInteraction = {
           .setTimestamp();
 
         await logToChannel({
-          channel: logChannel,
+          channel: SERVER_CHANNELS.showcaseLogs,
           content: { type: 'embed', embed },
           silent: true,
         });

@@ -1,6 +1,6 @@
 import type { Message } from 'discord.js';
+import { SERVER_CHANNELS } from '@/constants/channels.js';
 import { cachedMessages } from '@/util/cache/recent-message-store.js';
-import { config } from '../../env.js';
 import { MAX_RULE_TIMEFRAME } from './constants.js';
 import type { Rule } from './rules-config.js';
 import { rules } from './rules-config.js';
@@ -29,9 +29,7 @@ export async function checkRules(newMessage: Message): Promise<void> {
     });
 
     if (result.broken) {
-      const logChannel = newMessage.client.channels.cache.get(
-        config.channelIds.spamDetection
-      );
+      const logChannel = SERVER_CHANNELS.spamDetection;
       await rule.action(result.messages, rule, logChannel);
       return;
     }

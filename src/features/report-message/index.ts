@@ -1,6 +1,6 @@
 import { createMessageContextMenuCommand } from '@/common/commands/create-commands.js';
-import { config } from '@/env.js';
-import { ChannelType, Colors, EmbedBuilder, MessageFlags } from 'discord.js';
+import { SERVER_CHANNELS } from '@/constants/channels.js';
+import { Colors, EmbedBuilder, MessageFlags } from 'discord.js';
 
 export const reportMessage = createMessageContextMenuCommand({
   data: {
@@ -22,17 +22,8 @@ export const reportMessage = createMessageContextMenuCommand({
 
     const targetMessage = interaction.targetMessage;
     const reporter = interaction.user;
-    const channelId = config.channelIds.spamDetection;
-    const channel = guild.channels.cache.get(channelId);
 
     try {
-      if (!channel || channel.type !== ChannelType.GuildText) {
-        await interaction.editReply({
-          content: 'Moderator channel not found or is not a text channel.',
-        });
-        return;
-      }
-
       const jumpLink = targetMessage.url;
       const authorTag = targetMessage.author.tag ?? 'Unknown';
       const authorId = targetMessage.author.id ?? 'Unknown';
@@ -55,7 +46,7 @@ export const reportMessage = createMessageContextMenuCommand({
           { name: 'Linked User', value: `<@${authorId}>`, inline: true }
         );
 
-      await channel.send({ embeds: [embed] });
+      await SERVER_CHANNELS.spamDetection.send({ embeds: [embed] });
 
       await interaction.editReply({
         content: 'Thanks. The message was reported to moderators.',

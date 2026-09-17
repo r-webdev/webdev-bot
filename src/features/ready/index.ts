@@ -1,5 +1,6 @@
 import { Events } from 'discord.js';
 import { createEvent } from '@/common/events/create-event.js';
+import { resolveChannels } from '@/constants/channels.js';
 import { config } from '@/env.js';
 import { initializeAdventScheduler } from '@/util/advent-scheduler.js';
 import { fetchAndCachePublicChannelsMessages } from '@/util/channel-prefetch.js';
@@ -31,28 +32,29 @@ export const readyEvent = createEvent(
       process.exit(1);
     }
 
+    resolveChannels(guild);
+
     if (config.fetchAndSyncMessages) {
       await fetchAndCachePublicChannelsMessages(guild, true);
-
-      // Sync guides to channel
-      try {
-        console.log(
-          `🔄 Starting guide sync to channel ${config.channelIds.guides}...`
-        );
-        await syncGuidesToChannel(client, config.channelIds.guides);
-      } catch (error) {
-        if (error && typeof error === 'object' && 'code' in error) {
-          const discordError = error as { code: number; message?: string };
-          if (discordError.code === 50001) {
-            console.warn(
-              '⚠️ Bot does not have access to the guides channel. Please check bot permissions and channel ID.'
-            );
-          } else {
-            console.error('❌ Failed to sync guides:', error);
-          }
+    }
+    // Sync guides to channel
+    try {
+      console.log(
+        `🔄 Starting guide sync to channel ${config.channelIds.guides}...`
+      );
+      await syncGuidesToChannel(client, config.channelIds.guides);
+    } catch (error) {
+      if (error && typeof error === 'object' && 'code' in error) {
+        const discordError = error as { code: number; message?: string };
+        if (discordError.code === 50001) {
+          console.warn(
+            '⚠️ Bot does not have access to the guides channel. Please check bot permissions and channel ID.'
+          );
         } else {
           console.error('❌ Failed to sync guides:', error);
         }
+      } else {
+        console.error('❌ Failed to sync guides:', error);
       }
     }
 
@@ -65,7 +67,7 @@ export const readyEvent = createEvent(
 
     // Make sure all channels in the archived category are properly archived on startup
     try {
-      await syncArchiveCategoryChannels(guild);
+      await syncArchiveCategoryChannels();
     } catch (error) {
       console.error(
         '❌ Failed to ensure archived channels are properly archived:',
