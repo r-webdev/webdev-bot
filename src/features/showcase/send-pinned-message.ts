@@ -8,7 +8,7 @@ import {
   PermissionsBitField,
 } from 'discord.js';
 import { createSlashCommand } from '@/common/commands/create-commands.js';
-import { config } from '@/env.js';
+import { SERVER_CHANNELS } from '@/constants/channels.js';
 
 export const sendShowcasePinnedMessage = createSlashCommand({
   data: {
@@ -20,15 +20,8 @@ export const sendShowcasePinnedMessage = createSlashCommand({
   },
   execute: async (interaction) => {
     await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-    const showcaseChannel = interaction.guild?.channels.cache.get(
-      config.channelIds.showcaseRules
-    );
-    if (showcaseChannel === undefined || !showcaseChannel.isTextBased()) {
-      await interaction.editReply({
-        content: 'Showcase channel not found or is not a forum channel.',
-      });
-      return;
-    }
+
+    const showcaseChannel = SERVER_CHANNELS.showcaseRules;
 
     const guideLines = [
       'Welcome to the Showcase channel! Please read the rules and guidelines before posting your content. Make sure to follow the format and include all necessary information. Happy sharing!',

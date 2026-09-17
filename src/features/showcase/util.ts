@@ -1,7 +1,6 @@
 import type { Collection } from 'discord.js';
 import {
   FileUploadBuilder,
-  type Guild,
   type GuildForumTag,
   LabelBuilder,
   ModalBuilder,
@@ -10,7 +9,6 @@ import {
   TextInputBuilder,
   TextInputStyle,
 } from 'discord.js';
-import { config } from '@/env.js';
 
 export type ShowcaseMessageData = {
   link: string;
@@ -163,16 +161,4 @@ export const resolveTagNames = (
   return tagIds.map(
     (id) => availableTags.find((tag) => tag.id === id)?.name ?? id
   );
-};
-
-export const getShowcaseLogChannel = (guild: Guild | null) => {
-  if (!guild) {
-    throw new Error('Guild is null');
-  }
-  const channelId = config.channelIds.showcaseLogs;
-  const channel = guild.channels.cache.get(channelId);
-  if (!channel?.isTextBased() || !channel.isSendable()) {
-    throw new Error('Showcase log channel not found or is not text-based');
-  }
-  return channel;
 };

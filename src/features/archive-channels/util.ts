@@ -1,6 +1,5 @@
-import { config } from '@/env.js';
+import { SERVER_CHANNELS } from '@/constants/channels.js';
 import {
-  Guild,
   ChannelType,
   type GuildChannel,
   PermissionFlagsBits,
@@ -18,18 +17,8 @@ export const PUBLIC_PERMISSIONS = [
   PermissionFlagsBits.Connect,
 ];
 
-export async function syncArchiveCategoryChannels(guild: Guild) {
-  const archiveCategory = guild.channels.cache.get(
-    config.channelIds.archiveCategory
-  );
-
-  if (archiveCategory?.type !== ChannelType.GuildCategory) {
-    throw new Error(
-      `Archive category with ID ${config.channelIds.archiveCategory} not found in the guild.`
-    );
-  }
-
-  const archivedChannels = archiveCategory.children.cache;
+export async function syncArchiveCategoryChannels() {
+  const archivedChannels = SERVER_CHANNELS.archiveCategory.children.cache;
   const results = await Promise.allSettled(
     archivedChannels.map(archiveChannel)
   );

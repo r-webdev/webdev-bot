@@ -21,6 +21,7 @@ import { config } from '../../env.js';
 import { buildCommandString } from '../../util/build-command-string.js';
 import { getPublicChannels } from '../../util/channel.js';
 import { logToChannel } from '../../util/channel-logging.js';
+import { SERVER_CHANNELS } from '@/constants/channels.js';
 
 const DEFAULT_LOOK_BACK_MS = 10 * MINUTE;
 const DEFAULT_TIMEOUT_DURATION_MS = 1 * HOUR;
@@ -370,17 +371,13 @@ const logRepelAction = async ({
   const mentionText = modMessage
     ? `${config.roleIds.moderators.map((id) => `<@&${id}>`).join(' ')} - ${modMessage}`
     : undefined;
-  const channel = interaction.client.channels.cache.get(
-    config.channelIds.repelLogs
-  ) as TextChannel;
-
   const embed =
     failedChannelsEmbed !== null
       ? [commandEmbed, resultEmbed, failedChannelsEmbed]
       : [commandEmbed, resultEmbed];
 
   await logToChannel({
-    channel,
+    channel: SERVER_CHANNELS.repelLogs,
     content: {
       type: 'embed',
       embed,

@@ -19,10 +19,10 @@ import {
   buildShowcaseModal,
   createShowcaseMessageContent,
   getAttachmentsCount,
-  getShowcaseLogChannel,
   parseShowcaseMessage,
   resolveTagNames,
 } from './util.js';
+import { SERVER_CHANNELS } from '@/constants/channels.js';
 
 export const editShowcaseInteraction: ButtonSubmitInteraction = {
   commandName: 'edit_showcase',
@@ -266,7 +266,6 @@ const modalHandler: ModalSubmitInteraction = {
 
       if (changes.length > 0) {
         try {
-          const logChannel = getShowcaseLogChannel(interaction.guild);
           const author = {
             name: interaction.user.tag,
             iconURL: interaction.user.displayAvatarURL(),
@@ -302,7 +301,7 @@ const modalHandler: ModalSubmitInteraction = {
             .setColor(Colors.Orange)
             .setTimestamp();
 
-          await logChannel.send({
+          await SERVER_CHANNELS.showcaseLogs.send({
             embeds: [embed],
             allowedMentions: { parse: [] },
           });
