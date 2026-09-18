@@ -20,7 +20,7 @@ import {
 } from '@/common/interactions/modal-interaction.js';
 import { logToChannel } from '@/util/channel-logging.js';
 import { customId } from '@/util/custom-id.js';
-import { deleteShowcase } from './delete-showcase.js';
+import { deleteShowcase, deleteShowcaseModal } from './delete-showcase.js';
 import { editShowcaseInteraction } from './edit-showcase.js';
 import { buildShowcaseModal, createShowcaseMessageContent } from './util.js';
 import { SERVER_CHANNELS } from '@/constants/channels.js';
@@ -157,5 +157,6 @@ const modalHandler: ModalSubmitInteraction = {
 };
 
 registerModalSubmitInteraction(modalHandler);
+registerModalSubmitInteraction(deleteShowcaseModal);
 registerButtonSubmitInteraction(deleteShowcase);
 registerButtonSubmitInteraction(editShowcaseInteraction);
