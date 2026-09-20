@@ -19,7 +19,7 @@ import {
   basicMessage,
 } from '@/util/components/basic-message.js';
 import { customId, parseCustomId } from '@/util/custom-id.js';
-import { isValidTagName } from '@/util/tags.js';
+import { isValidTagName, getTagPrimaryAlias } from '@/util/tags.js';
 import { getCommandUser } from '@/util/member.js';
 import { canAccessTags } from './permissions.js';
 
@@ -123,7 +123,7 @@ const modalHandler: ModalSubmitInteraction = {
       await interaction.reply({
         components: [
           basicMessage(
-            `Tag ${updatedTag?.aliases.map((tag) => tag.name).join(', ')} has been updated.`
+            `Tag \`${getTagPrimaryAlias(updatedTag!)}\` has been updated.`
           ),
         ],
         flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
