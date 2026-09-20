@@ -120,10 +120,22 @@ const modalHandler: ModalSubmitInteraction = {
         userId: interaction.user.id,
       });
 
+      if (updatedTag === null) {
+        await interaction.reply({
+          components: [
+            basicErrorMessage(
+              `Failed to update tag \`${tagName}\`. An unexpected error occurred.`
+            ),
+          ],
+          flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+        });
+        return;
+      }
+
       await interaction.reply({
         components: [
           basicMessage(
-            `Tag \`${getTagPrimaryAlias(updatedTag!)}\` has been updated.`
+            `Tag \`${getTagPrimaryAlias(updatedTag)}\` has been updated.`
           ),
         ],
         flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
