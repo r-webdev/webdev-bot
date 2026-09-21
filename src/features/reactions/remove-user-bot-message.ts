@@ -1,7 +1,7 @@
 import type { ClientEvents, Events, GuildMember } from 'discord.js';
 import { UserBotMessagesService } from '@/services/user-bot-messages/user-bot-messages-service.js';
 
-const DELETE_EMOJIS = ['🗑️', '❌'];
+export const DELETE_EMOJIS = ['🗑️', '❌'];
 
 export const removeUserBotMessage: (
   ...args: ClientEvents[Events.MessageReactionAdd]
