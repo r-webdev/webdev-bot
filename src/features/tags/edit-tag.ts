@@ -19,7 +19,7 @@ import {
   basicMessage,
 } from '@/util/components/basic-message.js';
 import { customId, parseCustomId } from '@/util/custom-id.js';
-import { isValidTagName } from '@/util/tags.js';
+import { isValidTagName, getTagPrimaryAlias } from '@/util/tags.js';
 import { getCommandUser } from '@/util/member.js';
 import { canAccessTags } from './permissions.js';
 
@@ -120,10 +120,22 @@ const modalHandler: ModalSubmitInteraction = {
         userId: interaction.user.id,
       });
 
+      if (updatedTag === null) {
+        await interaction.reply({
+          components: [
+            basicErrorMessage(
+              `Failed to update tag \`${tagName}\`. An unexpected error occurred.`
+            ),
+          ],
+          flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+        });
+        return;
+      }
+
       await interaction.reply({
         components: [
           basicMessage(
-            `Tag ${updatedTag?.aliases.map((tag) => tag.name).join(', ')} has been updated.`
+            `Tag \`${getTagPrimaryAlias(updatedTag)}\` has been updated.`
           ),
         ],
         flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,

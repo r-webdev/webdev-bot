@@ -93,7 +93,7 @@ export const TagService = {
         where: { id: existing.id },
         data: {
           content: data.content,
-          desc: data.desc,
+          description: data.desc,
           lastModifiedBy: data.userId,
           updatedAt: new Date(),
         },
