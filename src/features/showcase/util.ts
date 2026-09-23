@@ -8,6 +8,8 @@ import {
   StringSelectMenuOptionBuilder,
   TextInputBuilder,
   TextInputStyle,
+  ActionRowBuilder,
+  type ModalActionRowComponentBuilder,
 } from 'discord.js';
 
 export type ShowcaseMessageData = {
@@ -161,4 +163,30 @@ export const resolveTagNames = (
   return tagIds.map(
     (id) => availableTags.find((tag) => tag.id === id)?.name ?? id
   );
+};
+
+export type BuildDeleteShowcaseModalOptions = {
+  id: string;
+};
+
+export const buildDeleteShowcaseModal = ({
+  id,
+}: BuildDeleteShowcaseModalOptions): ModalBuilder => {
+  return new ModalBuilder()
+    .setCustomId(id)
+    .setTitle('Delete Showcase')
+    .addLabelComponents((label) =>
+      label
+        .setLabel('Reason for deletion (optional)')
+        .setDescription(
+          'Provide a reason for deleting this showcase (optional)'
+        )
+        .setTextInputComponent((textInput) =>
+          textInput
+            .setCustomId('deleteReason')
+            .setStyle(TextInputStyle.Paragraph)
+            .setMaxLength(1000)
+            .setRequired(false)
+        )
+    );
 };
