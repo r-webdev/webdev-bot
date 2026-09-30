@@ -30,6 +30,7 @@ root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 cd "$root"
 
 source_skills=".agents/skills"
+relative_source_skills="../${source_skills}"
 
 confirm_optional_symlink() {
   local agent_name="$1"
@@ -98,7 +99,7 @@ esac
 
 if [[ -L "$link_path" ]]; then
   current_target="$(readlink "$link_path")"
-  if [[ "$current_target" == "$source_skills" || "$current_target" == "../agents/skills" ]]; then
+  if [[ "$current_target" == "$relative_source_skills" || "$current_target" == "$source_skills" ]]; then
     echo "already linked: $link_path -> $source_skills"
     exit 0
   fi
@@ -111,5 +112,5 @@ elif [[ "$agent" == "cursor" || "$agent" == "codex" ]]; then
 fi
 
 mkdir -p "$(dirname "$link_path")"
-ln -s "$source_skills" "$link_path"
+ln -s "$relative_source_skills" "$link_path"
 echo "linked: $link_path -> $source_skills"
