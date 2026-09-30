@@ -1,6 +1,6 @@
 import type { Channel, Message } from 'discord.js';
 import { cachedMessages } from '@/util/cache/recent-message-store.js';
-import { DAY, HOUR } from '../../constants/time.js';
+import { DAY, HOUR, SECOND } from '../../constants/time.js';
 import { defaultLogFunction, type LogFunction } from './logs.js';
 import { finishModeration, startModeration } from './moderation-state.js';
 import type { Rule } from './rules-config.js';
@@ -11,6 +11,8 @@ type ActionConfig = {
   muteDuration?: number;
   log?: LogFunction;
 };
+
+const GRACE_PERIOD = 10 * SECOND;
 
 export const deleteMessageDuringModeration = async (
   message: Message
@@ -83,13 +85,24 @@ const handleAction = (config: ActionConfig) => {
 
       let deletedMessagesCount = 0;
 
+      let lateMessages: Message[] = [];
+
       if (config.deleteMessages) {
         deletedMessagesCount = await handleBulkDeleteMessages(messages);
+
+        lateMessages = cachedMessages.getMessagesInTimeRange(
+          author.id,
+          messages[0].createdTimestamp
+        );
+
+        await new Promise((resolve) => setTimeout(resolve, GRACE_PERIOD));
+
+        deletedMessagesCount += await handleBulkDeleteMessages(lateMessages);
       }
 
       const logFunction = config.log || defaultLogFunction;
       await logFunction({
-        messages,
+        messages: [...messages, ...lateMessages],
         reason: config.reason,
         logChannel,
         deletedMessagesCount,
