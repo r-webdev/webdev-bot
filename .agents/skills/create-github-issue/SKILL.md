@@ -56,6 +56,8 @@ Write a short, specific **title** (no conventional-commit prefix unless the deve
 Write the **body** using this structure. Keep the headings and order exactly:
 
 ```
+## Why
+
 Short description why.
 
 ## Acceptance Criteria
@@ -94,7 +96,7 @@ Fill this subsection only when reporting a bug. Skip it for features and chores.
 
 Rules for filling the template:
 
-- Open with a short paragraph explaining **why** the work matters.
+- **Why** — a short paragraph explaining why the work matters.
 - **Acceptance Criteria** — concrete, testable bullets. If you cannot name real criteria, put the unknowns under **Open Questions** instead of inventing them.
 - **Open Questions** — anything that must be answered before work can start. Use `_None_` if there are none.
 - **Out of Scope** — what this issue will not do. Prefer a small, focused ticket (see [AGENTS.md](../../../AGENTS.md)).
@@ -126,8 +128,8 @@ If they confirm a related existing issue:
 - **Do not create a new issue.**
 - **Do not edit** that issue (title, body, labels, or other fields). Contributors cannot update the duplicate this way.
 - They **may leave a comment** with more information.
-- Use **AskQuestion** (when available; otherwise ask conversationally) with a prompt like: “Add a comment with more information to #<number>?” Options: **Yes — add a comment**, **No — stop**.
-- If several results might match, confirm **which issue number** first, then AskQuestion about commenting on that issue.
+- Use your question tool (`AskQuestion` or `AskUserQuestion`; otherwise ask conversationally) with a prompt like: “Add a comment with more information to #<number>?” Options: **Yes — add a comment**, **No — stop**.
+- If several results might match, confirm **which issue number** first, then ask about commenting on that issue.
 
 If no result relates, or none were found, continue to Step 4 (new-issue draft).
 
@@ -199,5 +201,5 @@ Stop there unless the developer asks to plan or implement the issue (see [plan-g
 - Prefer small scope: do not bundle unrelated chores into the ticket.
 - Do not create `.github/ISSUE_TEMPLATE` files as part of filing an issue.
 - Never create commits or pull requests for the described issue.
-- Never edit an existing issue to “update” a duplicate. Only comment when the developer agrees via AskQuestion.
+- Never edit an existing issue to “update” a duplicate. Only comment when the developer agrees when asked.
 - After creating a **new** issue, tell the developer that it needs to be triaged by the code owners.
