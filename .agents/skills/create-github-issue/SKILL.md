@@ -201,5 +201,5 @@ Stop there unless the developer asks to plan or implement the issue (see [plan-g
 - Prefer small scope: do not bundle unrelated chores into the ticket.
 - Do not create `.github/ISSUE_TEMPLATE` files as part of filing an issue.
 - Never create commits or pull requests for the described issue.
-- Never edit an existing issue to “update” a duplicate. Only comment when the developer agrees when asked.
+- Never edit an existing issue to “update” a duplicate. Only comment after the developer agrees to it.
 - After creating a **new** issue, tell the developer that it needs to be triaged by the code owners.
