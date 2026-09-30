@@ -92,7 +92,7 @@ const handleAction = (config: ActionConfig) => {
 
         lateMessages = cachedMessages.getMessagesInTimeRange(
           author.id,
-          messages[0].createdTimestamp
+          messages[0].createdTimestamp - 1 * SECOND
         );
 
         await new Promise((resolve) => setTimeout(resolve, GRACE_PERIOD));
