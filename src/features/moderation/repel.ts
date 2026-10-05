@@ -436,6 +436,10 @@ export const repelCommand = createSlashCommand({
             name: '3 hours',
             value: 3 * HOUR,
           },
+		  {
+            name: '0 (Do not delete any messages)',
+            value: 0,
+          },
         ],
       },
       {
