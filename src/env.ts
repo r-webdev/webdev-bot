@@ -24,6 +24,8 @@ export const config = {
   },
   fetchAndSyncMessages: optionalEnv('FETCH_AND_SYNC_MESSAGES') !== 'false',
   guidesTrackerPath: optionalEnv('GUIDES_TRACKER_PATH'),
+  showcaseDigestLookbackDays: optionalEnv('SHOWCASE_DIGEST_LOOKBACK_DAYS'),
+  showcaseReactEmoji: optionalEnv('SHOWCASE_REACT_EMOI'),
   adventOfCodeTrackerPath: requireEnv('ADVENT_OF_CODE_TRACKER_PATH'),
   roleIds: {
     moderators: requireEnv('MODERATORS_ROLE_IDS')
@@ -43,6 +45,7 @@ export const config = {
     showcase: requireEnv('SHOWCASE_CHANNEL_ID'),
     showcaseLogs: requireEnv('SHOWCASE_LOG_CHANNEL_ID'),
     showcaseRules: requireEnv('SHOWCASE_RULES_CHANNEL_ID'),
+    showcaseDigest: requireEnv('SHOWCASE_DIGEST_CHANNEL_ID'),
     spamDetection: requireEnv('SPAM_DETECTION_CHANNEL_ID'),
     archiveCategory: requireEnv('ARCHIVE_CATEGORY_ID'),
   },

@@ -16,6 +16,7 @@ type ChannelTypeMap = {
   showcase: ForumChannel;
   showcaseLogs: TextChannel;
   showcaseRules: TextChannel;
+  showcaseDigest: TextChannel;
   spamDetection: TextChannel;
   archiveCategory: CategoryChannel;
 };
@@ -27,6 +28,7 @@ const EXPECTED_DISCORD_TYPE: Record<ChannelKey, ChannelType> = {
   showcase: ChannelType.GuildForum,
   showcaseLogs: ChannelType.GuildText,
   showcaseRules: ChannelType.GuildText,
+  showcaseDigest: ChannelType.GuildText,
   spamDetection: ChannelType.GuildText,
   archiveCategory: ChannelType.GuildCategory,
 };
