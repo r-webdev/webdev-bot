@@ -15,20 +15,14 @@ import {
   MessageReaction,
 } from 'discord.js';
 
-const postProcessor = async (posts: Collection<string, ForumThreadChannel>) => {
-  const container = new ContainerBuilder();
-  container.addTextDisplayComponents(
-    new TextDisplayBuilder().setContent('## Showcase Digest')
-  );
-  type Post = { id: string; messageCount: number; likes: number };
-  const filterByReaction = (reactEmoji: MessageReaction) => {
-    return reactEmoji.emoji.identifier == REACT_EMOJI;
-  };
+type Post = { id: string; messageCount: number; likes: number };
 
-  const sortByDescPost = (postA: Post, postB: Post) => {
-    return postB.likes - postA.likes;
-  };
-  const postsUnordered: Post[] = await Promise.all(
+const filterByReaction = (reactEmoji: MessageReaction) => {
+  return reactEmoji.emoji.identifier == REACT_EMOJI;
+};
+
+const convertPosts = async (posts: Collection<string, ForumThreadChannel>) => {
+  return await Promise.all(
     posts.map(async (post) => {
       const firstMessage: Message | null = await post.fetchStarterMessage();
       if (!firstMessage) {
@@ -43,7 +37,17 @@ const postProcessor = async (posts: Collection<string, ForumThreadChannel>) => {
       };
     })
   );
+};
 
+const postProcessor = async (posts: Collection<string, ForumThreadChannel>) => {
+  const container = new ContainerBuilder();
+  container.addTextDisplayComponents(
+    new TextDisplayBuilder().setContent('## Showcase Digest')
+  );
+
+  const postsUnordered: Post[] = await convertPosts(posts);
+  const sortByDescPost = (postA: Post, postB: Post) =>
+    postB.likes - postA.likes;
   const postsOrdered = postsUnordered.sort(sortByDescPost);
 
   postsOrdered.forEach((post, index) => {
@@ -56,6 +60,20 @@ const postProcessor = async (posts: Collection<string, ForumThreadChannel>) => {
   return container.components.length > 1 ? container : null;
 };
 
+function filterPostsByCreationTime(
+  posts: Collection<string, ForumThreadChannel>,
+  lookbackN: number
+): Collection<string, ForumThreadChannel> {
+  return posts.filter((post) => {
+    const creationTime = post.createdAt?.getTime();
+    const now = new Date().getTime();
+    if (!creationTime) {
+      console.error('Creation time is missing from post on showcase-digest');
+      return false;
+    }
+    return creationTime > now - DAY * lookbackN;
+  });
+}
 export const digestHandler = async (
   interaction: ButtonInteraction | ChatInputCommandInteraction
 ) => {
@@ -74,35 +92,34 @@ export const digestHandler = async (
 
   const digestChannel = SERVER_CHANNELS.showcaseDigest as TextChannel;
   const forumChannel = SERVER_CHANNELS.showcase;
-  const posts = forumChannel.threads.cache.filter((post) => {
-    const creationTime = post.createdAt?.getTime();
-    const now = new Date().getTime();
-    if (!creationTime) {
-      console.error('Creation time is missing from post on showcase-digest');
-      return false;
-    }
-    return creationTime > now - DAY * LOOKBACK_N;
-  });
+  const posts = filterPostsByCreationTime(
+    forumChannel.threads.cache,
+    LOOKBACK_N
+  );
 
-  if (posts) {
-    const component = await postProcessor(posts);
-    if (component === null) {
-      console.warn('Showcases Forum was empty!');
-      await interaction.reply({
-        flags: MessageFlags.Ephemeral,
-        content:
-          'There was no valid posts in showcases forum. (N might be too low?)',
-      });
-      return;
-    }
-
-    await digestChannel.send({
-      flags: MessageFlags.IsComponentsV2,
-      components: [component],
-    });
-    await interaction.reply('This worked!');
-  } else {
-    console.error('No posts found.');
+  if (posts.size === 0) {
+    console.warn('No posts found.');
     await interaction.reply('No posts were found.');
+    return;
   }
+
+  const component = await postProcessor(posts);
+  if (component === null) {
+    console.warn('Showcases Forum was empty!');
+    await interaction.reply({
+      flags: MessageFlags.Ephemeral,
+      content:
+        'There was no valid posts in showcases forum. (N might be too low?)',
+    });
+    return;
+  }
+
+  await digestChannel.send({
+    flags: MessageFlags.IsComponentsV2,
+    components: [component],
+  });
+  await interaction.reply({
+    flags: MessageFlags.Ephemeral,
+    content: 'Successfully digested the message!',
+  });
 };
