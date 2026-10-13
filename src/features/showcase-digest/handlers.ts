@@ -1,8 +1,6 @@
-import { createSlashCommand } from '@/common/commands/create-commands.js';
 import { SERVER_CHANNELS } from '@/constants/channels.js';
-import { MINUTE } from '@/constants/time.js';
-import { config } from '@/env.js';
-
+import { DAY } from '@/constants/time.js';
+import { LOOKBACK_N, REACT_EMOJI } from './config.js';
 import {
   ButtonInteraction,
   ChatInputCommandInteraction,
@@ -16,30 +14,6 @@ import {
   Message,
   MessageReaction,
 } from 'discord.js';
-
-const LOOKBACK_N: number = (() => {
-  const DEFAULT_N = 7;
-  if (config.showcaseDigestLookbackDays) {
-    try {
-      return Number.parseInt(config.showcaseDigestLookbackDays);
-    } catch (err) {
-      console.error('Failed to parse showcaseDigestLookbackDays: ', err);
-    }
-  }
-  console.warn(`DEFAULT_N is being used for showcase digest: n=${DEFAULT_N}`);
-  return DEFAULT_N;
-})();
-
-const REACT_EMOJI = (() => {
-  const DEFAULT_EMOJI: string = '%F0%9F%98%AD';
-  if (config.showcaseReactEmoji) {
-    return config.showcaseReactEmoji;
-  }
-  console.warn(
-    `DEFAULT_REACT_EMOJI is being used for showcase digest: n=${DEFAULT_EMOJI}`
-  );
-  return DEFAULT_EMOJI;
-})();
 
 const postProcessor = async (posts: Collection<string, ForumThreadChannel>) => {
   const container = new ContainerBuilder();
@@ -79,10 +53,10 @@ const postProcessor = async (posts: Collection<string, ForumThreadChannel>) => {
       )
     );
   });
-  return container.components.length ? container : null;
+  return container.components.length > 1 ? container : null;
 };
 
-const digestHandler = async (
+export const digestHandler = async (
   interaction: ButtonInteraction | ChatInputCommandInteraction
 ) => {
   if (!interaction.inGuild() || !interaction.guild) {
@@ -107,7 +81,7 @@ const digestHandler = async (
       console.error('Creation time is missing from post on showcase-digest');
       return false;
     }
-    return creationTime > now - MINUTE * LOOKBACK_N;
+    return creationTime > now - DAY * LOOKBACK_N;
   });
 
   if (posts) {
@@ -132,11 +106,3 @@ const digestHandler = async (
     await interaction.reply('No posts were found.');
   }
 };
-
-export const createDigestCommand = createSlashCommand({
-  data: {
-    name: 'digest-force',
-    description: `Forcefully consumes posts of the last ${LOOKBACK_N} days`,
-  },
-  execute: digestHandler,
-});
