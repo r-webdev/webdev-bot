@@ -64,9 +64,9 @@ function filterPostsByCreationTime(
   posts: Collection<string, ForumThreadChannel>,
   lookbackN: number
 ): Collection<string, ForumThreadChannel> {
+  const now = new Date().getTime();
   return posts.filter((post) => {
     const creationTime = post.createdAt?.getTime();
-    const now = new Date().getTime();
     if (!creationTime) {
       console.error('Creation time is missing from post on showcase-digest');
       return false;
