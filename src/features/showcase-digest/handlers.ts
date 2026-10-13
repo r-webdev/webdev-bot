@@ -11,7 +11,6 @@ import {
   TextChannel,
   ForumThreadChannel,
   channelMention,
-  Message,
   MessageReaction,
 } from 'discord.js';
 
@@ -21,44 +20,53 @@ const filterByReaction = (reactEmoji: MessageReaction) => {
   return reactEmoji.emoji.identifier == REACT_EMOJI;
 };
 
-const convertPosts = async (posts: Collection<string, ForumThreadChannel>) => {
-  return await Promise.all(
+const convertPosts = async (
+  posts: Collection<string, ForumThreadChannel>
+): Promise<Post[]> => {
+  const settled = await Promise.all(
     posts.map(async (post) => {
-      const firstMessage: Message | null = await post.fetchStarterMessage();
+      const firstMessage = await post.fetchStarterMessage().catch(() => null);
       if (!firstMessage) {
         console.error('Failed to get starter message under showcase-digest');
-        return { id: '', messageCount: 0, likes: 0 };
+        return null;
       }
-      const likes = firstMessage.reactions.cache.find(filterByReaction)?.count;
+      const likes =
+        firstMessage.reactions.cache.find(filterByReaction)?.count ?? 0;
       return {
         id: post.id,
-        messageCount: post.messageCount ? post.messageCount : 0,
-        likes: likes ? likes : 0,
+        messageCount: post.messageCount ?? 0,
+        likes,
       };
     })
   );
+
+  return settled.filter((post): post is Post => post !== null);
 };
 
 const postProcessor = async (posts: Collection<string, ForumThreadChannel>) => {
+  const postsUnordered: Post[] = await convertPosts(posts);
+  const sortByDescPost = (postA: Post, postB: Post) =>
+    postB.likes - postA.likes;
+  return postsUnordered.sort(sortByDescPost);
+};
+
+/* This function expects a non-empty posts */
+function createContainer(posts: Post[]): ContainerBuilder {
   const container = new ContainerBuilder();
   container.addTextDisplayComponents(
     new TextDisplayBuilder().setContent('## Showcase Digest')
   );
 
-  const postsUnordered: Post[] = await convertPosts(posts);
-  const sortByDescPost = (postA: Post, postB: Post) =>
-    postB.likes - postA.likes;
-  const postsOrdered = postsUnordered.sort(sortByDescPost);
-
-  postsOrdered.forEach((post, index) => {
+  posts.forEach((post, index) => {
     container.addTextDisplayComponents(
       new TextDisplayBuilder().setContent(
-        `${index}. ${channelMention(post.id)} (Comments: ${post.messageCount})`
+        `${index + 1}. ${channelMention(post.id)} (Comments: ${post.messageCount})`
       )
     );
   });
-  return container.components.length > 1 ? container : null;
-};
+
+  return container;
+}
 
 function filterPostsByCreationTime(
   posts: Collection<string, ForumThreadChannel>,
@@ -103,8 +111,9 @@ export const digestHandler = async (
     return;
   }
 
-  const component = await postProcessor(posts);
-  if (component === null) {
+  const postsOrdered: Post[] = await postProcessor(posts);
+
+  if (postsOrdered.length === 0) {
     console.warn('Showcases Forum was empty!');
     await interaction.reply({
       flags: MessageFlags.Ephemeral,
@@ -113,6 +122,7 @@ export const digestHandler = async (
     });
     return;
   }
+  const component = createContainer(postsOrdered);
 
   await digestChannel.send({
     flags: MessageFlags.IsComponentsV2,
