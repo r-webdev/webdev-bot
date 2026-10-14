@@ -38,6 +38,38 @@ function createContainer(posts: Post[]): ContainerBuilder {
   return container;
 }
 
+/**
+ * Builds and posts the showcase digest to the digest channel without an
+ * interaction, so it can be driven by the scheduler. Relies on channels already
+ * resolved into SERVER_CHANNELS at ready.
+ */
+export const runShowcaseDigest = async (): Promise<'sent' | 'empty'> => {
+  const digestChannel = SERVER_CHANNELS.showcaseDigest as TextChannel;
+  const forumChannel = SERVER_CHANNELS.showcase;
+  const posts = filterPostsByCreationTime(
+    forumChannel.threads.cache,
+    LOOKBACK_N
+  );
+
+  if (posts.size === 0) {
+    console.warn('No posts found.');
+    return 'empty';
+  }
+
+  const postsOrdered: Post[] = await postProcessor(posts);
+
+  if (postsOrdered.length === 0) {
+    console.warn('Showcases Forum was empty!');
+    return 'empty';
+  }
+
+  await digestChannel.send({
+    flags: MessageFlags.IsComponentsV2,
+    components: [createContainer(postsOrdered)],
+  });
+  return 'sent';
+};
+
 export const digestHandler = async (
   interaction: ButtonInteraction | ChatInputCommandInteraction
 ) => {
