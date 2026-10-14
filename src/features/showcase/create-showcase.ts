@@ -85,7 +85,6 @@ const modalHandler: ModalSubmitInteraction = {
           allowedMentions: { users: [interaction.user.id] },
         },
       });
-
       await thread.send({
         flags: MessageFlags.IsComponentsV2,
         components: [
