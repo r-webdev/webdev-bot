@@ -1,4 +1,5 @@
 import { SERVER_CHANNELS } from '@/constants/channels.js';
+import { config } from '@/env.js';
 import { LOOKBACK_N, REACT_EMOJI } from './config.js';
 import {
   ButtonInteraction,
@@ -10,6 +11,7 @@ import {
   TextChannel,
   ForumThreadChannel,
   channelMention,
+  roleMention,
 } from 'discord.js';
 import { convertPosts, filterPostsByCreationTime, type Post } from './util.js';
 
@@ -34,6 +36,12 @@ function createContainer(posts: Post[]): ContainerBuilder {
       )
     );
   });
+
+  container.addTextDisplayComponents(
+    new TextDisplayBuilder().setContent(
+      `-# ${roleMention(config.roleIds.digestRole)}`
+    )
+  );
 
   return container;
 }
@@ -66,6 +74,7 @@ export const runShowcaseDigest = async (): Promise<'sent' | 'empty'> => {
   await digestChannel.send({
     flags: MessageFlags.IsComponentsV2,
     components: [createContainer(postsOrdered)],
+    allowedMentions: { roles: [config.roleIds.digestRole] },
   });
   return 'sent';
 };
@@ -86,23 +95,9 @@ export const digestHandler = async (
     return;
   }
 
-  const digestChannel = SERVER_CHANNELS.showcaseDigest as TextChannel;
-  const forumChannel = SERVER_CHANNELS.showcase;
-  const posts = filterPostsByCreationTime(
-    forumChannel.threads.cache,
-    LOOKBACK_N
-  );
+  const result = await runShowcaseDigest();
 
-  if (posts.size === 0) {
-    console.warn('No posts found.');
-    await interaction.reply('No posts were found.');
-    return;
-  }
-
-  const postsOrdered: Post[] = await postProcessor(posts);
-
-  if (postsOrdered.length === 0) {
-    console.warn('Showcases Forum was empty!');
+  if (result === 'empty') {
     await interaction.reply({
       flags: MessageFlags.Ephemeral,
       content:
@@ -110,12 +105,7 @@ export const digestHandler = async (
     });
     return;
   }
-  const component = createContainer(postsOrdered);
 
-  await digestChannel.send({
-    flags: MessageFlags.IsComponentsV2,
-    components: [component],
-  });
   await interaction.reply({
     flags: MessageFlags.Ephemeral,
     content: 'Successfully digested the message!',

@@ -37,6 +37,7 @@ export const config = {
     b: optionalEnv('ROLE_B_ID'),
     c: optionalEnv('ROLE_C_ID'),
     tagAccess: requireEnv('TAG_ACCESS_ROLE_ID'),
+    digestRole: requireEnv('DIGEST_ROLE_ID'),
   },
   channelIds: {
     repelLogs: requireEnv('REPEL_LOG_CHANNEL_ID'),
