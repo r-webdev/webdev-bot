@@ -1,5 +1,4 @@
 import { SERVER_CHANNELS } from '@/constants/channels.js';
-import { DAY } from '@/constants/time.js';
 import { LOOKBACK_N, REACT_EMOJI } from './config.js';
 import {
   ButtonInteraction,
@@ -11,40 +10,11 @@ import {
   TextChannel,
   ForumThreadChannel,
   channelMention,
-  MessageReaction,
 } from 'discord.js';
-
-type Post = { id: string; messageCount: number; likes: number };
-
-const filterByReaction = (reactEmoji: MessageReaction) => {
-  return reactEmoji.emoji.identifier == REACT_EMOJI;
-};
-
-const convertPosts = async (
-  posts: Collection<string, ForumThreadChannel>
-): Promise<Post[]> => {
-  const settled = await Promise.all(
-    posts.map(async (post) => {
-      const firstMessage = await post.fetchStarterMessage().catch(() => null);
-      if (!firstMessage) {
-        console.error('Failed to get starter message under showcase-digest');
-        return null;
-      }
-      const likes =
-        firstMessage.reactions.cache.find(filterByReaction)?.count ?? 0;
-      return {
-        id: post.id,
-        messageCount: post.messageCount ?? 0,
-        likes,
-      };
-    })
-  );
-
-  return settled.filter((post): post is Post => post !== null);
-};
+import { convertPosts, filterPostsByCreationTime, type Post } from './util.js';
 
 const postProcessor = async (posts: Collection<string, ForumThreadChannel>) => {
-  const postsUnordered: Post[] = await convertPosts(posts);
+  const postsUnordered: Post[] = await convertPosts(posts, REACT_EMOJI);
   const sortByDescPost = (postA: Post, postB: Post) =>
     postB.likes - postA.likes;
   return postsUnordered.sort(sortByDescPost);
@@ -68,20 +38,6 @@ function createContainer(posts: Post[]): ContainerBuilder {
   return container;
 }
 
-function filterPostsByCreationTime(
-  posts: Collection<string, ForumThreadChannel>,
-  lookbackN: number
-): Collection<string, ForumThreadChannel> {
-  const now = new Date().getTime();
-  return posts.filter((post) => {
-    const creationTime = post.createdAt?.getTime();
-    if (!creationTime) {
-      console.error('Creation time is missing from post on showcase-digest');
-      return false;
-    }
-    return creationTime > now - DAY * lookbackN;
-  });
-}
 export const digestHandler = async (
   interaction: ButtonInteraction | ChatInputCommandInteraction
 ) => {
