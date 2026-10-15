@@ -1,5 +1,7 @@
 import { SERVER_CHANNELS } from '@/constants/channels.js';
 import { config } from '@/env.js';
+import { getCommandUser } from '@/util/member.js';
+import { isModerator } from '@/util/permissions.js';
 import { LOOKBACK_N, REACT_EMOJI } from './config.js';
 import {
   ButtonInteraction,
@@ -90,6 +92,14 @@ export const digestHandler = async (
     await interaction.reply({
       content:
         'There was an error processing the digest. Please try again later.',
+      flags: MessageFlags.Ephemeral,
+    });
+    return;
+  }
+
+  if (!isModerator(getCommandUser(interaction))) {
+    await interaction.reply({
+      content: 'Only moderators can run the showcase digest.',
       flags: MessageFlags.Ephemeral,
     });
     return;
