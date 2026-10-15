@@ -1,7 +1,7 @@
 import { config } from '@/env.js';
 
 export const LOOKBACK_N: number = (() => {
-  const DEFAULT_N = 7;
+  const DEFAULT_N = 14;
   if (config.showcaseDigestLookbackDays) {
     try {
       return Number.parseInt(config.showcaseDigestLookbackDays);
