@@ -122,6 +122,54 @@ const configuration = getConfiguration();
   } as const;
   ```
 
+### Error Handling
+
+Throw an error when a function cannot complete its job, and handle it where the caller can respond. Do not return a sentinel string or flag that every caller must remember to check.
+
+```typescript
+// ❌ BAD — every caller has to check the returned string
+function foo(): 'good' | 'bad' {
+  if (somethingNotRight) {
+    return 'bad';
+  }
+
+  doTheRightThing();
+  return 'good';
+}
+
+function bar(): void {
+  const result = foo();
+
+  if (result === 'bad') {
+    console.error('bad message for logging');
+    interaction.reply('bad message to user');
+  }
+
+  if (result === 'good') {
+    interaction.reply('good message to user');
+  }
+}
+
+// ✅ GOOD — the failure is thrown and handled in one place
+function foo(): void {
+  if (somethingNotRight) {
+    throw new Error('something is not right');
+  }
+
+  doTheRightThing();
+}
+
+function bar(): void {
+  try {
+    foo();
+    interaction.reply('success, expected outcome');
+  } catch (error) {
+    console.error(error);
+    interaction.reply(error.message);
+  }
+}
+```
+
 ## Configuration Is the Source of Truth
 
 Root-level config files define how this project is built, linted, formatted, and run. **Do not invent parallel config** (no new ESLint/Prettier/Biome/Jest/Vitest configs, no duplicate tsconfig variants, no ad-hoc tooling files).
