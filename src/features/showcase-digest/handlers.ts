@@ -24,9 +24,10 @@ import {
 
 const postProcessor = async (posts: Collection<string, ForumThreadChannel>) => {
   const postsUnordered: Post[] = await convertPosts(posts, REACT_EMOJI);
-  const sortByDescPost = (postA: Post, postB: Post) =>
-    postB.likes - postA.likes;
-  return postsUnordered.sort(sortByDescPost);
+  const byLikesDescending= (postA: Post, postB: Post) => {
+    return postB.likes - postA.likes;
+  };
+  return postsUnordered.sort(byLikesDescending);
 };
 
 function createContainer(posts: Post[]): ContainerBuilder {
