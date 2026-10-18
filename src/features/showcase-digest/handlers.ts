@@ -69,6 +69,7 @@ export const createShowcaseDigest = async (): Promise<void> => {
 
   if (posts.size === 0) {
     throw new ShowcaseDigestValidationError(
+      'There was no posts to be displayed in Showcase Digest.',
       'There was no posts to display in this digest.'
     );
   }
@@ -109,7 +110,7 @@ export const digestHandler = async (
       console.error(error.message);
       await interaction.reply({
         flags: MessageFlags.Ephemeral,
-        content: error.getUserMessage(),
+        content: error.getExternalMessage(),
       });
     } else {
       console.error('An unexpected error caught:', error);

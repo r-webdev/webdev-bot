@@ -67,13 +67,13 @@ export const filterPostsByCreationTime = (
 };
 
 export class ShowcaseDigestValidationError extends Error {
-  userMessage: string;
-  constructor(external: string, internal?: string) {
-    super(internal);
-    this.userMessage = external;
+  externalMessage: string;
+  constructor(internalMessage: string, externalMessage: string) {
+    super(internalMessage);
+    this.externalMessage = externalMessage;
     this.name = 'ShowcaseDigestValidationError';
   }
-  public getUserMessage(): string {
-    return this.userMessage;
+  public getExternalMessage(): string {
+    return this.externalMessage;
   }
 }
