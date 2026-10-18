@@ -17,17 +17,14 @@ export const createDigestCommand = createSlashCommand({
 // https://www.nodecron.com/cron-syntax#nth-weekday
 const SHOWCASE_DIGEST_CRONS = ['0 16 * * 5#1', '0 16 * * 5#3'];
 
-const runScheduledShowcaseDigest = (): void => {
+const runScheduledShowcaseDigest = async (): Promise<void> => {
   console.log('Running scheduled showcase digest...');
-  createShowcaseDigest()
-    .then(() => console.log(`Successfully displayed showcase digest!`))
-    .catch((error) => {
-      if (error instanceof ShowcaseDigestValidationError) {
-        error.logError(); // No output to give to the user.
-      } else {
-        console.error('Something unexpected happened: ', error);
-      }
-    });
+  try {
+    await createShowcaseDigest();
+    console.log(`Successfully displayed showcase digest!`);
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 export function initializeShowcaseDigestScheduler(): void {

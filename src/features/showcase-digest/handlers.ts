@@ -18,7 +18,6 @@ import {
   convertPosts,
   filterPostsByCreationTime,
   type Post,
-  LEVEL,
   ShowcaseDigestValidationError,
 } from './util.js';
 
@@ -34,8 +33,7 @@ function createContainer(posts: Post[]): ContainerBuilder {
   if (posts.length == 0) {
     throw new ShowcaseDigestValidationError(
       'Something went wrong. Please try again later.',
-      'createContainer passed posts[] with length 0. Impossible scenario.',
-      LEVEL.SEVERE
+      'createContainer passed posts[] with length 0. Impossible scenario.'
     );
   }
 
@@ -108,7 +106,7 @@ export const digestHandler = async (
     await createShowcaseDigest();
   } catch (error: unknown) {
     if (error instanceof ShowcaseDigestValidationError) {
-      error.logError();
+      console.error(error.message);
       await interaction.reply({
         flags: MessageFlags.Ephemeral,
         content: error.getUserMessage(),

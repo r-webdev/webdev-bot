@@ -20,8 +20,7 @@ export const convertPosts = async (
       if (!firstMessage) {
         throw new ShowcaseDigestValidationError(
           'Something went wrong, please try again later.',
-          'Failed to get starter message under showcase-digest',
-          LEVEL.WARN
+          'Failed to get starter message under showcase-digest'
         );
       }
       const likes =
@@ -39,7 +38,7 @@ export const convertPosts = async (
   return settled.flatMap((result) => {
     if (result.status === 'rejected') {
       if (result.reason instanceof ShowcaseDigestValidationError) {
-        result.reason.logError();
+        console.error(result.reason.message);
       } else {
         console.error(
           'Unexpected error in scheduled showcase digest:',
@@ -67,37 +66,12 @@ export const filterPostsByCreationTime = (
   });
 };
 
-export enum LEVEL {
-  SEVERE,
-  WARN,
-  INFO,
-}
 export class ShowcaseDigestValidationError extends Error {
   userMessage: string;
-  level?: LEVEL;
-  constructor(userMessage: string, logError?: string, level?: LEVEL) {
+  constructor(userMessage: string, logError?: string) {
     super(logError);
     this.userMessage = userMessage;
     this.name = 'ShowcaseDigestValidationError';
-    this.level = level;
-  }
-  public logError() {
-    const logMessage = this.message;
-    if (logMessage === '') {
-      return;
-    }
-    switch (this.level) {
-      case LEVEL.WARN:
-        console.warn(logMessage);
-        break;
-      case LEVEL.INFO:
-        console.log(logMessage);
-        break;
-      default:
-      case LEVEL.SEVERE:
-        console.error(logMessage);
-        break;
-    }
   }
   public getUserMessage(): string {
     return this.userMessage;
