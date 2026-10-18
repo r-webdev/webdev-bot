@@ -6,23 +6,28 @@ export type Post = { id: string; messageCount: number; likes: number };
 export const filterByReaction = (
   reaction: MessageReaction,
   reactEmoji: string
-): boolean => reaction.emoji.identifier === reactEmoji;
+): boolean => {
+  return reaction.emoji.identifier === reactEmoji;
+};
 
 export const convertPosts = async (
   posts: Collection<string, ForumThreadChannel>,
   reactEmoji: string
 ): Promise<Post[]> => {
-  const settled = await Promise.all(
-    posts.map(async (post) => {
-      const firstMessage = await post.fetchStarterMessage().catch(() => null);
+  const settled = await Promise.allSettled(
+    posts.map(async (post): Promise<Post> => {
+      const firstMessage = await post.fetchStarterMessage();
       if (!firstMessage) {
-        console.warn('Failed to get starter message under showcase-digest');
-        return null;
+        throw new ShowcaseDigestValidationError(
+          'Something went wrong, please try again later.',
+          'Failed to get starter message under showcase-digest',
+          LEVEL.WARN
+        );
       }
       const likes =
-        firstMessage.reactions.cache.find((reaction) =>
-          filterByReaction(reaction, reactEmoji)
-        )?.count ?? 0;
+        firstMessage.reactions.cache.find((reaction) => {
+          return filterByReaction(reaction, reactEmoji);
+        })?.count ?? 0;
       return {
         id: post.id,
         messageCount: post.messageCount ?? 0,
@@ -31,7 +36,16 @@ export const convertPosts = async (
     })
   );
 
-  return settled.filter((post): post is Post => post !== null);
+  return settled.flatMap((result) => {
+    if (result.status === 'rejected') {
+      if (result.reason instanceof ShowcaseDigestValidationError) {
+        result.reason.logError();
+        return [];
+      }
+      throw result.reason;
+    }
+    return [result.value];
+  });
 };
 
 export const filterPostsByCreationTime = (

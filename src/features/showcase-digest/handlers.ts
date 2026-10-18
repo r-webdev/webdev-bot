@@ -124,6 +124,6 @@ export const digestHandler = async (
 
   await interaction.reply({
     flags: MessageFlags.Ephemeral,
-    content: 'Successfully digested the message!',
+    content: 'Successfully create a showcase digest!',
   });
 };

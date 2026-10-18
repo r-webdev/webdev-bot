@@ -7,7 +7,8 @@ import { convertPosts, filterPostsByCreationTime } from './util.js';
 
 // This magic identifier is the emoji code used to define what reaction it is.
 // Code %F0%9F%98%AD refers to 'LOUDLY CRYING FACE' emoji
-const REACT_IDENTIFIER = '%F0%9F%98%AD';
+const REACT_IDENTIFIER_A = '%F0%9F%98%AD';
+const REACT_IDENTIFIER_B = '%F0%9F%91%8D';
 
 function reactionCache(
   entries: { identifier: string; count: number }[]
@@ -52,7 +53,9 @@ function collectionOf(
   posts: ForumThreadChannel[]
 ): Collection<string, ForumThreadChannel> {
   const collection = new Collection<string, ForumThreadChannel>();
-  posts.forEach((post) => collection.set(post.id, post));
+  posts.forEach((post) => {
+    return collection.set(post.id, post);
+  });
   return collection;
 }
 
@@ -64,13 +67,13 @@ void describe('showcase-digest/util', () => {
           id: 'a',
           messageCount: 5,
           reactions: [
-            { identifier: REACT_IDENTIFIER, count: 3 },
-            { identifier: '%F0%9F%91%8D', count: 99 },
+            { identifier: REACT_IDENTIFIER_A, count: 3 },
+            { identifier: REACT_IDENTIFIER_B, count: 99 },
           ],
         }),
       ]);
 
-      const result = await convertPosts(posts, REACT_IDENTIFIER);
+      const result = await convertPosts(posts, REACT_IDENTIFIER_A);
 
       assert.deepEqual(result, [{ id: 'a', messageCount: 5, likes: 3 }]);
     });
@@ -79,11 +82,11 @@ void describe('showcase-digest/util', () => {
       const posts = collectionOf([
         mockPost({
           id: 'a',
-          reactions: [{ identifier: '%F0%9F%91%8D', count: 9 }],
+          reactions: [{ identifier: REACT_IDENTIFIER_B, count: 9 }],
         }),
       ]);
 
-      const [post] = await convertPosts(posts, REACT_IDENTIFIER);
+      const [post] = await convertPosts(posts, REACT_IDENTIFIER_A);
 
       assert.equal(post.likes, 0);
     });
@@ -92,12 +95,12 @@ void describe('showcase-digest/util', () => {
       const posts = collectionOf([
         mockPost({
           id: 'ok',
-          reactions: [{ identifier: REACT_IDENTIFIER, count: 1 }],
+          reactions: [{ identifier: REACT_IDENTIFIER_A, count: 1 }],
         }),
         mockPost({ id: 'gone', noStarter: true }),
       ]);
 
-      const result = await convertPosts(posts, REACT_IDENTIFIER);
+      const result = await convertPosts(posts, REACT_IDENTIFIER_A);
 
       assert.deepEqual(
         result.map((post) => post.id),
@@ -105,21 +108,18 @@ void describe('showcase-digest/util', () => {
       );
     });
 
-    void it('drops posts whose starter message fetch rejects', async () => {
+    void it('propagates a non-validation error from starter message fetch', async () => {
       const posts = collectionOf([
         mockPost({
           id: 'ok',
-          reactions: [{ identifier: REACT_IDENTIFIER, count: 1 }],
+          reactions: [{ identifier: REACT_IDENTIFIER_A, count: 1 }],
         }),
         mockPost({ id: 'boom', starterRejects: true }),
       ]);
 
-      const result = await convertPosts(posts, REACT_IDENTIFIER);
-
-      assert.deepEqual(
-        result.map((post) => post.id),
-        ['ok']
-      );
+      await assert.rejects(() => convertPosts(posts, REACT_IDENTIFIER_A), {
+        message: 'fetch failed',
+      });
     });
 
     void it('defaults a missing messageCount to 0', async () => {
@@ -127,7 +127,7 @@ void describe('showcase-digest/util', () => {
         mockPost({ id: 'a', messageCount: undefined }),
       ]);
 
-      const [post] = await convertPosts(posts, REACT_IDENTIFIER);
+      const [post] = await convertPosts(posts, REACT_IDENTIFIER_A);
 
       assert.equal(post.messageCount, 0);
     });

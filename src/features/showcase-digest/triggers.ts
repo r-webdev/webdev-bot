@@ -23,8 +23,9 @@ const INTERVAL_WEEKS = Math.max(1, Math.round(LOOKBACK_N / 7));
 
 const currentWeekIndex = (): number => Math.floor(Date.now() / WEEK);
 
-const isScheduledWeek = (): boolean =>
-  currentWeekIndex() % INTERVAL_WEEKS === 0;
+const isScheduledWeek = (): boolean => {
+  return currentWeekIndex() % INTERVAL_WEEKS === 0;
+};
 
 export function initializeShowcaseDigestScheduler(): void {
   console.log('Initializing showcase digest scheduler...');
