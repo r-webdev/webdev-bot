@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "erasableSyntaxOnly": true,
     "declaration": false,
     "declarationMap": false,
     "module": "nodenext",
