@@ -16,7 +16,7 @@ export const convertPosts = async (
     posts.map(async (post) => {
       const firstMessage = await post.fetchStarterMessage().catch(() => null);
       if (!firstMessage) {
-        console.error('Failed to get starter message under showcase-digest');
+        console.warn('Failed to get starter message under showcase-digest');
         return null;
       }
       const likes =
@@ -48,3 +48,40 @@ export const filterPostsByCreationTime = (
     return creationTime > now - DAY * lookbackN;
   });
 };
+
+export enum LEVEL {
+  SEVERE,
+  WARN,
+  INFO,
+}
+export class ShowcaseDigestValidationError extends Error {
+  userMessage: string;
+  level?: LEVEL;
+  constructor(userMessage: string, logError?: string, level?: LEVEL) {
+    super(logError);
+    this.userMessage = userMessage;
+    this.name = 'ShowcaseDigestValidationError';
+    this.level = level;
+  }
+  public logError() {
+    const logMessage = this.message;
+    if (logMessage === '') {
+      return;
+    }
+    switch (this.level) {
+      case LEVEL.WARN:
+        console.warn(logMessage);
+        break;
+      case LEVEL.INFO:
+        console.log(logMessage);
+        break;
+      default:
+      case LEVEL.SEVERE:
+        console.error(logMessage);
+        break;
+    }
+  }
+  public getUserMessage(): string {
+    return this.userMessage;
+  }
+}

@@ -2,7 +2,8 @@ import * as cron from 'node-cron';
 import { createSlashCommand } from '@/common/commands/create-commands.js';
 import { WEEK } from '@/constants/time.js';
 import { LOOKBACK_N } from './config.js';
-import { digestHandler, runShowcaseDigest } from './handlers.js';
+import { digestHandler, createShowcaseDigest } from './handlers.js';
+import { ShowcaseDigestValidationError } from './util.js';
 
 export const createDigestCommand = createSlashCommand({
   data: {
@@ -38,11 +39,14 @@ export function initializeShowcaseDigestScheduler(): void {
         return;
       }
       console.log('Running scheduled showcase digest...');
-      runShowcaseDigest()
-        .then((result) => console.log(`Scheduled showcase digest: ${result}`))
-        .catch((error) =>
-          console.error('Error in scheduled showcase digest:', error)
-        );
+      createShowcaseDigest()
+        .then(() => console.log(`Successfully displayed showcase digest!`))
+        .catch((error) => {
+          if (error instanceof ShowcaseDigestValidationError) {
+            error.logError(); // No output to give to the user.
+            console.error('Failed to run showcase digest!');
+          }
+        });
     },
     { timezone: 'UTC' }
   );

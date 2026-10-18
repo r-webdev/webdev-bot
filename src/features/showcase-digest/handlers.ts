@@ -10,12 +10,17 @@ import {
   MessageFlags,
   ContainerBuilder,
   TextDisplayBuilder,
-  TextChannel,
   ForumThreadChannel,
   channelMention,
   roleMention,
 } from 'discord.js';
-import { convertPosts, filterPostsByCreationTime, type Post } from './util.js';
+import {
+  convertPosts,
+  filterPostsByCreationTime,
+  type Post,
+  LEVEL,
+  ShowcaseDigestValidationError,
+} from './util.js';
 
 const postProcessor = async (posts: Collection<string, ForumThreadChannel>) => {
   const postsUnordered: Post[] = await convertPosts(posts, REACT_EMOJI);
@@ -24,8 +29,15 @@ const postProcessor = async (posts: Collection<string, ForumThreadChannel>) => {
   return postsUnordered.sort(sortByDescPost);
 };
 
-/* This function expects a non-empty posts */
 function createContainer(posts: Post[]): ContainerBuilder {
+  if (posts.length == 0) {
+    throw new ShowcaseDigestValidationError(
+      'Something went wrong. Please try again later.',
+      'createContainer passed posts[] with length 0. Impossible scenario.',
+      LEVEL.SEVERE
+    );
+  }
+
   const container = new ContainerBuilder();
   container.addTextDisplayComponents(
     new TextDisplayBuilder().setContent('## Showcase Digest')
@@ -53,8 +65,8 @@ function createContainer(posts: Post[]): ContainerBuilder {
  * interaction, so it can be driven by the scheduler. Relies on channels already
  * resolved into SERVER_CHANNELS at ready.
  */
-export const runShowcaseDigest = async (): Promise<'sent' | 'empty'> => {
-  const digestChannel = SERVER_CHANNELS.showcaseDigest as TextChannel;
+export const createShowcaseDigest = async (): Promise<void> => {
+  const digestChannel = SERVER_CHANNELS.showcaseDigest;
   const forumChannel = SERVER_CHANNELS.showcase;
   const posts = filterPostsByCreationTime(
     forumChannel.threads.cache,
@@ -62,36 +74,27 @@ export const runShowcaseDigest = async (): Promise<'sent' | 'empty'> => {
   );
 
   if (posts.size === 0) {
-    console.warn('No posts found.');
-    return 'empty';
+    throw new ShowcaseDigestValidationError(
+      'There was no posts to display in this digest.'
+    );
   }
 
   const postsOrdered: Post[] = await postProcessor(posts);
-
-  if (postsOrdered.length === 0) {
-    console.warn('Showcases Forum was empty!');
-    return 'empty';
-  }
+  const container = createContainer(postsOrdered);
 
   await digestChannel.send({
     flags: MessageFlags.IsComponentsV2,
-    components: [createContainer(postsOrdered)],
+    components: [container],
     allowedMentions: { roles: [config.roleIds.digestRole] },
   });
-  return 'sent';
 };
 
 export const digestHandler = async (
   interaction: ButtonInteraction | ChatInputCommandInteraction
 ) => {
   if (!interaction.inGuild() || !interaction.guild) {
-    // This might need an upgrade? I don't think its handled correctly.
-    console.error(
-      'Failure from command interaction on showcaseDigest: No guild present'
-    );
     await interaction.reply({
-      content:
-        'There was an error processing the digest. Please try again later.',
+      content: 'This command can only be run in the web development discord.',
       flags: MessageFlags.Ephemeral,
     });
     return;
@@ -105,15 +108,18 @@ export const digestHandler = async (
     return;
   }
 
-  const result = await runShowcaseDigest();
-
-  if (result === 'empty') {
-    await interaction.reply({
-      flags: MessageFlags.Ephemeral,
-      content:
-        'There was no valid posts in showcases forum. (N might be too low?)',
-    });
-    return;
+  try {
+    await createShowcaseDigest();
+  } catch (error: unknown) {
+    if (error instanceof ShowcaseDigestValidationError) {
+      error.logError();
+      await interaction.reply({
+        flags: MessageFlags.Ephemeral,
+        content: error.getUserMessage(),
+      });
+      return;
+    }
+    throw error;
   }
 
   await interaction.reply({
