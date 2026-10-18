@@ -108,7 +108,7 @@ void describe('showcase-digest/util', () => {
       );
     });
 
-    void it('propagates a non-validation error from starter message fetch', async () => {
+    void it('drops posts whose starter message fetch rejects', async () => {
       const posts = collectionOf([
         mockPost({
           id: 'ok',
@@ -117,9 +117,12 @@ void describe('showcase-digest/util', () => {
         mockPost({ id: 'boom', starterRejects: true }),
       ]);
 
-      await assert.rejects(() => convertPosts(posts, REACT_IDENTIFIER_A), {
-        message: 'fetch failed',
-      });
+      const result = await convertPosts(posts, REACT_IDENTIFIER_A);
+
+      assert.deepEqual(
+        result.map((post) => post.id),
+        ['ok']
+      );
     });
 
     void it('defaults a missing messageCount to 0', async () => {
