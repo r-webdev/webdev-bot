@@ -2,7 +2,6 @@ import * as cron from 'node-cron';
 import { createSlashCommand } from '@/common/commands/create-commands.js';
 import { LOOKBACK_N } from './config.js';
 import { digestHandler, createShowcaseDigest } from './handlers.js';
-import { ShowcaseDigestValidationError } from './util.js';
 
 export const createDigestCommand = createSlashCommand({
   data: {
