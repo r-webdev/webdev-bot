@@ -5,7 +5,9 @@ import type { ForumThreadChannel, MessageReaction } from 'discord.js';
 import { DAY } from '@/constants/time.js';
 import { convertPosts, filterPostsByCreationTime } from './util.js';
 
-const REACT = '%F0%9F%98%AD';
+// This magic identifier is the emoji code used to define what reaction it is.
+// Code %F0%9F%98%AD refers to 'LOUDLY CRYING FACE' emoji
+const REACT_IDENTIFIER = '%F0%9F%98%AD';
 
 function reactionCache(
   entries: { identifier: string; count: number }[]
@@ -62,13 +64,13 @@ void describe('showcase-digest/util', () => {
           id: 'a',
           messageCount: 5,
           reactions: [
-            { identifier: REACT, count: 3 },
+            { identifier: REACT_IDENTIFIER, count: 3 },
             { identifier: '%F0%9F%91%8D', count: 99 },
           ],
         }),
       ]);
 
-      const result = await convertPosts(posts, REACT);
+      const result = await convertPosts(posts, REACT_IDENTIFIER);
 
       assert.deepEqual(result, [{ id: 'a', messageCount: 5, likes: 3 }]);
     });
@@ -81,18 +83,21 @@ void describe('showcase-digest/util', () => {
         }),
       ]);
 
-      const [post] = await convertPosts(posts, REACT);
+      const [post] = await convertPosts(posts, REACT_IDENTIFIER);
 
       assert.equal(post.likes, 0);
     });
 
     void it('drops posts whose starter message is missing', async () => {
       const posts = collectionOf([
-        mockPost({ id: 'ok', reactions: [{ identifier: REACT, count: 1 }] }),
+        mockPost({
+          id: 'ok',
+          reactions: [{ identifier: REACT_IDENTIFIER, count: 1 }],
+        }),
         mockPost({ id: 'gone', noStarter: true }),
       ]);
 
-      const result = await convertPosts(posts, REACT);
+      const result = await convertPosts(posts, REACT_IDENTIFIER);
 
       assert.deepEqual(
         result.map((post) => post.id),
@@ -102,11 +107,14 @@ void describe('showcase-digest/util', () => {
 
     void it('drops posts whose starter message fetch rejects', async () => {
       const posts = collectionOf([
-        mockPost({ id: 'ok', reactions: [{ identifier: REACT, count: 1 }] }),
+        mockPost({
+          id: 'ok',
+          reactions: [{ identifier: REACT_IDENTIFIER, count: 1 }],
+        }),
         mockPost({ id: 'boom', starterRejects: true }),
       ]);
 
-      const result = await convertPosts(posts, REACT);
+      const result = await convertPosts(posts, REACT_IDENTIFIER);
 
       assert.deepEqual(
         result.map((post) => post.id),
@@ -119,7 +127,7 @@ void describe('showcase-digest/util', () => {
         mockPost({ id: 'a', messageCount: undefined }),
       ]);
 
-      const [post] = await convertPosts(posts, REACT);
+      const [post] = await convertPosts(posts, REACT_IDENTIFIER);
 
       assert.equal(post.messageCount, 0);
     });
