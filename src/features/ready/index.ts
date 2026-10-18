@@ -59,14 +59,12 @@ export const readyEvent = createEvent(
       }
     }
 
-    // Initialize Advent of Code scheduler
     try {
       initializeAdventScheduler(client, config.channelIds.adventOfCode);
     } catch (error) {
       console.error('❌ Failed to initialize Advent of Code scheduler:', error);
     }
 
-    // Initialize showcase digest scheduler
     try {
       initializeShowcaseDigestScheduler();
     } catch (error) {

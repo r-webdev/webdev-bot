@@ -25,7 +25,7 @@ export const config = {
   fetchAndSyncMessages: optionalEnv('FETCH_AND_SYNC_MESSAGES') !== 'false',
   guidesTrackerPath: optionalEnv('GUIDES_TRACKER_PATH'),
   showcaseDigestLookbackDays: optionalEnv('SHOWCASE_DIGEST_LOOKBACK_DAYS'),
-  showcaseReactEmoji: optionalEnv('SHOWCASE_REACT_EMOIJ'),
+  showcaseReactEmoji: optionalEnv('SHOWCASE_REACT_EMOJI'),
   adventOfCodeTrackerPath: requireEnv('ADVENT_OF_CODE_TRACKER_PATH'),
   roleIds: {
     moderators: requireEnv('MODERATORS_ROLE_IDS')

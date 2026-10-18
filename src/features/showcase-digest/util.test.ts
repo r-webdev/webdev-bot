@@ -35,8 +35,12 @@ function mockPost(options: MockPostOptions): ForumThreadChannel {
     messageCount: options.messageCount ?? 0,
     createdAt: options.createdAt === undefined ? new Date() : options.createdAt,
     fetchStarterMessage: async () => {
-      if (options.starterRejects) throw new Error('fetch failed');
-      if (options.noStarter) return null;
+      if (options.starterRejects) {
+        throw new Error('fetch failed');
+      }
+      if (options.noStarter) {
+        return null;
+      }
       return { reactions: { cache: reactionCache(options.reactions ?? []) } };
     },
   } as unknown as ForumThreadChannel;
