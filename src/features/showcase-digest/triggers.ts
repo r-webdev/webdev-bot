@@ -1,6 +1,5 @@
 import * as cron from 'node-cron';
 import { createSlashCommand } from '@/common/commands/create-commands.js';
-import { WEEK } from '@/constants/time.js';
 import { LOOKBACK_N } from './config.js';
 import { digestHandler, createShowcaseDigest } from './handlers.js';
 import { ShowcaseDigestValidationError } from './util.js';
@@ -13,46 +12,32 @@ export const createDigestCommand = createSlashCommand({
   execute: digestHandler,
 });
 
-// https://github.com/node-cron/node-cron?tab=readme-ov-file#cron-syntax
-const SHOWCASE_DIGEST_CRON = '0 16 * * 5';
+// Fire on the 1st and 3rd Friday of every month at 16:00 UTC using node-cron's
+// nth-weekday syntax (5#1 = first Friday, 5#3 = third Friday).
+// https://www.nodecron.com/cron-syntax#nth-weekday
+const SHOWCASE_DIGEST_CRONS = ['0 16 * * 5#1', '0 16 * * 5#3'];
 
-// Number of weeks between runs, derived from the lookback window. node-cron
-// can't express "every N days" directly, so we fire weekly and skip the weeks
-// that don't line up with the interval.
-const INTERVAL_WEEKS = Math.max(1, Math.round(LOOKBACK_N / 7));
-
-const currentWeekIndex = (): number => Math.floor(Date.now() / WEEK);
-
-const isScheduledWeek = (): boolean => {
-  return currentWeekIndex() % INTERVAL_WEEKS === 0;
+const runScheduledShowcaseDigest = (): void => {
+  console.log('Running scheduled showcase digest...');
+  createShowcaseDigest()
+    .then(() => console.log(`Successfully displayed showcase digest!`))
+    .catch((error) => {
+      if (error instanceof ShowcaseDigestValidationError) {
+        error.logError(); // No output to give to the user.
+      } else {
+        console.error('Something unexpected happened: ', error);
+      }
+    });
 };
 
 export function initializeShowcaseDigestScheduler(): void {
   console.log('Initializing showcase digest scheduler...');
 
-  cron.schedule(
-    SHOWCASE_DIGEST_CRON,
-    () => {
-      if (!isScheduledWeek()) {
-        console.log(
-          `Skipping showcase digest this week (runs every ${INTERVAL_WEEKS} week(s))`
-        );
-        return;
-      }
-      console.log('Running scheduled showcase digest...');
-      createShowcaseDigest()
-        .then(() => console.log(`Successfully displayed showcase digest!`))
-        .catch((error) => {
-          if (error instanceof ShowcaseDigestValidationError) {
-            error.logError(); // No output to give to the user.
-            console.error('Failed to run showcase digest!');
-          }
-        });
-    },
-    { timezone: 'UTC' }
-  );
+  SHOWCASE_DIGEST_CRONS.forEach((expression) => {
+    cron.schedule(expression, runScheduledShowcaseDigest, { timezone: 'UTC' });
+  });
 
   console.log(
-    `Showcase digest scheduler initialized (runs Fridays at 16:00 UTC, every ${INTERVAL_WEEKS} week(s))`
+    'Showcase digest scheduler initialized (runs 1st and 3rd Fridays at 16:00 UTC)'
   );
 }

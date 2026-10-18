@@ -60,11 +60,6 @@ function createContainer(posts: Post[]): ContainerBuilder {
   return container;
 }
 
-/**
- * Builds and posts the showcase digest to the digest channel without an
- * interaction, so it can be driven by the scheduler. Relies on channels already
- * resolved into SERVER_CHANNELS at ready.
- */
 export const createShowcaseDigest = async (): Promise<void> => {
   const digestChannel = SERVER_CHANNELS.showcaseDigest;
   const forumChannel = SERVER_CHANNELS.showcase;
@@ -117,13 +112,18 @@ export const digestHandler = async (
         flags: MessageFlags.Ephemeral,
         content: error.getUserMessage(),
       });
-      return;
+    } else {
+      console.error('An unexpected error caught:', error);
+      await interaction.reply({
+        flags: MessageFlags.Ephemeral,
+        content: 'Something went wrong, please try again.',
+      });
     }
-    throw error;
+    return;
   }
 
   await interaction.reply({
     flags: MessageFlags.Ephemeral,
-    content: 'Successfully create a showcase digest!',
+    content: 'Successfully created a showcase digest!',
   });
 };

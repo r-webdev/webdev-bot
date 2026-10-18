@@ -40,9 +40,13 @@ export const convertPosts = async (
     if (result.status === 'rejected') {
       if (result.reason instanceof ShowcaseDigestValidationError) {
         result.reason.logError();
-        return [];
+      } else {
+        console.error(
+          'Unexpected error in scheduled showcase digest:',
+          result.reason
+        );
       }
-      throw result.reason;
+      return [];
     }
     return [result.value];
   });
