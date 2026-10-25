@@ -11,6 +11,7 @@ import type { Command } from './types.js';
 import { reportMessage } from '@/features/report-message/index.js';
 import { tagCommand } from '@/features/tags/index.js';
 import { botOptionsCommand } from '@/features/bot-options/index.js';
+import { createDigestCommand } from '@/features/showcase-digest/triggers.js';
 
 export const commands = new Map<string, Command>(
   [
@@ -22,6 +23,7 @@ export const commands = new Map<string, Command>(
     cacheMessages,
     publicGuidesCommand,
     createShowcaseCommand,
+    createDigestCommand,
     sendShowcasePinnedMessage,
     reportMessage,
     tagCommand,

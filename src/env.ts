@@ -35,6 +35,7 @@ export const config = {
     b: optionalEnv('ROLE_B_ID'),
     c: optionalEnv('ROLE_C_ID'),
     tagAccess: requireEnv('TAG_ACCESS_ROLE_ID'),
+    digestRole: requireEnv('DIGEST_ROLE_ID'),
   },
   channelIds: {
     repelLogs: requireEnv('REPEL_LOG_CHANNEL_ID'),
@@ -43,6 +44,7 @@ export const config = {
     showcase: requireEnv('SHOWCASE_CHANNEL_ID'),
     showcaseLogs: requireEnv('SHOWCASE_LOG_CHANNEL_ID'),
     showcaseRules: requireEnv('SHOWCASE_RULES_CHANNEL_ID'),
+    showcaseDigest: requireEnv('SHOWCASE_DIGEST_CHANNEL_ID'),
     spamDetection: requireEnv('SPAM_DETECTION_CHANNEL_ID'),
     archiveCategory: requireEnv('ARCHIVE_CATEGORY_ID'),
   },

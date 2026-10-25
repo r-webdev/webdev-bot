@@ -3,6 +3,7 @@ import { createEvent } from '@/common/events/create-event.js';
 import { resolveChannels } from '@/constants/channels.js';
 import { config } from '@/env.js';
 import { initializeAdventScheduler } from '@/util/advent-scheduler.js';
+import { initializeShowcaseDigestScheduler } from '@/features/showcase-digest/triggers.js';
 import { fetchAndCachePublicChannelsMessages } from '@/util/channel-prefetch.js';
 import { syncGuidesToChannel } from '@/util/post-guides.js';
 import { leaveIfNotAllowedServer } from '@/util/server-guard.js';
@@ -58,11 +59,16 @@ export const readyEvent = createEvent(
       }
     }
 
-    // Initialize Advent of Code scheduler
     try {
       initializeAdventScheduler(client, config.channelIds.adventOfCode);
     } catch (error) {
       console.error('❌ Failed to initialize Advent of Code scheduler:', error);
+    }
+
+    try {
+      initializeShowcaseDigestScheduler();
+    } catch (error) {
+      console.error('Failed to initialize showcase digest scheduler:', error);
     }
 
     // Make sure all channels in the archived category are properly archived on startup
