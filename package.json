@@ -57,7 +57,7 @@
     "tsx": "^4.23.0"
   },
   "lint-staged": {
-    "*.{js,ts}": "pnpm run lint",
+    "*.{js,ts}": "pnpm run lint:fix",
     "*.{js,ts,json}": "oxfmt --no-error-on-unmatched-pattern"
   },
   "packageManager": "pnpm@10.17.1",
