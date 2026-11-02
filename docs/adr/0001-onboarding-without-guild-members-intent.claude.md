@@ -58,6 +58,16 @@ Harsh review done (in chat). Nothing in the main doc edited yet. All findings be
 - Interaction with message-count bug L5: dormant-period messages are activity AND get counted; still needs fixing.
 - Eval order step 5 and journey table dormant row need rewording once decided.
 
+## Decisions from AskUserQuestion round (session 1)
+- Help forum: start role can CREATE and reply. So goal 1 cannot claim to stop low-effort help requests; draft rewords it and the "do not do" paragraph says so. Flag to human: this means the original trigger (low-effort help requests) is NOT addressed by this ADR. Ask whether that is intended.
+- Dormancy scope: ONLY unfinished members. Finished stay permanent and row is still deleted on finish. Consequence: hijack goal covers only never-finished accounts (stated in goal 5 draft). Human chose this over recommended "everyone".
+- Voice activity = joining a voice channel (VoiceStateUpdate).
+- lastActivity writes throttled (only update when stored value older than an interval, e.g. 1 day). Exact interval to settle in technical design.
+
+## Drafted in main doc (awaiting human review): Problem and goals
+- Goal 1 reworded, goal 5 reworded, "what the gates do" paragraph shortened to help forum only.
+- Not yet touched: journey table (still says showcase write; must become comment-only), dormant row, eval order step 5, Data section (lastActivity column), rectification (sets lastActivity), L5 etc.
+
 ## Still waiting on human
 - Q4 section order; and whether to split the spec out of the ADR
-- Help forum: can start role CREATE posts or only reply? (matters for goal 1)
+- Review of the drafted Problem and goals section
