@@ -1,6 +1,6 @@
 # Scratchpad: ADR 0001 (onboarding without GuildMembers intent)
 
-Main doc: `0001-onboarding-without-guild-members-intent.md`. Status in main doc is `accepted`; review says it should be `proposed`.
+Main doc: `0001-onboarding-without-guild-members-intent.md`. Front matter (status) removed from main doc at the human's direction: the ADR carries no status at all.
 
 ## Session 1 state
 
@@ -11,7 +11,7 @@ Harsh review done (in chat). Nothing in the main doc edited yet. All findings be
 ### Blockers
 - B1 Intent rationale self-contradicts: bot already depends on MessageContent (privileged, `src/index.ts:17`); the 400-char mechanic needs it. "Approval could be refused/revoked" applies equally. Also no evidence anyone applied for GuildMembers and was refused. 10,000-user claim unverified. Q: has GuildMembers been applied for? What is the guild/bot size? What is the real reason to avoid the intent?
 - B2 Goal 1 (protect regulars) is defeated: start role (granted at join by Discord onboarding) opens help forum + showcase, the exact channels that caused the problem. Q: move those behind finished role, or reword goal 1?
-- B3 Status `accepted` but section 5 has open decision + unverified assumptions. Should be `proposed`.
+- B3 RESOLVED: status/front matter removed entirely (human: "it should have no status at all"). Section 5 open items still stand on their own.
 - B4 Contradictions: line 22/34 say dormant can read; journey table line 45 says dormant loses access to everything except message mods + dormant channel. Table says "start role stays"; Option A removes start role. Rectification text and eval-order step 5 silent on start role.
 
 ### Logic bugs
@@ -44,4 +44,9 @@ Harsh review done (in chat). Nothing in the main doc edited yet. All findings be
 5. Open decision: dormant read-only (S15, T12)
 
 ## Decisions made
-None yet.
+- ADR has no status and no YAML front matter. Done in main doc.
+
+## Still waiting on human (asked end of session 1)
+- Q2 goal 1 vs start role channels (a/b/c)
+- Q3 goal 5 fate (a/b/c)
+- Q4 section order; and whether to split the spec out of the ADR
