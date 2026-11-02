@@ -82,12 +82,17 @@ Harsh review done (in chat). Nothing in the main doc edited yet. All findings be
 ## SCOPE DECISION (human): business definition first, technical details later
 Work only on "Problem and goals" and "1. What Onboarding is" (journey + rules) until the business definition is settled. Do NOT edit sections 2-5 (decision, technical design, considered options, open decision) yet. Technical items below are parked, not dropped. Business items still open are listed under "Business questions open".
 
+## FINALIZED by human: journey table and rules (as drafted in session 1)
+
+## Business decisions (latest round)
+- Dormant notice: member is told in PRIVATE (private thread leaning) immediately when their message is deleted, with a way to reactivate. Reasoning (human): a user who cannot write somewhere will more likely churn than investigate; informing them keeps them in the server and makes reactivating easy; a bot is less likely to react to such a message. OPEN FOR THE TEAM (not the human alone): private thread (member, bot, mods only) vs reply in the channel where everyone sees it. Written into ADR rules as an open point.
+- No start role: nothing, their choice, no nudge. Written into rules.
+- Gates: 7 days = friction for drive-bys (goals 3, 4). 400 chars = rough engagement sign (goal 6) AND friction; no quality judgement. Human did NOT pick "7 days: time to read rules", so goal 2 (server comprehension) is backed by no gate; only by Discord onboarding presumably. Check with human.
+
 ## Business questions open
-- Review of drafted journey table and rules
-- How is a dormant member told what happened (what the member experiences)? DM / reply / private thread: business-visible, decide wording only, mechanism later
-- Path for "Everyone" (no start role) members to get the start role / are they nudged
-- Why 7 days and 400 chars (trace each gate to a goal)
-- Legacy member rule is business-visible: confirm
+- Goal 2 (comprehension) has no gate behind it: drop, reword, or attribute to Discord onboarding?
+- Legacy member rule: confirm (joined before launch, receives start+finished+legacy on first post; never evaluated if they never post)
+- Launch date: constant vs env var (L8), probably technical; park
 
 ## Not yet touched (later sections; PARKED until business definition done)
 - Section 2/5: Option A/B open-decision section needs rewriting to reflect B chosen. "Telling the member" thread section now relevant to B (DM vs ephemeral vs private thread: still undecided).
