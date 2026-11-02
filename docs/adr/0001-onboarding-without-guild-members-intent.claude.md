@@ -15,6 +15,7 @@ Harsh review done (in chat). Nothing in the main doc edited yet. All findings be
 - B4 Contradictions: line 22/34 say dormant can read; journey table line 45 says dormant loses access to everything except message mods + dormant channel. Table says "start role stays"; Option A removes start role. Rectification text and eval-order step 5 silent on start role.
 
 ### Logic bugs
+- (Q3 decided: dormancy now activity-based, see Decisions; L6 largely addressed except finished-member scope and legacy non-posters)
 - L5 Messages posted while dormant (dormant channel, Option B) are after the old anchor so get counted; rectification does not delete rows, contradicting "count is already empty".
 - L6 Dormancy rule (3 months after anchor w/o finished) does not match goal 5 (never-taken-part accounts). Hits slow active members and active lounge chatters who skipped Discord onboarding (cannot finish without start role). Never touches finished members (real hijack targets). Legacy non-posters invisible at launch.
 - L7 Leave grace loophole: kick + rejoin within 7 days keeps progress; time away counts toward the 7 days.
@@ -46,7 +47,17 @@ Harsh review done (in chat). Nothing in the main doc edited yet. All findings be
 ## Decisions made
 - ADR has no status and no YAML front matter. Done in main doc.
 
-## Still waiting on human (asked end of session 1)
-- Q2 goal 1 vs start role channels (a/b/c)
-- Q3 goal 5 fate (a/b/c)
+- Q2 (goal 1 vs start role channels), human's facts: new joiners with the start role can COMMENT on showcases in the showcase forum but cannot CREATE showcases. Creation goes through the bot via a button in showcase-guidelines, which the start role cannot reach. Start role can "participate" in the help forum. So the journey table line "write in ... showcase" is inaccurate; must say comment-only. Reasoning: showcase spam is already blocked structurally; the remaining question is help forum posting.
+- Q3 (goal 5): dormancy becomes ACTIVITY-based. Store `lastActivity` datetime in DB. Activity = wrote a message anywhere, created a forum post, joined and talked in voice. Each updates lastActivity. Dormant after 3 months with no activity. Replaces "3 months after restart anchor without finished". Reasoning: dormancy should target accounts with no sign of life, not slow members.
+
+## Implications of Q3 to resolve (asked via AskUserQuestion)
+- Does activity dormancy apply to finished members too? Today: finished => row deleted, permanent. Covering finished means keeping a row (lastActivity) for every finished member, which reverses "row deleted on finish" and affects the leave/rejoin design and the no-intent tracking (finished members only seen when they post/join voice).
+- Voice: bot cannot detect "talking", only joining (VoiceStateUpdate, GuildVoiceStates already enabled). 
+- Write volume: updating lastActivity on every message; probably throttle (only write if older than N hours).
+- Initial lastActivity for a new row = join date; rectification sets lastActivity = now.
+- Interaction with message-count bug L5: dormant-period messages are activity AND get counted; still needs fixing.
+- Eval order step 5 and journey table dormant row need rewording once decided.
+
+## Still waiting on human
 - Q4 section order; and whether to split the spec out of the ADR
+- Help forum: can start role CREATE posts or only reply? (matters for goal 1)
