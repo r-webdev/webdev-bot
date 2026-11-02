@@ -1,7 +1,3 @@
----
-status: accepted
----
-
 # Onboarding: a role-based member journey, built without the GuildMembers intent
 
 Terms in **bold** are defined in [GLOSSARY.md](../../GLOSSARY.md).
@@ -12,18 +8,18 @@ Regulars have said they are tired of dealing with low-quality content from new j
 
 Onboarding exists to serve these goals, in this order of weight:
 
-1. **Protect regulars' attention.** Keep low-effort questions and self-promotion out of the busiest channels until a newcomer has had time to settle in.
+1. **Protect regulars' attention.** Keep newcomers out of general chat and the rest of the server until they have had time to settle in. Newcomers cannot create showcases, because that goes through a bot button in a channel they cannot reach. They can comment on showcases and take part in the help forum from the start.
 2. **Server comprehension.** Newcomers should have seen the rules and learned how to ask a good question before they reach the whole server.
 3. **Spam and raids.** Fresh accounts have limited reach while trust is unknown.
 4. **Drive-by accounts.** People who join, post once and leave should not cost moderators time.
-5. **Limit hijacked dormant accounts.** An account that has never taken part for months can later be compromised and used to post scam messages. Dormancy removes the ability to write from accounts that have shown no sign of life.
+5. **Limit hijacked dormant accounts.** An account that has shown no activity for months can later be compromised and used to post scam messages. A member who has not finished Onboarding and has no activity for 3 months loses the ability to write. Activity means writing a message anywhere, creating a forum post, or joining a voice channel. Finished members are never made dormant, so this goal does not cover them.
 6. **Encourage participation.** Newcomers get a friendly place to take part straight away (the lounge and a few topic channels) and a path to the rest.
 
 Reading is not restricted by this flow. Members who read but rarely post keep their access to read the server. Onboarding gates where a member can write, not whether they may be here. A dormant member can read but cannot write until they reactivate.
 
 ### What the gates do and do not do
 
-The 7-day wait and the 400-character threshold are deliberate friction. They keep newcomers out of general chat and the rest of the server while they settle in, and they cost a drive-by account some effort. They do not judge quality. A member can pass them with filler, and a newcomer can still post a low-effort question or project in the channels the start role opens, including help forum and showcase. Moderation and the community's own norms remain responsible for quality. Onboarding only limits how much of the server a newcomer can reach while that happens.
+The 7-day wait and the 400-character threshold are deliberate friction. They keep newcomers out of general chat and the rest of the server while they settle in, and they cost a drive-by account some effort. The 7 days make a throwaway account wait before it reaches everything. The 400 characters are a rough sign that the member has taken part, and also cost effort. They do not judge quality. A member can pass them with filler, and a newcomer can still create a low-effort help request in the help forum, which the start role opens. Moderation and the community's own norms remain responsible for quality. Onboarding only limits how much of the server a newcomer can reach while that happens.
 
 Every gate in section 1 must trace back to one of these goals. A gate that serves none of them should be removed.
 
@@ -38,22 +34,25 @@ The purpose is to let newcomers take part in a few friendly channels straight aw
 | Stage             | How a member gets there                                                     | What they can do                                                                                                                           |
 | ----------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | **Everyone**      | Joined, but has no onboarding role (for example skipped Discord onboarding) | Write in lounge, read a few channels, read message mods to open a ticket                                                                   |
-| **Start role**    | Granted by Discord onboarding                                               | Also write in help forum, ai, gaming, real life, frontend, design, backend and showcase                                                    |
+| **Start role**    | Granted by Discord onboarding                                               | Also write in help forum (create and reply), ai, gaming, real life, frontend, design and backend, and comment on showcases. Showcases are created through a bot button in a channel this role cannot reach |
 | **7-day role**    | 7 days after the **restart anchor**                                         | Milestone only                                                                                                                             |
 | **Messages role** | 400 **counted message** characters since the restart anchor                 | Milestone only                                                                                                                             |
 | **Finished role** | Holds start, 7-day and messages                                             | Full server access. Permanent. The 7-day and messages roles are removed                                                                    |
-| **Dormant role**  | 3 months after the restart anchor without the finished role                 | Loses access to everything except message mods and the **dormant channel**. The 7-day and messages roles are removed; the start role stays |
+| **Dormant role**  | 3 months without **activity**, without the finished role                    | Keeps its channel access, but every message they write is deleted and they are told how to reactivate. The 7-day and messages roles are removed; the start role stays |
 | **Legacy member** | Joined before launch, first seen posting                                    | Receives start, finished and **legacy role** at once                                                                                       |
 
 ### Rules
 
-- The restart anchor is the later of the member's join date and their latest rectification. The 7-day clock, the message count and the 3-month dormancy deadline all run from it.
-- Dormancy applies to anyone without the finished role, including members who never held the start role.
+- The restart anchor is the later of the member's join date and their latest rectification. The 7-day clock and the message count run from it.
+- **Activity** is writing a message anywhere (a forum post counts), or joining a voice channel. The bot cannot tell whether someone speaks, only that they joined. It stores the time of the member's last activity, and updates it only when the stored time is older than a set interval, because dormancy is measured in months. A new member's last activity starts as their join date.
+- Dormancy runs from last activity: 3 months with none, for anyone without the finished role, including members who never held the start role. Finished members are never made dormant.
+- When a dormant member writes, their message is deleted and the bot immediately tells them why, privately, and how to reactivate. A member who simply cannot write somewhere is more likely to leave than to investigate, and this keeps them in the server and makes reactivating easy. Open for the team: whether this happens in a private thread (only the member, the bot and moderators can see it) or as a reply in the channel itself, where everyone sees it.
+- A member who has no start role (for example, skipped Discord onboarding) stays limited to the lounge until they complete Discord onboarding themselves. They are not nudged.
 - Finishing needs the start role. A member could meet the 7-day and message conditions without it, but the finished role waits until Discord onboarding has been completed.
 - Counted messages are text only, with whitespace, markdown syntax and links removed. Attachments add nothing. Messages written before the start role count. Messages that are deleted, or removed by spam detection, do not. Edits recount the message.
-- **Rectification** leaves dormancy. A moderator runs `/onboarding reactivate @member`, or the member presses the button in the dormant channel. Both remove the dormant role and set a new restart anchor. The message count is already empty, because it is cleared when the member becomes dormant. A returning member starts over on purpose, with another 7 days and 400 characters: the point is to show they are present again.
+- **Rectification** leaves dormancy. A moderator runs `/onboarding reactivate @member`, or the member presses the button in the dormant channel. Both remove the dormant role, set a new restart anchor and set last activity to now. The message count is already empty, because it is cleared when the member becomes dormant, and messages from a member holding the dormant role are not counted. A returning member starts over on purpose, with another 7 days and 400 characters: the point is to show they are present again.
 - The messages role is held only while the counted characters stay at or above the threshold. If deletions or spam removals drop a member below it before they finish, the role is removed, so posting 400 characters and deleting them does not count.
-- A member who leaves keeps their Onboarding progress for a grace period of 7 days, counted from when the daily job first notices they are gone. If they rejoin within it, their restart anchor and counted messages are as they were, however soon after leaving they return. The time away counts toward the 7 days and the dormancy deadline, because the anchor does not move. After the grace period the progress is deleted and they start Onboarding again. Members who had already finished always start again, because their record is gone and Discord removes their roles when they leave. Counted messages are only deleted in two cases: their onboarding record is deleted (they finished, or the grace period after leaving ran out), or they become dormant.
+- A member who leaves keeps their Onboarding progress for a grace period of 7 days, counted from when the daily job first notices they are gone. If they rejoin within it, their counted messages are as they were, however soon after leaving they return. The time away does not count toward the 7 days or the dormancy deadline: the restart anchor and last activity move forward by the time away, measured from when the daily job noticed the leave until the rejoin. After the grace period the progress is deleted and they start Onboarding again. Members who had already finished always start again, because their record is gone and Discord removes their roles when they leave. Counted messages are only deleted in two cases: their onboarding record is deleted (they finished, or the grace period after leaving ran out), or they become dormant.
 - Bots and moderators (**exempt members**) are never touched.
 - Which channels each role can see or write in is configured by moderators in Discord. The bot only adds and removes roles. It never edits channel permission overwrites.
 
