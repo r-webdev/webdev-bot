@@ -8,7 +8,7 @@ Workflow: iterative authoring skill. Ask, don't guess. Prefer AskUserQuestion (h
 Business half is DRAFTED in the main doc and the human finalized it, except one last read-through they have not explicitly done:
 - "Problem and goals" (goals 1, 2, 5 and the gates paragraph reworded) and "1. What Onboarding is" (journey table + rules).
 - Sections 2-5 (decision, technical design, considered options, to-verify/open decision) are UNTOUCHED and now STALE: they still describe anchor-based dormancy, Option A/B as undecided, no lastActivity.
-- The main doc has UNCOMMITTED edits (status front matter removed, business half). Human decides when to commit it. `pnpm exec oxfmt` fails on Node v20.17 (needs newer, see .nvmrc), so the widened table rows are unformatted; run fmt on a supported Node before committing.
+- The human has already committed the main doc edits themselves (17e95a4 "clarify goal dormancy", 06d6704 "7 day gives users also enough time to get a read on the server and its community"). The working tree is clean for that file. They may have tweaked wording, so RE-READ the main doc at the start of the next session and treat it as the source of truth over this file. `pnpm exec oxfmt` fails on Node v20.17 (needs newer, see .nvmrc), so the widened table rows may still be unformatted; check `pnpm fmt:check` on a supported Node.
 - Note: AGENTS.md and docs/agents/ are also uncommitted in the working tree and are not ours.
 
 ## Decisions made (business, reasoning kept for context)
