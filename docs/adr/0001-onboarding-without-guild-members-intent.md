@@ -9,7 +9,7 @@ Regulars have said they are tired of dealing with low-quality content from new j
 Onboarding exists to serve these goals, in this order of weight:
 
 1. **Protect regulars' attention.** Keep newcomers out of general chat and the rest of the server until they have had time to settle in. Newcomers cannot create showcases, because that goes through a bot button in a channel they cannot reach. They can comment on showcases and take part in the help forum from the start.
-2. **Server comprehension.** Newcomers should have seen the rules and learned how to ask a good question before they reach the whole server.
+2. **Server comprehension.** The 7-day wait gives newcomers time to read the rules and see how good questions are asked before they reach the whole server. Nothing checks that they did.
 3. **Spam and raids.** Fresh accounts have limited reach while trust is unknown.
 4. **Drive-by accounts.** People who join, post once and leave should not cost moderators time.
 5. **Limit hijacked dormant accounts.** An account that has shown no activity for months can later be compromised and used to post scam messages. A member who has not finished Onboarding and has no activity for 3 months loses the ability to write. Activity means writing a message anywhere, creating a forum post, or joining a voice channel. Finished members are never made dormant, so this goal does not cover them.
