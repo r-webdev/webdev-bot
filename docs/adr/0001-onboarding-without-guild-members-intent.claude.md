@@ -79,7 +79,17 @@ Harsh review done (in chat). Nothing in the main doc edited yet. All findings be
 - Rules: activity definition (message anywhere incl. forum post, voice join; throttled; initial = join date), dormancy runs from lastActivity, finished never dormant, rectification sets lastActivity=now and dormant messages not counted, rejoin shifts anchor+lastActivity.
 - Formatting NOT run: `pnpm exec oxfmt` fails on Node v20.17 (needs newer; .nvmrc). Table padding is unformatted; run fmt before commit of main doc.
 
-## Not yet touched (later sections)
+## SCOPE DECISION (human): business definition first, technical details later
+Work only on "Problem and goals" and "1. What Onboarding is" (journey + rules) until the business definition is settled. Do NOT edit sections 2-5 (decision, technical design, considered options, open decision) yet. Technical items below are parked, not dropped. Business items still open are listed under "Business questions open".
+
+## Business questions open
+- Review of drafted journey table and rules
+- How is a dormant member told what happened (what the member experiences)? DM / reply / private thread: business-visible, decide wording only, mechanism later
+- Path for "Everyone" (no start role) members to get the start role / are they nudged
+- Why 7 days and 400 chars (trace each gate to a goal)
+- Legacy member rule is business-visible: confirm
+
+## Not yet touched (later sections; PARKED until business definition done)
 - Section 2/5: Option A/B open-decision section needs rewriting to reflect B chosen. "Telling the member" thread section now relevant to B (DM vs ephemeral vs private thread: still undecided).
 - Section 3: Data (add lastActivity column on Onboarding), evaluation order step 5 (dormancy by lastActivity, not anchor), join-message entry point ("changes nothing else" now shifts anchor/lastActivity), message entry point (skip recording when dormant, update lastActivity incl. voice and forum posts), new VoiceStateUpdate entry point, Option B handler (delete messages from dormant members, Manage Messages permission), daily job wording.
 - Verify: forum post starter message arrives as MessageCreate; VoiceStateUpdate available.
