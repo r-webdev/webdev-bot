@@ -45,6 +45,17 @@ Technical (PARKED by human: "business definition first, technical details later"
 7. Minor: who accepted the dormancy best-effort gap (invisible members) and when does it become unacceptable; cite the source of "a daily job was the requirement".
 8. Verify before building: forum post starter message arrives as MessageCreate; VoiceStateUpdate available (GuildVoiceStates already on); join messages visible in the system channel; single-member fetch works without the intent.
 
+## New suggestions from the human (end of session 1), NOT yet discussed or scoped
+
+S1. Prevent media attachments while Onboarding is not finished.
+- My notes (unconfirmed): could be a Discord permission (deny Attach Files / Embed Links on the unfinished roles, set by moderators, which fits the rule "the bot only moves roles") or the bot deleting such messages (Manage Messages, briefly visible, like Option B). Journey rules currently say "Attachments add nothing" to the count, so wording changes too.
+- Questions to ask: which stage (Everyone, start role, 7-day/messages milestone holders, dormant)? Attachments only, or also embeds/links? All channels or only some? Which goal does it serve (spam/raids, goal 3, and general-chat quality, goal 1)? Does a finished member keep full access? Does dormant need it?
+
+S2. Replace the Discord onboarding rules quiz (rules shown with 4 answers, 3 wrong and 1 right) with the newcomer writing the rules out in their own words in a channel.
+- My notes (unconfirmed): this is a bigger change than it looks. Today Discord onboarding grants the start role and is the only gate for goal 2. Writing in a channel means someone or something must grant the start role afterwards, so the bot (or a moderator) would take over granting it. That would also remove a technical cost in the ADR ("roles granted outside the bot are noticed late"). It touches the "Everyone" stage, "Discord onboarding" in the glossary, goal 2 (the "nothing checks it" wording could become false), the "No start role" rule and the technical sections.
+- Questions to ask: what exactly do they write (rules in own words, an introduction, both)? Who validates it: moderators, the bot (length/keywords), or nobody? Which channel, and can the Everyone stage write there (it is currently lounge-only)? Does Discord onboarding still exist for picking the Developer/Designer role? What is the grant mechanism: moderator button/command or automatic? Is spam in that channel a risk (goal 3)?
+- Do this as its own business-level discussion BEFORE the technical sections, because it changes the journey.
+
 ## Next session: how to start
 
-Read the main doc and this file, then ask (AskUserQuestion) which to do: (a) business sign-off read-through, or (b) start the technical sections at item 1 (B1). Do not edit sections 2-5 without confirming scope.
+Read the main doc and this file, then ask (AskUserQuestion) which to do: (a) business sign-off read-through, (b) the two new suggestions S1 and S2 (business level, S2 may reshape the journey, so probably first), or (c) start the technical sections at item 1 (B1). Do not edit sections 2-5 without confirming scope.
