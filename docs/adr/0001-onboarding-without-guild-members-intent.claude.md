@@ -64,10 +64,29 @@ Harsh review done (in chat). Nothing in the main doc edited yet. All findings be
 - Voice activity = joining a voice channel (VoiceStateUpdate).
 - lastActivity writes throttled (only update when stored value older than an interval, e.g. 1 day). Exact interval to settle in technical design.
 
-## Drafted in main doc (awaiting human review): Problem and goals
-- Goal 1 reworded, goal 5 reworded, "what the gates do" paragraph shortened to help forum only.
-- Not yet touched: journey table (still says showcase write; must become comment-only), dormant row, eval order step 5, Data section (lastActivity column), rectification (sets lastActivity), L5 etc.
+## FINALIZED by human: Problem and goals (goals 1 and 5, gates paragraph)
+- Human on the trigger gap: "low effort or low quality messages should not pollute the main area where people hang out, notably general chat. this is why all new comers only have access to the lounge." Intended scope of goal 1 = protect GENERAL CHAT. Trigger paragraph left as is.
+- Human on stages: "people without any roles only have access to lounge, then the start role gives access to more channels, and after finishing the onboarding they gain access to the full server." So the journey table channel list is right; just showcase is comment-only.
+
+## Decisions (journey section round)
+- Dormant = Option B (delete and notify). Human chose it over my recommendation A. Known cost, recorded in ADR already: message is visible briefly, weakens goal 5, bot needs Manage Messages and must handle every message from dormant members. Option A text and S15/T12 now partly moot; Option A can be kept in "considered options" instead of "open decision". Start role stays on dormancy (matches table).
+- Messages from dormant members are NOT counted (skip recording while dormant role held). Resolves L5.
+- Time away does NOT count on rejoin within grace: anchor AND lastActivity shift forward by away time. Human chose this. Away time measured from when the daily job noticed the leave (imprecise by up to a day, consistent with grace period). Resolves L7. Needs stored state: Onboarding row already has "left noticed" time; shift on rejoin.
+
+## Drafted in main doc (awaiting human review): Journey table and rules
+- Start-role row: showcase comment-only, help forum create+reply.
+- Dormant row: 3 months without activity; keeps channel access, messages deleted + notified.
+- Rules: activity definition (message anywhere incl. forum post, voice join; throttled; initial = join date), dormancy runs from lastActivity, finished never dormant, rectification sets lastActivity=now and dormant messages not counted, rejoin shifts anchor+lastActivity.
+- Formatting NOT run: `pnpm exec oxfmt` fails on Node v20.17 (needs newer; .nvmrc). Table padding is unformatted; run fmt before commit of main doc.
+
+## Not yet touched (later sections)
+- Section 2/5: Option A/B open-decision section needs rewriting to reflect B chosen. "Telling the member" thread section now relevant to B (DM vs ephemeral vs private thread: still undecided).
+- Section 3: Data (add lastActivity column on Onboarding), evaluation order step 5 (dormancy by lastActivity, not anchor), join-message entry point ("changes nothing else" now shifts anchor/lastActivity), message entry point (skip recording when dormant, update lastActivity incl. voice and forum posts), new VoiceStateUpdate entry point, Option B handler (delete messages from dormant members, Manage Messages permission), daily job wording.
+- Verify: forum post starter message arrives as MessageCreate; VoiceStateUpdate available.
+- L8 launch date in both constants and env vars: still open, decide which.
+- B1 (intent argument), T9-T13, S14 (split spec) still open.
 
 ## Still waiting on human
-- Q4 section order; and whether to split the spec out of the ADR
-- Review of the drafted Problem and goals section
+- Review of drafted Journey table and rules
+- Launch date: constant or env var (L8)
+- Q4: whether to split spec out of ADR (deferred; human chose to edit in place first)
