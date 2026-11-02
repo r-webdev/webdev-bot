@@ -89,10 +89,14 @@ Work only on "Problem and goals" and "1. What Onboarding is" (journey + rules) u
 - No start role: nothing, their choice, no nudge. Written into rules.
 - Gates: 7 days = friction for drive-bys (goals 3, 4). 400 chars = rough engagement sign (goal 6) AND friction; no quality judgement. Human did NOT pick "7 days: time to read rules", so goal 2 (server comprehension) is backed by no gate; only by Discord onboarding presumably. Check with human.
 
+## Business definition status: essentially complete
+- Goal 2 reworded (human chose): the 7-day wait gives time to read rules and see good questions; nothing checks it. Drafted in main doc, awaiting a final look.
+- Legacy rule confirmed as written (start+finished+legacy on first post).
+
 ## Business questions open
-- Goal 2 (comprehension) has no gate behind it: drop, reword, or attribute to Discord onboarding?
-- Legacy member rule: confirm (joined before launch, receives start+finished+legacy on first post; never evaluated if they never post)
-- Launch date: constant vs env var (L8), probably technical; park
+- Team decision (not ours): private thread vs in-channel reply for dormant notice. Stays as open point in ADR rules.
+- Launch date: constant vs env var (L8), technical; park
+- Next: either human reads the whole business half once more and signs off, or we move to technical sections (B1 intent argument first, then rewrite open decision section for Option B, T9-T13, S14)
 
 ## Not yet touched (later sections; PARKED until business definition done)
 - Section 2/5: Option A/B open-decision section needs rewriting to reflect B chosen. "Telling the member" thread section now relevant to B (DM vs ephemeral vs private thread: still undecided).
