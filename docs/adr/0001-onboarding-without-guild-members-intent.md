@@ -1,4 +1,4 @@
-# Onboarding: a role-based member journey, built without the GuildMembers intent
+# Onboarding: a role-based member journey
 
 Terms in **bold** are defined in [GLOSSARY.md](../../GLOSSARY.md).
 
@@ -19,7 +19,7 @@ Reading is not restricted by this flow. Members who read but rarely post keep th
 
 ### What the gates do and do not do
 
-The 7-day wait and the 400-character threshold are deliberate friction. They keep newcomers out of general chat and the rest of the server while they settle in, and they cost a drive-by account some effort. The 7 days make a throwaway account wait before it reaches everything. The 400 characters are a rough sign that the member has taken part, and also cost effort. They do not judge quality. A member can pass them with filler, and a newcomer can still create a low-effort help request in the help forum, which the start role opens. Moderation and the community's own norms remain responsible for quality. Onboarding only limits how much of the server a newcomer can reach while that happens.
+The 7-day wait and the 3-days-of-activity requirement are deliberate friction. They keep newcomers out of general chat and the rest of the server while they settle in, and they cost a drive-by account some effort. The 7 days make a throwaway account wait before it reaches everything. Requiring activity on 3 different days shows the member returns to chat and join in, which is a more meaningful sign of trust than an arbitrary character count. They do not judge quality. A member can still create a low-effort help request in the help forum, which the start role opens. Moderation and the community's own norms remain responsible for quality. Onboarding only limits how much of the server a newcomer can reach while that happens.
 
 Every gate in section 1 must trace back to one of these goals. A gate that serves none of them should be removed.
 
@@ -31,42 +31,55 @@ The purpose is to let newcomers take part in a few friendly channels straight aw
 
 ### The journey
 
-| Stage             | How a member gets there                                                     | What they can do                                                                                                                           |
-| ----------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Everyone**      | Joined, but has no onboarding role (for example skipped Discord onboarding) | Write in lounge, read a few channels, read message mods to open a ticket                                                                   |
-| **Start role**    | Granted by Discord onboarding                                               | Also write in help forum (create and reply), ai, gaming, real life, frontend, design and backend, and comment on showcases. Showcases are created through a bot button in a channel this role cannot reach |
-| **7-day role**    | 7 days after the **restart anchor**                                         | Milestone only                                                                                                                             |
-| **Messages role** | 400 **counted message** characters since the restart anchor                 | Milestone only                                                                                                                             |
-| **Finished role** | Holds start, 7-day and messages                                             | Full server access. Permanent. The 7-day and messages roles are removed                                                                    |
-| **Dormant role**  | 3 months without **activity**, without the finished role                    | Keeps its channel access, but every message they write is deleted and they are told how to reactivate. The 7-day and messages roles are removed; the start role stays |
-| **Legacy member** | Joined before launch, first seen posting                                    | Receives start, finished and **legacy role** at once                                                                                       |
+| Stage             | How a member gets there                                                     | What they can do                                                                                                                                                                                                           |
+| ----------------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Everyone**      | Joined, but has no onboarding role (for example skipped Discord onboarding) | Write in lounge, read a few channels (announcement, rules, etc.), read message mods to open a ticket                                                                                                                       |
+| **Start role**    | Granted by Discord onboarding                                               | Also write in help forum (create and reply), ai, gaming, real-life, frontend, design-ui-ux and backend-and-cloud, and comment on showcases. Showcases are created through a bot button in a channel this role cannot reach |
+| **7-day role**    | 7 days after the **restart anchor**                                         | Milestone only                                                                                                                                                                                                             |
+| **3-days role**   | Activity recorded on 3 different days since the restart anchor              | Milestone only                                                                                                                                                                                                             |
+| **Finished role** | Holds start, 7-day and 3-days                                               | Full server access. Permanent. The 7-day and 3-days roles are removed                                                                                                                                                      |
+| **Dormant role**  | 3 months without **activity**, without the finished role                    | Keeps its channel access, but every message they write is deleted and they are told how to reactivate. The 7-day and 3-days roles are removed; the start role stays                                                        |
+| **Legacy member** | Joined before launch, first seen posting                                    | Receives start, finished and **legacy role** at once                                                                                                                                                                       |
 
 ### Rules
 
-- The restart anchor is the later of the member's join date and their latest rectification. The 7-day clock and the message count run from it.
+- The restart anchor is the later of the member's join date and their latest rectification. The 7-day clock and the activity-day count run from it.
 - **Activity** is writing a message anywhere (a forum post counts), or joining a voice channel. The bot cannot tell whether someone speaks, only that they joined. It stores the time of the member's last activity, and updates it only when the stored time is older than a set interval, because dormancy is measured in months. A new member's last activity starts as their join date.
 - Dormancy runs from last activity: 3 months with none, for anyone without the finished role, including members who never held the start role. Finished members are never made dormant.
-- When a dormant member writes, their message is deleted and the bot immediately tells them why, privately, and how to reactivate. A member who simply cannot write somewhere is more likely to leave than to investigate, and this keeps them in the server and makes reactivating easy. Open for the team: whether this happens in a private thread (only the member, the bot and moderators can see it) or as a reply in the channel itself, where everyone sees it.
+- When a dormant member writes, their message is deleted immediately, they receive a 10-minute timeout, and the bot creates a private thread in that channel, adds the member, and posts an explanation with a reactivate button. This **soft block** approach ensures the user learns about their dormant status at the moment of attempt and is given a clear, actionable path forward without having to search the server. The timeout prevents spam and is removed when the member reactivates.
 - A member who has no start role (for example, skipped Discord onboarding) stays limited to the lounge until they complete Discord onboarding themselves. They are not nudged.
-- Finishing needs the start role. A member could meet the 7-day and message conditions without it, but the finished role waits until Discord onboarding has been completed.
-- Counted messages are text only, with whitespace, markdown syntax and links removed. Attachments add nothing. Messages written before the start role count. Messages that are deleted, or removed by spam detection, do not. Edits recount the message.
-- **Rectification** leaves dormancy. A moderator runs `/onboarding reactivate @member`, or the member presses the button in the dormant channel. Both remove the dormant role, set a new restart anchor and set last activity to now. The message count is already empty, because it is cleared when the member becomes dormant, and messages from a member holding the dormant role are not counted. A returning member starts over on purpose, with another 7 days and 400 characters: the point is to show they are present again.
-- The messages role is held only while the counted characters stay at or above the threshold. If deletions or spam removals drop a member below it before they finish, the role is removed, so posting 400 characters and deleting them does not count.
-- A member who leaves keeps their Onboarding progress for a grace period of 7 days, counted from when the daily job first notices they are gone. If they rejoin within it, their counted messages are as they were, however soon after leaving they return. The time away does not count toward the 7 days or the dormancy deadline: the restart anchor and last activity move forward by the time away, measured from when the daily job noticed the leave until the rejoin. After the grace period the progress is deleted and they start Onboarding again. Members who had already finished always start again, because their record is gone and Discord removes their roles when they leave. Counted messages are only deleted in two cases: their onboarding record is deleted (they finished, or the grace period after leaving ran out), or they become dormant.
+- Finishing needs the start role. A member could meet the 7-day and 3-days conditions without it, but the finished role waits until Discord onboarding has been completed.
+- Activity on a day is recorded once per calendar day, regardless of how many messages are sent. Activity means writing a message anywhere (a forum post counts), or joining a voice channel. A member must record activity on 3 distinct days to earn the 3-days role.
+- **Rectification** leaves dormancy. A moderator runs `/onboarding reactivate @member`, or the member presses the button in the dormant channel. Both remove the dormant role, set a new restart anchor and set last activity to now. The day count is already empty, because it is cleared when the member becomes dormant, and activity from a member holding the dormant role is not counted. A returning member starts over on purpose, with another 7 days and 3 days of activity: the point is to show they are present again.
+- The 3-days role is held only while the activity-day count stays at or above 3. If a member's activity days are deleted or reset, the role is removed.
+- A member who leaves keeps their Onboarding progress for a grace period of 7 days, counted from when the daily job first notices they are gone. If they rejoin within it, their activity-day count is as it was, however soon after leaving they return. The time away does not count toward the 7 days or the dormancy deadline: the restart anchor and last activity move forward by the time away, measured from when the daily job noticed the leave until the rejoin. After the grace period the progress is deleted and they start Onboarding again. Members who had already finished always start again, because their record is gone and Discord removes their roles when they leave. Activity-day records are only deleted in two cases: their onboarding record is deleted (they finished, or the grace period after leaving ran out), or they become dormant.
 - Bots and moderators (**exempt members**) are never touched.
 - Which channels each role can see or write in is configured by moderators in Discord. The bot only adds and removes roles. It never edits channel permission overwrites.
 
 ## 2. The decision
 
-Onboarding is implemented as a role reconciler that works **without the GuildMembers privileged intent**. It relies on a small tracking table, the join system message, per-message events and a daily job that fetches members one by one.
+Onboarding is implemented as a role reconciler that works **with the GuildMembers privileged intent**. It relies on proper Discord events for joins, leaves, and role updates, along with a tracking table for activity days and dormancy.
 
-### Why not use the intent
+**Fallback:** If the GuildMembers intent application is denied, the bot can fall back to the approach described in section 3.1, which uses system messages, per-message events, and a daily job to fetch members one by one.
 
-The intent is the obvious route. It delivers join, leave and role-update events and lets the bot list every member. It is privileged. Discord's [Gateway documentation](https://docs.discord.com/developers/events/gateway) says apps with fewer than 10,000 users can switch privileged intents on in the Developer Portal, and approval is needed above that. This app already needed approval for the Message Content intent, so the same process would apply to GuildMembers. We chose not to depend on an approval that Discord controls and could refuse or revoke.
+### Why use the intent
 
-### What this costs
+The intent is the most straightforward route. It delivers join, leave and role-update events in real-time and lets the bot list every member. This app already requires approval for the Message Content intent (privileged, see `src/index.ts:17`), so applying for GuildMembers follows the same process. Using the intent eliminates the technical debt of workarounds and provides cleaner, more reliable functionality.
 
-- Roles granted outside the bot (Discord onboarding giving the start role) are noticed late: when the member next posts, or at the next daily run.
+### What this gives us (with GuildMembers intent)
+
+- Roles granted outside the bot (Discord onboarding giving the start role) are noticed immediately via role-update events.
+- Leaves are noticed immediately via leave events, enabling accurate grace period tracking.
+- Time-based roles (7-day, dormant) can be applied in real-time or via scheduled jobs.
+- Existing members can be listed, enabling a clean backfill of legacy members.
+- Dormancy can be comprehensive: all members can be evaluated, not just those the bot saw join or post.
+- The leave grace period starts exactly when the member left.
+
+### Fallback costs (without GuildMembers intent)
+
+If the intent is not approved, the fallback approach has these costs:
+
+- Roles granted outside the bot are noticed late: when the member next posts, or at the next daily run.
 - Leaves are noticed late, at the next daily run.
 - Time-based roles (7-day, dormant) are applied once a day, so they can arrive up to a day late.
 - Existing members can't be listed, so they become **legacy members** one at a time, as they post.
@@ -75,116 +88,169 @@ The intent is the obvious route. It delivers join, leave and role-update events 
 
 ## 3. Technical design
 
-### Signals the bot uses
+### Signals the bot uses (with GuildMembers intent)
 
-| Need               | Source                                                                                                          | Needs privileged intent |
-| ------------------ | --------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| A member joined    | System join message (`MessageType.UserJoin`) in the server's system channel. `message.author` is the joiner     | No (GuildMessages)      |
-| Join date, roles   | `message.member` on every guild message (`joinedAt`, `roles`)                                                   | No                      |
-| Message counted    | `MessageCreate`                                                                                                 | No                      |
-| Message edited     | `MessageUpdate`                                                                                                 | No                      |
-| Message uncounted  | `MessageDelete` and `MessageDeleteBulk`                                                                         | No                      |
-| Member left        | Daily run fetches each tracked member by ID and treats Discord's "Unknown Member" error (code 10007) as a leave | No                      |
-| Start role granted | Seen on the member's next message, or when the daily run fetches them                                           | No                      |
+| Need               | Source                                            | Needs privileged intent |
+| ------------------ | ------------------------------------------------- | ----------------------- |
+| A member joined    | `GuildMemberAdd` event                            | Yes (GuildMembers)      |
+| Join date, roles   | `GuildMemberAdd` event or `guild.members.fetch()` | Yes (GuildMembers)      |
+| Activity tracked   | `MessageCreate`, `VoiceStateUpdate` events        | No                      |
+| Member left        | `GuildMemberRemove` event                         | Yes (GuildMembers)      |
+| Start role granted | `GuildMemberUpdate` event (role change)           | Yes (GuildMembers)      |
 
-Spam detection removes messages with `bulkDelete`. discord.js reports that with a separate bulk-delete event, and the bot has no delete listeners today. Both events must be handled, otherwise spam would still count toward the 400 characters.
+**Fallback signals (without GuildMembers intent):**
+
+- A member joined: System join message (`MessageType.UserJoin`) in the server's system channel
+- Join date, roles: `message.member` on every guild message
+- Member left: Daily run fetches each tracked member by ID and treats Discord's "Unknown Member" error (code 10007) as a leave
+- Start role granted: Seen on the member's next message, or when the daily run fetches them
+
+Note: Spam detection removes messages with `bulkDelete`. discord.js reports that with a separate bulk-delete event, and the bot has no delete listeners today.
 
 ### Data
 
-Two new Prisma models in [schema.prisma](../../prisma/schema.prisma):
+Three Prisma models in [schema.prisma](../../prisma/schema.prisma):
 
-- **Onboarding**: one row per member who is in progress or dormant. Columns are the user ID (primary key), join date, restart anchor, and the time the bot first noticed the member had left (empty while they are in the server). The row is deleted when the member finishes, or when the grace period after leaving has ended.
-- **OnboardingMessage**: one row per counted message. Columns are the message ID (primary key), the user ID (a foreign key to `Onboarding` that cascades on delete) and the counted length. A member's total is the sum of their rows. A message's creation time is not stored: messages before the anchor are filtered when they arrive, and the time is encoded in the message ID if it is ever needed. A member's rows are deleted in exactly two cases: their `Onboarding` row is deleted, or they become dormant.
+- **Onboarding**: one row per member who is actively in the onboarding process (not finished, not dormant). Columns are the user ID (primary key), join date, restart anchor, last activity date, activity days count (number of distinct days with activity), and the time the bot first noticed the member had left (empty while they are in the server). The row is deleted when the member finishes, becomes dormant, or when the grace period after leaving has ended.
+- **Dormant**: one row per dormant member. Columns are the user ID (primary key), dormancy start date, and last activity date. The row is deleted when the member is removed from the server (after leaving with no rejoin within grace period) or when they reactivate.
+- **OnboardingActivityDay**: one row per distinct day of activity for a member. Columns are a composite primary key of user ID and date. This table tracks which days a member was active. A member's total is the count of their rows.
 
-Roles are not mirrored in the database. Discord's role list is the source of truth for the current stage, and the tables hold only what Discord cannot tell us (the anchor and the message lengths).
+Roles are not mirrored in the database. Discord's role list is the source of truth for the current stage, and the tables hold only what Discord cannot tell us (the anchor, activity days, and dormancy state).
 
-### Why message records get their own table
+**Fallback note:** Without GuildMembers intent, the Dormant table would be merged into Onboarding with a status column, as the bot cannot reliably detect when members leave.
 
-Counting a message, uncounting a deleted one and recounting an edited one are each a single statement keyed by message ID, so concurrent events for the same member cannot overwrite each other. A delete event for a message that is not in the bot's cache carries only the message ID and no author, and the primary key finds the owner directly. Replays (startup catch-up, duplicate events) become upserts on the primary key and cannot double-count. Message rows are removed by a cascade, not by application code. `OnboardingMessage` declares its relation to `Onboarding` with `onDelete: Cascade`, so deleting a member's `Onboarding` row deletes all of their `OnboardingMessage` rows in the same operation. The code that finishes a member or handles a leave only deletes the `Onboarding` row and cannot forget the messages. Becoming dormant is the exception: the `Onboarding` row stays, so the dormancy step deletes that member's message rows explicitly. Rectification and rejoining never delete message rows.
+### Why activity days get their own table
 
-SQLite only enforces foreign keys when they are switched on for the connection. A test must confirm the cascade really fires with the better-sqlite3 adapter in use, and the schema must not rely on it silently doing nothing.
+Tracking activity per day in a separate table allows:
 
-Storing the messages as a JSON column on `Onboarding` was considered and rejected; see section 4.
+- Efficient counting of distinct days without complex queries
+- Easy insertion of a new day's activity (insert if not exists)
+- Clean deletion when a member finishes or becomes dormant (cascade delete)
+- Replays (startup catch-up, duplicate events) become idempotent inserts on the composite primary key
+
+The `OnboardingActivityDay` table declares its relation to `Onboarding` with `onDelete: Cascade`, so deleting a member's `Onboarding` row deletes all of their activity day rows in the same operation. When a member becomes dormant, their activity day rows are explicitly deleted.
+
+SQLite only enforces foreign keys when they are switched on for the connection. A test must confirm the cascade really fires with the better-sqlite3 adapter in use.
 
 ### One decision function
 
 All entry points call the same two pieces:
 
-1. A pure function takes the member's roles, restart anchor, counted characters, join date and the current time, and returns the roles to add and remove. It has no Discord calls, so it can be unit-tested.
+1. A pure function takes the member's roles, restart anchor, activity days count, join date and the current time, and returns the roles to add and remove. It has no Discord calls, so it can be unit-tested.
 2. An applier makes the role changes and writes a line to the onboarding log channel.
 
 Evaluation order inside the pure function:
 
 1. **Exempt member**: nothing.
-2. **Finished role present**: remove any leftover 7-day and messages roles, stop tracking.
+2. **Finished role present**: remove any leftover 7-day and 3-days roles, stop tracking.
 3. **Joined before the launch date**: add start, finished and legacy.
 4. **Dormant role present**: nothing until rectification.
-5. **3 months past the anchor**: remove 7-day and messages, add dormant, delete the member's message rows.
+5. **3 months past the anchor**: remove 7-day and 3-days, add dormant, move to Dormant table, delete the member's activity day rows.
 6. **7 days past the anchor**: add 7-day.
-7. **400 counted characters**: add messages. Below 400 while holding the messages role: remove it.
-8. **Start, 7-day and messages all held**: add finished, remove 7-day and messages.
+7. **3 activity days**: add 3-days role. Below 3 while holding the 3-days role: remove it.
+8. **Start, 7-day and 3-days all held**: add finished, remove 7-day and 3-days, delete Onboarding row.
 
 Role changes run one at a time, as the existing [addRoleToUser](../../src/util/add-role-to-user.ts) does, so a large first run stays inside Discord's rate limits. Functions throw when they cannot complete their job and the caller handles it.
 
-### Entry points
+### Entry points (with GuildMembers intent)
 
-- **Join message**: create the member's `Onboarding` row. If a row already exists, the bot clears its left time and changes nothing else, whether the join message is a replay or the member is returning within the grace period. The row keeps its original join date and restart anchor, so a member who had been in the server for 6 days does not restart their 7-day clock, and the message rows are untouched. The roles lost while away are re-granted by the next evaluation.
-- **Any guild message from a member who is not exempt and not finished**: if there is no tracking row, create one from `message.member.joinedAt`. Record the counted length (messages before the restart anchor are ignored), then evaluate.
-- **Message edit and delete events**: recompute or remove the message record, then evaluate.
-- **Daily job**: scheduled with `node-cron` at a fixed UTC time, like the showcase digest. For each tracked member it fetches the member by ID. If the member is gone, it records when it first noticed, and deletes their data once the grace period has passed; members marked as left are not evaluated. If the member is present, it clears any recorded left time and re-evaluates them.
+- **Member join** (`GuildMemberAdd`): create the member's `Onboarding` row with join date as restart anchor and initial last activity.
+- **Message create** (`MessageCreate`): if the member is not exempt and not finished, create tracking row if missing, record activity day if the message is after the anchor and it's a new calendar day, then evaluate.
+- **Voice state update** (`VoiceStateUpdate`): if the member joined a voice channel and is not exempt and not finished, create tracking row if missing, record activity day if it's a new calendar day, then evaluate.
+- **Member leave** (`GuildMemberRemove`): record leave time in Onboarding row. If no rejoin within 7 days, delete the row.
+- **Member update** (`GuildMemberUpdate`): if start role is granted and member has Onboarding row, evaluate.
+- **Daily job**: scheduled with `node-cron` at a fixed UTC time. For each tracked member, re-evaluate. For dormant members, check if they should be removed from the Dormant table.
+- **Rectification**: a shared function checks the member holds the dormant role (throws if not), removes it, creates a new Onboarding row with anchor set to now, and evaluates. The `/onboarding reactivate` slash command and the dormant-channel button both call it.
+
+**Fallback entry points (without GuildMembers intent):**
+
+- **Join message**: create the member's `Onboarding` row. If a row already exists, the bot clears its left time.
+- **Any guild message from a member who is not exempt and not finished**: if there is no tracking row, create one from `message.member.joinedAt`. Record activity day, then evaluate.
+- **Daily job**: For each tracked member, fetch by ID. If gone, record leave time; if present after grace period, delete row.
 - **Startup catch-up**: fetch recent history of the system channel and replay join messages the bot missed while offline.
-- **Rectification**: a shared function checks the member holds the dormant role (throws if not), removes it, sets the anchor to now and evaluates. It does not touch message rows. The `/onboarding reactivate` slash command and the dormant-channel button both call it.
 
 ### Dormant channel
 
-At startup the bot makes sure one fixed message with a "Reactivate" button exists in the dormant channel, and posts it if missing. The placeholder text says the account has been dormant and the member should press the button to restart onboarding. The final wording is a constant that will be replaced later. The button is handled by the persistent interaction handlers so it survives restarts, and it rejects members without the dormant role.
+At startup the bot makes sure one fixed message with a "Reactivate" button exists in the dormant channel, and posts it if missing. This serves as a reference point for dormant users. The placeholder text says the account has been dormant and the member should press the button to restart onboarding. The final wording is a constant that will be replaced later. The button is handled by the persistent interaction handlers so it survives restarts, and it rejects members without the dormant role.
+
+**Note:** With Option B chosen, this shared message is supplementary. The primary notification mechanism is the private thread created when a dormant member attempts to write.
 
 ### Configuration
 
-- **Constants** in one onboarding config file: counted-character threshold (400), days until the 7-day role (7) and dormancy period (3 months), leave grace period (7 days), daily-job time, launch-date constant.
+- **Constants** in one onboarding config file: days until the 7-day role (7), activity days required (3), dormancy period (3 months), leave grace period (7 days), daily-job time, launch-date constant.
 - **Required env vars** in [env.ts](../../src/env.ts): the five onboarding role IDs plus the legacy role ID, the dormant channel ID and the onboarding log channel ID, and the launch date. The optional `ONBOARDING_ROLE_ID` and `ONBOARDING_CHANNEL_ID` and the unused `/onboarding` stub are removed.
-- **Permissions**: the bot's own role must sit above all onboarding roles and have Manage Roles, and it needs View Channel on the system channel.
-- The GuildMembers intent stays off. No change to the intents in [index.ts](../../src/index.ts).
+- **Permissions**: the bot's own role must sit above all onboarding roles and have Manage Roles, Moderate Members (for applying timeouts), View Channel on the system channel, and (with GuildMembers intent) the GuildMembers privileged intent enabled in the Developer Portal.
+- **Intent configuration**: Enable GuildMembers intent in `src/index.ts`. If the intent is not approved, fall back to the system message approach.
 
 ## 4. Considered options
 
-- **Apply for the GuildMembers intent.** Simplest design. It would also give events for role changes and leaves, and a list of all members for a clean backfill. Rejected because it depends on Discord's approval, which has been needed before and is not ours to decide.
+- **Use GuildMembers intent (CHOSEN).** Simplest design. It provides real-time events for joins, leaves, and role changes, and allows listing all members for a clean backfill. Requires approval for servers with 10,000+ users, but this server may be below that threshold. Fallback to the system message approach if approval is denied.
+- **Activity-based trust instead of character count (CHOSEN).** Using 3 days of activity is more meaningful than a 400-character threshold. It better aligns with Goal 1 (protecting regulars) by ensuring users return to engage, rather than just posting a long message once.
+- **Separate Dormant table (CHOSEN).** Keeping active and dormant users in separate tables makes the data model clearer and allows the Onboarding table to only contain users actively progressing.
 - **Keep a running character total per member instead of per-message records.** Less storage. Rejected because deleted and spam-removed messages must stop counting, and a total alone cannot tell which characters to subtract.
-- **One table, with the per-message lengths in a JSON column on `Onboarding`** (message ID mapped to counted length). Simpler schema, one read for a member's whole state, and one delete for cleanup. Rejected for three reasons. Every update is a read-modify-write of the whole column, so two events for the same member, such as a new message during a spam bulk-delete, can silently overwrite each other unless updates are serialised per member. A delete event for an uncached message gives only the message ID, so finding the member who owns it means scanning every member's JSON with raw SQL, since Prisma cannot filter inside JSON on SQLite as far as we know. And the total would be computed in code, with the whole blob rewritten on every message. Fixing the first two with a per-member lock and a message-to-member lookup would rebuild the second table in a worse form.
+- **One table, with the per-message lengths in a JSON column on `Onboarding`** (message ID mapped to counted length). Simpler schema, one read for a member's whole state, and one delete for cleanup. Rejected for three reasons. Every update is a read-modify-write of the whole column, so two events for the same member can silently overwrite each other unless updates are serialised per member. A delete event for an uncached message gives only the message ID, so finding the member who owns it means scanning every member's JSON with raw SQL. And the total would be computed in code, with the whole blob rewritten on every message. Fixing the first two with a per-member lock and a message-to-member lookup would rebuild the second table in a worse form.
 - **Restore finished members who leave and rejoin.** Would need a permanent record of every finished member. Without the intent the bot only learns of a rejoin, never of the leave, so the 7-day grace period given to in-progress members cannot be applied: the choices are restoring access whenever they return, or guessing from the finish time. Rejected to keep the design small and not grant full access automatically; a finished member who returns starts again.
 - **Hourly job instead of daily.** Faster role delivery. Not chosen: a daily job was the requirement and the lag is acceptable.
 - **Bot manages channel permission overwrites.** Would let the bot enforce what "dormant" means. Rejected because channel permissions belong to moderators and the onboarding flow is meant to be roles only.
 
 ## 5. To verify before building
 
+### With GuildMembers intent:
+
+- That the bot receives `GuildMemberAdd`, `GuildMemberRemove`, and `GuildMemberUpdate` events.
+- That the bot can list all members to backfill legacy members.
+- That `VoiceStateUpdate` events are received to track voice channel joins.
+
+### Fallback (without GuildMembers intent):
+
 - That the bot can see and read the system join messages in the real server, and that welcome messages are enabled there.
 - That fetching a single member by ID works with the intent off. Discord's docs say only List Guild Members requires the intent. The Get Guild Member page does not mention one, and the existing stub in [features/onboarding](../../src/features/onboarding/index.ts) already calls it.
-- How a dormant member is made read-only. Decision pending; the two options are described below.
 
-### Open decision: making dormant members read-only
+### For both approaches:
 
-A dormant member must be able to read the server but not write anywhere, including the lounge. The lounge stays open to every other member. Two ways to get there.
+- That activity day tracking correctly identifies distinct calendar days.
+- That the separate Dormant table works as expected.
+- That the private thread notification works as expected: creation, member addition, button functionality, and thread cleanup.
 
-**Option A: channel permissions.** Dormancy removes the start role. Moderators configure the dormant role with read access everywhere and a Send Messages deny on every writable channel, the lounge included. Discord applies `@everyone` overwrites first and role overwrites after, so the dormant role's deny beats the lounge's `@everyone` allow. Another role's explicit allow would beat the deny, because Discord combines role overwrites so that an allow from any role wins over a deny from another. The start role's write allows are such an allow, which is why the start role has to be removed. Reactivation re-adds it.
+### Decision: making dormant members read-only
 
-- Discord enforces it. Nothing is posted, and it works when the bot is down.
-- The bot still only moves roles and never edits overwrites.
-- The member cannot write anywhere and gets no prompt on their own. They may not know why, or how to come back, unless they are told (see "Telling the member" below).
-- Reactivation skips Discord onboarding the second time.
+**Decision: Option B (Delete and notify with private thread) has been chosen.**
 
-**Option B: delete and notify.** Dormant members keep their channel permissions. When one writes a message, the bot deletes the message and tells them to press a reactivate button. This gives the member a clear, immediate task without searching the server.
+A dormant member must be able to read the server but not write anywhere, including the lounge. The chosen approach uses a **soft block** pattern with **just-in-time education**: the bot allows the write attempt to proceed, then intercepts it to provide immediate, actionable feedback. This is also known as **forgiving degradation** or **progressive intervention**—the system doesn't silently fail or permanently block, but instead converts the failure into a learning moment.
 
-- Discord only allows an ephemeral message as the response to an interaction (a slash command or button press). The bot cannot send one in reply to a normal message. The message that carries the button is therefore a DM, which fails if the member has DMs closed, a visible reply that deletes itself, or a private thread (see "Telling the member" below). Pressing the button can then respond ephemerally.
-- The offending message is posted before it is deleted. It can ping people and unfurl links for the moment it exists, and it stays if the bot is down or rate-limited. This weakens the hijacked-account goal, since a compromised account can post a scam before the delete lands.
-- The bot needs the Manage Messages permission and must act on every guild message from a dormant member.
-- Every dormant member who writes is deleted and notified, so a member with a legitimate message sees it removed.
+**Implementation:** When a dormant member writes a message, the bot:
+
+1. Deletes the message immediately (requires Manage Messages permission)
+2. Applies a **10-minute timeout** to the member (prevents further posts during this period)
+3. Creates a private thread in the channel where the message was posted
+4. Adds the member and the bot to the private thread
+5. Posts an explanation that the account is dormant and provides a reactivate button
+
+When the member presses the reactivate button, the bot removes the timeout, removes the dormant role, and proceeds with rectification. The member is notified because they were added to the thread, giving them a clear, visible path to reactivation without having to search the server or leave to figure out what happened.
+
+**Why Option B over Option A:**
+
+- **User retention:** A user who cannot write at all (**hard block**) is more likely to churn and leave the server entirely. A soft block keeps them engaged and provides immediate guidance.
+- **Discovery:** Users learn about their dormant status naturally through use, rather than having to investigate why they can't post.
+- **Actionable:** The notification includes the reactivate button right next to the explanation, making the next step obvious.
+
+**Trade-offs accepted:**
+
+- The offending message is briefly visible before deletion. It can ping people and unfurl links, which weakens Goal 5 (hijacked dormant accounts). This is mitigated by the immediate 10-minute timeout that prevents follow-up posts.
+- The bot must have Manage Messages permission and Moderate Members permission (for applying timeouts) and handle every guild message from dormant members.
+- Each dormant member who writes creates a new private thread. The bot needs permission to create private threads and add members. The 10-minute timeout prevents rapid successive thread creation from the same user.
 
 ### Telling the member
 
-A dormant member should be told what happened and given one action to take, without searching the server. A private thread does this better than a DM: it does not fail when DMs are closed, the message stays inside the server, and the reactivate button sits next to the explanation. When the member becomes dormant (or, in option B, when they first write), the bot creates a private thread, adds the member, and posts the explanation and the reactivate button. The member is notified because they were added to the thread.
+With Option B chosen, the telling happens **just-in-time** when the dormant member attempts to write. A private thread is created in the channel where they tried to post, which does not fail when DMs are closed, keeps the message inside the server, and places the reactivate button next to the explanation. The member is notified because they were added to the thread.
 
-This works with either option and replaces the single shared button message in the dormant channel, or sits beside it. To verify before relying on it:
+This approach replaces the single shared button message in the dormant channel, though that message can remain as a reference point.
+
+**To verify before relying on it:**
 
 - A member added to a private thread can see and use it when the parent channel is otherwise hidden from them.
 - The bot has permission to create private threads and add members.
-- The number of threads stays manageable, and an archived thread can still be used. Threads should be deleted or reused on reactivation.
+- The bot has Moderate Members permission to apply and remove the 10-minute timeout.
+- The number of threads stays manageable. Consider archiving threads after reactivation or after a period of inactivity.
+- The delete-and-create-thread sequence is atomic enough that the message doesn't persist long enough to cause harm.
+- The 10-minute timeout is applied correctly and removed upon reactivation.
