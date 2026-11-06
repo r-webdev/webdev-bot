@@ -45,3 +45,4 @@ src/generated
 *.db
 *.sqlite
 *.sqlite3
+*.ai-scratchpad.md
