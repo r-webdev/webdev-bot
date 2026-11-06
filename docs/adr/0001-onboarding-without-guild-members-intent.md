@@ -59,6 +59,56 @@ The purpose is to let newcomers take part in a few friendly channels straight aw
 - Bots and moderators (**exempt members**) are never touched.
 - Which channels each role can see or write in is configured by moderators in Discord. The bot only adds and removes roles. It never edits channel permission overwrites.
 
+### The flow at a glance
+
+```mermaid
+flowchart TD
+    Join([Member joins]) --> Progress
+    Join -. "joined before launch,<br/>first seen posting" .-> Legacy["Legacy member<br/>start + finished + legacy roles"]
+    Legacy --> Finished
+
+    subgraph Progress["In progress: four independent milestones"]
+        Start["Start role<br/>Discord onboarding"]
+        Rules["Rules role<br/>type the rules exactly<br/>in type-the-rules"]
+        Seven["7-day role<br/>7 days after the restart anchor"]
+        Three["3-days role<br/>activity on 3 different days"]
+    end
+
+    Progress --> All{"All four held?"}
+    All -- yes --> Finished(["Finished<br/>full server, permanent<br/>milestone roles removed"])
+    Progress -- "3 months without activity" --> Dormant["Dormant<br/>can read, writes are deleted<br/>rules, 7-day and 3-days roles removed"]
+    Dormant -- "reactivate button or<br/>/onboarding reactivate<br/>(start role kept, new restart anchor)" --> Progress
+```
+
+### A newcomer's journey
+
+The scores are a rough 1 to 5 guess at how the step feels to the member, where 1 is frustrating and 5 is pleasant. They mark where the design asks the most of people.
+
+```mermaid
+journey
+    title A newcomer's path to the full server
+    section Joining
+      Join the server: 3: Member
+      Choose Developer or Designer in Discord onboarding: 4: Member
+      Get pinged in type-the-rules: 3: Member, Bot
+    section Rules check
+      Type the rules from the image: 2: Member
+      Get told if it was correct or wrong: 3: Member, Bot
+      Receive the rules role: 4: Member, Bot
+    section Settling in
+      Ask a question in the help forum: 4: Member
+      Chat in the lounge and topic channels: 4: Member
+      Hit the file attachment block outside the help forum: 2: Member
+    section Earning trust
+      Wait out the 7 days: 3: Member
+      Be active on 3 different days: 4: Member
+      Receive the finished role and the full server: 5: Member, Bot
+    section Returning after 3 months away
+      Write a message and see it deleted: 1: Member, Bot
+      Read the explanation in a private thread: 3: Member, Bot
+      Press reactivate and repost the saved message: 4: Member, Bot
+```
+
 ## 2. The decision
 
 Onboarding is implemented as a role reconciler that works **with the GuildMembers privileged intent**. It relies on proper Discord events for joins, leaves, and role updates, along with a tracking table for activity days and dormancy.
