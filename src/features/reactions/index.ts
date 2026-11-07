@@ -7,13 +7,14 @@ import {
   User,
 } from 'discord.js';
 import { removeUserBotMessage } from './remove-user-bot-message.js';
+import { enforceSingleDigestVote } from '@/features/showcase-digest/vote.js';
 
 export type ReactionAddEvent = {
   reaction: MessageReaction | PartialMessageReaction;
   user: User | PartialUser;
 };
 
-const handlers = [removeUserBotMessage];
+const handlers = [removeUserBotMessage, enforceSingleDigestVote];
 
 export const reactionAddEvent = createEvent(
   {

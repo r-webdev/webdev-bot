@@ -1,7 +1,24 @@
 import { DAY } from '@/constants/time.js';
-import { Collection, ForumThreadChannel, MessageReaction } from 'discord.js';
+import {
+  Collection,
+  ComponentType,
+  ForumThreadChannel,
+  Message,
+  MessageReaction,
+  PartialMessageReaction,
+} from 'discord.js';
+import { MAX_VOTABLE_POSTS, VOTE_EMOJIS } from './config.js';
 
 export type Post = { id: string; messageCount: number; likes: number };
+
+export type VoteResult = { postId: string; rank: number; votes: number };
+
+const VOTE_EMOJI_SET = new Set(VOTE_EMOJIS);
+
+const DIGEST_TITLE = '## Showcase Digest';
+const RESULTS_TITLE = '## Showcase Digest Results';
+
+const CHANNEL_MENTION_REGEX = /<#(\d+)>/g;
 
 export const filterByReaction = (
   reaction: MessageReaction,
@@ -63,6 +80,82 @@ export const filterPostsByCreationTime = (
       return false;
     }
     return creationTime > now - DAY * lookbackN;
+  });
+};
+
+export const isVoteEmoji = (
+  reaction: MessageReaction | PartialMessageReaction
+): boolean => {
+  return (
+    reaction.emoji.name !== null && VOTE_EMOJI_SET.has(reaction.emoji.name)
+  );
+};
+
+const firstTextDisplayContent = (message: Message): string | undefined => {
+  const container = message.components[0];
+  if (!container || container.type !== ComponentType.Container) {
+    return undefined;
+  }
+  const firstComponent = container.components[0];
+  if (!firstComponent || firstComponent.type !== ComponentType.TextDisplay) {
+    return undefined;
+  }
+  return firstComponent.content;
+};
+
+export const isResultsMessage = (message: Message): boolean => {
+  return firstTextDisplayContent(message)?.startsWith(RESULTS_TITLE) === true;
+};
+
+export const isDigestMessage = (message: Message): boolean => {
+  const content = firstTextDisplayContent(message);
+  return (
+    content?.startsWith(DIGEST_TITLE) === true &&
+    !content.startsWith(RESULTS_TITLE)
+  );
+};
+
+// Recovers the ranked post ids from a posted digest by reading the channel
+// mentions out of its ComponentsV2 text, in display order. This lets the
+// results cron work without persisting any per-digest state.
+export const parseDigestPostIds = (message: Message): string[] => {
+  const container = message.components[0];
+  if (!container || container.type !== ComponentType.Container) {
+    return [];
+  }
+
+  const postIds: string[] = [];
+  for (const component of container.components) {
+    if (component.type !== ComponentType.TextDisplay) {
+      continue;
+    }
+    for (const match of component.content.matchAll(CHANNEL_MENTION_REGEX)) {
+      postIds.push(match[1]);
+    }
+  }
+  return postIds;
+};
+
+export const tallyDigestVotes = (
+  postIds: string[],
+  reactions: Collection<string, MessageReaction>
+): VoteResult[] => {
+  return postIds.slice(0, MAX_VOTABLE_POSTS).map((postId, index) => {
+    const emoji = VOTE_EMOJIS[index];
+    const reaction = reactions.find((entry) => entry.emoji.name === emoji);
+    // The bot seeds every voting emoji, so its own reaction is not a vote.
+    const botVote = reaction?.me ? 1 : 0;
+    const votes = Math.max((reaction?.count ?? 0) - botVote, 0);
+    return { postId, rank: index + 1, votes };
+  });
+};
+
+export const rankVoteResults = (results: VoteResult[]): VoteResult[] => {
+  return [...results].sort((resultA, resultB) => {
+    if (resultB.votes !== resultA.votes) {
+      return resultB.votes - resultA.votes;
+    }
+    return resultA.rank - resultB.rank;
   });
 };
 

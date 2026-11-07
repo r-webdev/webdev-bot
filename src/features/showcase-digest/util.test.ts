@@ -1,9 +1,19 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { Collection } from 'discord.js';
-import type { ForumThreadChannel, MessageReaction } from 'discord.js';
+import { Collection, ComponentType } from 'discord.js';
+import type { ForumThreadChannel, Message, MessageReaction } from 'discord.js';
 import { DAY } from '@/constants/time.js';
-import { convertPosts, filterPostsByCreationTime } from './util.js';
+import { VOTE_EMOJIS } from './config.js';
+import {
+  convertPosts,
+  filterPostsByCreationTime,
+  isDigestMessage,
+  isResultsMessage,
+  isVoteEmoji,
+  parseDigestPostIds,
+  rankVoteResults,
+  tallyDigestVotes,
+} from './util.js';
 
 // This magic identifier is the emoji code used to define what reaction it is.
 // Code %F0%9F%98%AD refers to 'LOUDLY CRYING FACE' emoji
@@ -133,6 +143,130 @@ void describe('showcase-digest/util', () => {
       const [post] = await convertPosts(posts, REACT_IDENTIFIER_A);
 
       assert.equal(post.messageCount, 0);
+    });
+  });
+
+  void describe('isVoteEmoji', () => {
+    void it('recognises a configured voting emoji', () => {
+      const reaction = {
+        emoji: { name: VOTE_EMOJIS[0] },
+      } as unknown as MessageReaction;
+
+      assert.equal(isVoteEmoji(reaction), true);
+    });
+
+    void it('rejects an unrelated emoji', () => {
+      const reaction = {
+        emoji: { name: 'x' },
+      } as unknown as MessageReaction;
+
+      assert.equal(isVoteEmoji(reaction), false);
+    });
+
+    void it('rejects an emoji with no name', () => {
+      const reaction = {
+        emoji: { name: null },
+      } as unknown as MessageReaction;
+
+      assert.equal(isVoteEmoji(reaction), false);
+    });
+  });
+
+  function digestMessage(lines: string[], title: string): Message {
+    const textDisplays = [title, ...lines].map((content) => ({
+      type: ComponentType.TextDisplay,
+      content,
+    }));
+    return {
+      components: [{ type: ComponentType.Container, components: textDisplays }],
+    } as unknown as Message;
+  }
+
+  void describe('isDigestMessage / isResultsMessage', () => {
+    void it('identifies a digest message by its title', () => {
+      const message = digestMessage(['1. <#a>'], '## Showcase Digest');
+
+      assert.equal(isDigestMessage(message), true);
+      assert.equal(isResultsMessage(message), false);
+    });
+
+    void it('identifies a results message by its title', () => {
+      const message = digestMessage(['1. <#a>'], '## Showcase Digest Results');
+
+      assert.equal(isResultsMessage(message), true);
+      assert.equal(isDigestMessage(message), false);
+    });
+
+    void it('ignores a message without a container', () => {
+      const message = { components: [] } as unknown as Message;
+
+      assert.equal(isDigestMessage(message), false);
+    });
+  });
+
+  void describe('parseDigestPostIds', () => {
+    void it('recovers post ids from channel mentions in display order', () => {
+      const message = digestMessage(
+        [
+          `1. <#111> (Comments: 2) ${VOTE_EMOJIS[0]}`,
+          `2. <#222> (Comments: 5) ${VOTE_EMOJIS[1]}`,
+          '-# <@&999>',
+        ],
+        '## Showcase Digest'
+      );
+
+      assert.deepEqual(parseDigestPostIds(message), ['111', '222']);
+    });
+  });
+
+  void describe('tallyDigestVotes', () => {
+    function reactionsFor(
+      entries: { emoji: string; count: number; me?: boolean }[]
+    ): Collection<string, MessageReaction> {
+      const cache = new Collection<string, MessageReaction>();
+      entries.forEach((entry, index) =>
+        cache.set(entry.emoji + index, {
+          emoji: { name: entry.emoji },
+          count: entry.count,
+          me: entry.me ?? false,
+        } as unknown as MessageReaction)
+      );
+      return cache;
+    }
+
+    void it('subtracts the bot seed reaction from each vote count', () => {
+      const reactions = reactionsFor([
+        { emoji: VOTE_EMOJIS[0], count: 4, me: true },
+        { emoji: VOTE_EMOJIS[1], count: 1, me: true },
+      ]);
+
+      const results = tallyDigestVotes(['a', 'b'], reactions);
+
+      assert.deepEqual(results, [
+        { postId: 'a', rank: 1, votes: 3 },
+        { postId: 'b', rank: 2, votes: 0 },
+      ]);
+    });
+
+    void it('treats a missing reaction as zero votes', () => {
+      const results = tallyDigestVotes(['a'], reactionsFor([]));
+
+      assert.deepEqual(results, [{ postId: 'a', rank: 1, votes: 0 }]);
+    });
+  });
+
+  void describe('rankVoteResults', () => {
+    void it('orders by votes descending and breaks ties by rank', () => {
+      const ranked = rankVoteResults([
+        { postId: 'a', rank: 1, votes: 2 },
+        { postId: 'b', rank: 2, votes: 5 },
+        { postId: 'c', rank: 3, votes: 2 },
+      ]);
+
+      assert.deepEqual(
+        ranked.map((result) => result.postId),
+        ['b', 'a', 'c']
+      );
     });
   });
 
