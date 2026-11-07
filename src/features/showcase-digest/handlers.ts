@@ -30,6 +30,7 @@ import {
   rankVoteResults,
   tallyDigestVotes,
   type Post,
+  type VoteResult,
   ShowcaseDigestValidationError,
 } from './util.js';
 
@@ -165,17 +166,34 @@ export const processShowcaseDigestResults = async (
     new TextDisplayBuilder().setContent('## Showcase Digest Results')
   );
 
-  const winningVotes = results[0]?.votes ?? 0;
-  results.forEach((result, index) => {
-    const isWinner = winningVotes > 0 && result.votes === winningVotes;
+  const formatResultLine = (result: VoteResult, position: number): string => {
     const voteLabel = result.votes === 1 ? 'vote' : 'votes';
-    const line = `${index + 1}. ${channelMention(result.postId)} - ${result.votes} ${voteLabel}`;
+    return `${position}. ${channelMention(result.postId)} - ${result.votes} ${voteLabel}`;
+  };
+
+  const topCount = 3;
+  const topResults = results.slice(0, topCount);
+  const honorableMentions = results.slice(topCount);
+
+  container.addTextDisplayComponents(
+    new TextDisplayBuilder().setContent(
+      `### Top ${topCount}\n${topResults
+        .map((result, index) => formatResultLine(result, index + 1))
+        .join('\n')}`
+    )
+  );
+
+  if (honorableMentions.length > 0) {
     container.addTextDisplayComponents(
       new TextDisplayBuilder().setContent(
-        isWinner ? `**${line} (winner)**` : line
+        `### Honorable mentions\n${honorableMentions
+          .map((result, index) =>
+            formatResultLine(result, topCount + index + 1)
+          )
+          .join('\n')}`
       )
     );
-  });
+  }
 
   await digestChannel.send({
     flags: MessageFlags.IsComponentsV2,
