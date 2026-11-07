@@ -23,26 +23,34 @@ Every gate in section 1 must trace back to one of these goals. A gate that serve
 
 ## 1. What Onboarding is
 
-New members of the Web Dev & Design server start with very little access and earn the rest of the server over time. **Onboarding** is the bot's own flow for this. It is separate from **Discord onboarding**, the question Discord shows at join, where the member picks a role such as Developer or Designer.
+Regulars are tired of low-effort posts from newcomers. **Onboarding** solves this by restricting new members' access until they prove they are trustworthy. It is a bot-managed role progression, separate from Discord's built-in onboarding (which only assigns a role like Developer or Designer).
 
-The purpose is to let newcomers take part in a few friendly channels straight away, while the rest of the server is held back until they have shown they are present and engaged. Access expands in **stages**: initial access to lounge and type-the-rules, broader access after Discord onboarding (start role), and full server access after completing all four milestones (finished role). Members who never finish lose the ability to write again, though they can still read.
+The bot grants access in stages by assigning Discord roles, which control which channels a member can see and write in. Newcomers must complete four milestones to gain full server access:
+
+1. Complete Discord onboarding (start role)
+2. Wait 7 days from the **restart anchor**
+3. Be active on 3 different days
+4. Pass a rules check
+
+Members who do not finish and then go 3 months without activity become **dormant**: they can read but cannot write. They can reactivate at any time.
+
+> **Restart anchor:** The later of the member's join date or their latest rectification (if they were dormant and reactivated). The 7-day clock and activity-day count both run from this point.
 
 ### The journey
 
-| Stage             | How a member gets there                                                     | What they can do                                                                                                                                                                                                           |
-| ----------------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Everyone**      | Joined, but has no onboarding role (for example skipped Discord onboarding) | Write in lounge and the type-the-rules channel, read a few channels (announcement, rules, etc.), read message mods to open a ticket                                                                                         |
-| **Start role**    | Granted by Discord onboarding                                               | Also write in help forum (create and reply), ai, gaming, real-life, frontend, design-ui-ux and backend-and-cloud, and comment on showcases. Showcases are created through a bot button in a channel this role cannot reach |
-| **7-day role**    | 7 days after the **restart anchor**                                         | Milestone only                                                                                                                                                                                                             |
-| **3-days role**   | Activity recorded on 3 different days since the restart anchor              | Milestone only                                                                                                                                                                                                             |
-| **Rules role**    | Passed the **rules check** in type-the-rules                                | Milestone only                                                                                                                                                                                                             |
-| **Finished role** | Holds start, rules, 7-day and 3-days                                        | Full server access, including all remaining channels and the ability to attach files. Permanent. The rules, 7-day and 3-days roles are removed                                                                                                                    |
-| **Dormant role**  | 3 months without **activity**, without the finished role                    | Keeps its channel access, but every message they write is deleted and they are told how to reactivate. The rules, 7-day and 3-days roles are removed; the start role stays                                              |
-| **Legacy member** | Joined before launch, first seen posting                                    | Receives start, finished and **legacy role** at once                                                                                                                                                                       |
+| **Role**     | **How Earned**                           | **Grants Access To**                                                         | **Notes**                                                                                              |
+| ------------ | ---------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| **Everyone** | Default state (no onboarding roles)      | Lounge, type-the-rules, announcements, rules                                 | Can open mod tickets                                                                                   |
+| **Start**    | Discord onboarding                       | Help forum, ai, gaming, real-life, frontend, design-ui-ux, backend-and-cloud | Can comment on showcases                                                                               |
+| **7-day**    | 7 days after restart anchor              | _None (milestone only)_                                                      | Auto-granted                                                                                           |
+| **3-days**   | Activity on 3 distinct days              | _None (milestone only)_                                                      | Auto-granted                                                                                           |
+| **Rules**    | Type rules from image in #type-the-rules | _None (milestone only)_                                                      | Bot checks message against rules text, deletes message, informs user of result, grants role if correct |
+| **Finished** | Holds Start + 7-day + 3-days + Rules     | All channels, can attach files                                               | Permanent; milestone roles removed                                                                     |
+| **Dormant**  | 3 months of inactivity (no Finished)     | Read-only                                                                    | Writes deleted, 10-min timeout, private thread with reactivate button                                  |
+| **Legacy**   | Joined before launch                     | All channels                                                                 | Receives Start + Finished + Legacy at once                                                             |
 
 ### Rules
 
-- The restart anchor is the later of the member's join date and their latest rectification. The 7-day clock and the activity-day count run from it.
 - **Activity** is writing a message anywhere (a forum post counts), or joining a voice channel. The bot cannot tell whether someone speaks, only that they joined. It stores the time of the member's last activity, and updates it only when the stored time is older than a set interval, because dormancy is measured in months. A new member's last activity starts as their join date.
 - Dormancy runs from last activity: 3 months with none, for anyone without the finished role, including members who never held the start role. Finished members are never made dormant.
 - When a dormant member writes, their message is deleted immediately, they receive a 10-minute timeout, and the bot creates a private thread in that channel, adds the member, and posts an explanation with a reactivate button and the text of the deleted message, so the member can repost it once reactivated. This **soft block** approach ensures the user learns about their dormant status at the moment of attempt and is given a clear, actionable path forward without having to search the server. The timeout prevents spam and is removed when the member reactivates.
