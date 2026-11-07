@@ -97,8 +97,7 @@ export const createShowcaseDigest = async (): Promise<void> => {
     allowedMentions: { roles: [config.roleIds.digestRole] },
   });
 
-  // Seed one reaction per votable post so members can vote. Reactions are added
-  // sequentially to keep them in rank order on the message.
+  // Reactions are added sequentially to keep them in rank order on the message.
   const votableCount = Math.min(postsOrdered.length, MAX_VOTABLE_POSTS);
   for (let index = 0; index < votableCount; index += 1) {
     await message.react(VOTE_EMOJIS[index]);
@@ -123,8 +122,6 @@ export const processShowcaseDigestResults = async (
     );
   }
 
-  // A forced run skips the timing and duplicate guards so a moderator can
-  // announce results on demand.
   if (!options.force) {
     const ageMs = Date.now() - digestMessage.createdTimestamp;
     const isDue =

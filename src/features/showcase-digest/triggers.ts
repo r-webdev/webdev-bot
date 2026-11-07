@@ -29,9 +29,7 @@ export const createDigestResultsCommand = createSlashCommand({
 // https://www.nodecron.com/cron-syntax#nth-weekday
 const SHOWCASE_DIGEST_CRONS = ['0 16 * * 5#1', '0 16 * * 5#3'];
 
-// Every Monday at 16:00 UTC, three days after the Friday digests. The handler
-// only acts when the most recent digest is within its results window, so the
-// off-week Mondays are no-ops.
+// Monday at 16:00 UTC, three days after the Friday digests.
 const SHOWCASE_DIGEST_RESULTS_CRON = '0 16 * * 1';
 
 const runScheduledShowcaseDigest = async (): Promise<void> => {

@@ -104,9 +104,6 @@ export const isDigestMessage = (message: Message): boolean => {
   );
 };
 
-// Recovers the ranked post ids from a posted digest by reading the channel
-// mentions out of its ComponentsV2 text, in display order. This lets the
-// results cron work without persisting any per-digest state.
 export const parseDigestPostIds = (message: Message): string[] => {
   const container = message.components[0];
   if (!container || container.type !== ComponentType.Container) {
