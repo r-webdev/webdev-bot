@@ -3,10 +3,12 @@ import { config } from '@/env.js';
 import { getCommandUser } from '@/util/member.js';
 import { isModerator } from '@/util/permissions.js';
 import {
+  HONORABLE_MENTION_EMOJI,
   LOOKBACK_N,
   MAX_VOTABLE_POSTS,
   REACT_EMOJI,
   RESULTS_AFTER_DAYS,
+  TOP_MEDAL_EMOJIS,
   VOTE_EMOJIS,
 } from './config.js';
 import { DAY } from '@/constants/time.js';
@@ -163,19 +165,21 @@ export const processShowcaseDigestResults = async (
     new TextDisplayBuilder().setContent('## Showcase Digest Results')
   );
 
-  const formatResultLine = (result: VoteResult, position: number): string => {
+  const formatResultLine = (result: VoteResult, prefix: string): string => {
     const voteLabel = result.votes === 1 ? 'vote' : 'votes';
-    return `${position}. ${channelMention(result.postId)} - ${result.votes} ${voteLabel}`;
+    return `${prefix} ${channelMention(result.postId)} - ${result.votes} ${voteLabel}`;
   };
 
-  const topCount = 3;
+  const topCount = TOP_MEDAL_EMOJIS.length;
   const topResults = results.slice(0, topCount);
   const honorableMentions = results.slice(topCount);
 
   container.addTextDisplayComponents(
     new TextDisplayBuilder().setContent(
       `### Top ${topCount}\n${topResults
-        .map((result, index) => formatResultLine(result, index + 1))
+        .map((result, index) =>
+          formatResultLine(result, TOP_MEDAL_EMOJIS[index])
+        )
         .join('\n')}`
     )
   );
@@ -184,9 +188,7 @@ export const processShowcaseDigestResults = async (
     container.addTextDisplayComponents(
       new TextDisplayBuilder().setContent(
         `### Honorable mentions\n${honorableMentions
-          .map((result, index) =>
-            formatResultLine(result, topCount + index + 1)
-          )
+          .map((result) => formatResultLine(result, HONORABLE_MENTION_EMOJI))
           .join('\n')}`
       )
     );

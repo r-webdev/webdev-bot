@@ -15,3 +15,13 @@ export const VOTE_EMOJIS: string[] = [
   ),
   String.fromCodePoint(0x1f51f),
 ];
+
+// First, second and third place medals used to rank the top posts.
+export const TOP_MEDAL_EMOJIS: string[] = [
+  String.fromCodePoint(0x1f947),
+  String.fromCodePoint(0x1f948),
+  String.fromCodePoint(0x1f949),
+];
+
+// Sports medal (gold with a star), used for honorable mentions.
+export const HONORABLE_MENTION_EMOJI = String.fromCodePoint(0x1f3c5);
