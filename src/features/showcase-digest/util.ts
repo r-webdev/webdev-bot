@@ -5,15 +5,12 @@ import {
   ForumThreadChannel,
   Message,
   MessageReaction,
-  PartialMessageReaction,
 } from 'discord.js';
 import { MAX_VOTABLE_POSTS, VOTE_EMOJIS } from './config.js';
 
 export type Post = { id: string; messageCount: number; likes: number };
 
 export type VoteResult = { postId: string; rank: number; votes: number };
-
-const VOTE_EMOJI_SET = new Set(VOTE_EMOJIS);
 
 const DIGEST_TITLE = '## Showcase Digest';
 const RESULTS_TITLE = '## Showcase Digest Results';
@@ -81,14 +78,6 @@ export const filterPostsByCreationTime = (
     }
     return creationTime > now - DAY * lookbackN;
   });
-};
-
-export const isVoteEmoji = (
-  reaction: MessageReaction | PartialMessageReaction
-): boolean => {
-  return (
-    reaction.emoji.name !== null && VOTE_EMOJI_SET.has(reaction.emoji.name)
-  );
 };
 
 const firstTextDisplayContent = (message: Message): string | undefined => {

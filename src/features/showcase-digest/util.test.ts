@@ -9,7 +9,6 @@ import {
   filterPostsByCreationTime,
   isDigestMessage,
   isResultsMessage,
-  isVoteEmoji,
   parseDigestPostIds,
   rankVoteResults,
   tallyDigestVotes,
@@ -143,32 +142,6 @@ void describe('showcase-digest/util', () => {
       const [post] = await convertPosts(posts, REACT_IDENTIFIER_A);
 
       assert.equal(post.messageCount, 0);
-    });
-  });
-
-  void describe('isVoteEmoji', () => {
-    void it('recognises a configured voting emoji', () => {
-      const reaction = {
-        emoji: { name: VOTE_EMOJIS[0] },
-      } as unknown as MessageReaction;
-
-      assert.equal(isVoteEmoji(reaction), true);
-    });
-
-    void it('rejects an unrelated emoji', () => {
-      const reaction = {
-        emoji: { name: 'x' },
-      } as unknown as MessageReaction;
-
-      assert.equal(isVoteEmoji(reaction), false);
-    });
-
-    void it('rejects an emoji with no name', () => {
-      const reaction = {
-        emoji: { name: null },
-      } as unknown as MessageReaction;
-
-      assert.equal(isVoteEmoji(reaction), false);
     });
   });
 
