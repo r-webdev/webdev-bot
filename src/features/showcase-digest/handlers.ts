@@ -54,14 +54,16 @@ function createContainer(posts: Post[]): ContainerBuilder {
 
   const container = new ContainerBuilder();
   container.addTextDisplayComponents(
-    new TextDisplayBuilder().setContent('## Showcase Digest')
+    new TextDisplayBuilder().setContent(
+      '## Showcase Digest\nThe top posts from the showcase over the last two weeks. Vote for your favourites by reacting with the matching number below.'
+    )
   );
 
   const votablePosts = posts.slice(0, MAX_VOTABLE_POSTS);
   votablePosts.forEach((post, index) => {
     container.addTextDisplayComponents(
       new TextDisplayBuilder().setContent(
-        `${index + 1}. ${channelMention(post.id)} (Comments: ${post.messageCount}) ${VOTE_EMOJIS[index]}`
+        `${VOTE_EMOJIS[index]} ${channelMention(post.id)} (Comments: ${post.messageCount})`
       )
     );
   });
@@ -162,7 +164,9 @@ export const processShowcaseDigestResults = async (
 
   const container = new ContainerBuilder();
   container.addTextDisplayComponents(
-    new TextDisplayBuilder().setContent('## Showcase Digest Results')
+    new TextDisplayBuilder().setContent(
+      '## Showcase Digest Results\nVoting has closed. Here are the showcase posts ranked by the number of votes they received.'
+    )
   );
 
   const formatResultLine = (result: VoteResult, prefix: string): string => {
