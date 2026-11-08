@@ -219,27 +219,26 @@ export const digestHandler = async (
     return;
   }
 
+  // Seeding reactions involves several sequential REST calls that exceed the
+  // 3 second interaction window, so acknowledge before doing the work.
+  await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
   try {
     await createShowcaseDigest();
   } catch (error: unknown) {
     if (error instanceof ShowcaseDigestValidationError) {
       console.error(error.message);
-      await interaction.reply({
-        flags: MessageFlags.Ephemeral,
-        content: error.getExternalMessage(),
-      });
+      await interaction.editReply({ content: error.getExternalMessage() });
     } else {
       console.error('An unexpected error caught:', error);
-      await interaction.reply({
-        flags: MessageFlags.Ephemeral,
+      await interaction.editReply({
         content: 'Something went wrong, please try again.',
       });
     }
     return;
   }
 
-  await interaction.reply({
-    flags: MessageFlags.Ephemeral,
+  await interaction.editReply({
     content: 'Successfully created a showcase digest!',
   });
 };
@@ -263,27 +262,24 @@ export const digestResultsHandler = async (
     return;
   }
 
+  await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
   try {
     await processShowcaseDigestResults({ force: true });
   } catch (error: unknown) {
     if (error instanceof ShowcaseDigestValidationError) {
       console.error(error.message);
-      await interaction.reply({
-        flags: MessageFlags.Ephemeral,
-        content: error.getExternalMessage(),
-      });
+      await interaction.editReply({ content: error.getExternalMessage() });
     } else {
       console.error('An unexpected error caught:', error);
-      await interaction.reply({
-        flags: MessageFlags.Ephemeral,
+      await interaction.editReply({
         content: 'Something went wrong, please try again.',
       });
     }
     return;
   }
 
-  await interaction.reply({
-    flags: MessageFlags.Ephemeral,
+  await interaction.editReply({
     content: 'Successfully announced the showcase digest results!',
   });
 };
