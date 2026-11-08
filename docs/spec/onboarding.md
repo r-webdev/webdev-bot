@@ -24,12 +24,6 @@ Regulars are annoyed by a steady stream of newcomer noise:
 3. **Reward participation.** Members who stay and contribute gain access and recognition.
 4. **Limit spam and abuse.** New and long-dormant accounts have limited reach: no attachments, no open voice.
 
-### Audience
-
-- New members (read this to know how to progress).
-- Regulars and moderators (read this to know what newcomers can and cannot do).
-- Maintainers of the bot.
-
 ### Success criteria
 
 - Regulars report less newcomer noise in general chat and voice.
