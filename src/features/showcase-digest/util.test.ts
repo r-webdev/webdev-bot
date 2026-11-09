@@ -170,6 +170,26 @@ void describe('showcase-digest/util', () => {
       assert.equal(isDigestMessage(message), false);
     });
 
+    void it('classifies a digest whose title carries an explanatory snippet', () => {
+      const message = digestMessage(
+        [`${VOTE_EMOJIS[0]} <#a>`],
+        '## Showcase Digest\nThe top posts from the showcase over the last two weeks.'
+      );
+
+      assert.equal(isDigestMessage(message), true);
+      assert.equal(isResultsMessage(message), false);
+    });
+
+    void it('classifies a results post whose title carries an explanatory snippet', () => {
+      const message = digestMessage(
+        ['### Top 3'],
+        '## Showcase Digest Results\nVoting has closed.'
+      );
+
+      assert.equal(isResultsMessage(message), true);
+      assert.equal(isDigestMessage(message), false);
+    });
+
     void it('ignores a message without a container', () => {
       const message = { components: [] } as unknown as Message;
 
@@ -181,8 +201,8 @@ void describe('showcase-digest/util', () => {
     void it('recovers post ids from channel mentions in display order', () => {
       const message = digestMessage(
         [
-          `1. <#111> (Comments: 2) ${VOTE_EMOJIS[0]}`,
-          `2. <#222> (Comments: 5) ${VOTE_EMOJIS[1]}`,
+          `${VOTE_EMOJIS[0]} <#111> (Comments: 2)`,
+          `${VOTE_EMOJIS[1]} <#222> (Comments: 5)`,
           '-# <@&999>',
         ],
         '## Showcase Digest'
@@ -223,6 +243,16 @@ void describe('showcase-digest/util', () => {
 
     void it('treats a missing reaction as zero votes', () => {
       const results = tallyDigestVotes(['a'], reactionsFor([]));
+
+      assert.deepEqual(results, [{ postId: 'a', rank: 1, votes: 0 }]);
+    });
+
+    void it('floors the vote count at zero when the seed is the only reaction', () => {
+      const reactions = reactionsFor([
+        { emoji: VOTE_EMOJIS[0], count: 0, me: true },
+      ]);
+
+      const results = tallyDigestVotes(['a'], reactions);
 
       assert.deepEqual(results, [{ postId: 'a', rank: 1, votes: 0 }]);
     });
