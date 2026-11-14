@@ -1,9 +1,12 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { createLogger } from './util/logger.js';
+
+const logger = createLogger('env');
 
 function loadEnvFile(filePath: string) {
   if (!existsSync(filePath)) {
-    console.warn(`Warning: File ${filePath} not found`);
+    logger.warn(`Warning: File ${filePath} not found`);
     return;
   }
 
@@ -24,15 +27,15 @@ function loadEnvFile(filePath: string) {
         }
       }
     }
-    console.log(`✅ Loaded: ${filePath}`);
+    logger.log(`✅ Loaded: ${filePath}`);
   } catch (error) {
-    console.warn(`Warning: Could not load ${filePath}`);
-    console.warn(error);
+    logger.warn(`Warning: Could not load ${filePath}`);
+    logger.warn(error);
   }
 }
 
 const nodeEnv = process.env.NODE_ENV || 'development';
-console.log(`🌍 Environment: ${nodeEnv}`);
+logger.log(`🌍 Environment: ${nodeEnv}`);
 
 const ENV_FILES = {
   test: join(process.cwd(), '.env.test'),
@@ -44,6 +47,6 @@ const envFile = ENV_FILES[nodeEnv as keyof typeof ENV_FILES];
 if (envFile) {
   loadEnvFile(envFile);
 } else {
-  console.error(`❌ Environment file ${nodeEnv} not found`);
+  logger.error(`❌ Environment file ${nodeEnv} not found`);
   process.exit(1);
 }

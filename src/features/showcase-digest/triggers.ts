@@ -2,6 +2,9 @@ import * as cron from 'node-cron';
 import { createSlashCommand } from '@/common/commands/create-commands.js';
 import { LOOKBACK_N } from './config.js';
 import { digestHandler, createShowcaseDigest } from './handlers.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('showcase-digest');
 
 export const createDigestCommand = createSlashCommand({
   data: {
@@ -17,23 +20,23 @@ export const createDigestCommand = createSlashCommand({
 const SHOWCASE_DIGEST_CRONS = ['0 16 * * 5#1', '0 16 * * 5#3'];
 
 const runScheduledShowcaseDigest = async (): Promise<void> => {
-  console.log('Running scheduled showcase digest...');
+  logger.log('Running scheduled showcase digest...');
   try {
     await createShowcaseDigest();
-    console.log(`Successfully displayed showcase digest!`);
+    logger.log(`Successfully displayed showcase digest!`);
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   }
 };
 
 export function initializeShowcaseDigestScheduler(): void {
-  console.log('Initializing showcase digest scheduler...');
+  logger.log('Initializing showcase digest scheduler...');
 
   SHOWCASE_DIGEST_CRONS.forEach((expression) => {
     cron.schedule(expression, runScheduledShowcaseDigest, { timezone: 'UTC' });
   });
 
-  console.log(
+  logger.log(
     'Showcase digest scheduler initialized (runs 1st and 3rd Fridays at 16:00 UTC)'
   );
 }

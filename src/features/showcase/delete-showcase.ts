@@ -12,6 +12,9 @@ import { customId, parseCustomId } from '@/util/custom-id.js';
 import { isUserInServer, isUserModerator } from '@/util/member.js';
 import { SERVER_CHANNELS } from '@/constants/channels.js';
 import { buildDeleteShowcaseModal, parseShowcaseMessage } from './util.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('showcase');
 
 const logShowcaseDeletion = async ({
   projectName,
@@ -118,7 +121,7 @@ export const deleteShowcase: ButtonSubmitInteraction = {
         flags: MessageFlags.Ephemeral,
       });
     } catch (error) {
-      console.error('Error deleting showcase:', error);
+      logger.error('Error deleting showcase:', error);
       await interaction.reply({
         content: '❌ An error occurred while trying to delete the showcase.',
         flags: MessageFlags.Ephemeral,
@@ -188,7 +191,7 @@ export const deleteShowcaseModal: ModalSubmitInteraction = {
         reason: deleteReason,
       });
     } catch (error) {
-      console.error('Error deleting showcase via modal:', error);
+      logger.error('Error deleting showcase via modal:', error);
       await interaction.reply({
         content: '❌ An error occurred while trying to delete the showcase.',
         flags: MessageFlags.Ephemeral,

@@ -1,5 +1,8 @@
 import type { StringSelectMenuInteraction } from 'discord.js';
 import { parseCustomId } from '@/util/custom-id.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('interactions');
 
 export type SelectMenuSubmitInteraction = {
   commandName: string;
@@ -14,7 +17,7 @@ export const selectMenuSubmitInteractions = new Map<
 export const registerSelectMenuSubmitInteraction = (
   interaction: SelectMenuSubmitInteraction
 ) => {
-  console.log(
+  logger.log(
     `Registering select menu submit interaction: ${interaction.commandName}`
   );
   selectMenuSubmitInteractions.set(interaction.commandName, interaction);

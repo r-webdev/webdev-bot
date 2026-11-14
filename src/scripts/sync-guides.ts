@@ -11,18 +11,21 @@ import {
   initializeGuidesChannel,
   syncGuidesToChannel,
 } from '@/util/post-guides.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('guides');
 
 async function main() {
   const args = process.argv.slice(2);
   const shouldInitialize = args.includes('--initialize');
 
   if (!config.channelIds.guides) {
-    console.error('❌ GUIDES_CHANNEL_ID environment variable is required');
-    console.error('Please set it in your environment variables');
+    logger.error('❌ GUIDES_CHANNEL_ID environment variable is required');
+    logger.error('Please set it in your environment variables');
     process.exit(1);
   }
 
-  console.log(`🤖 Starting Discord client for guide sync...`);
+  logger.log(`🤖 Starting Discord client for guide sync...`);
 
   const client = new Client({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
@@ -30,29 +33,29 @@ async function main() {
 
   try {
     await client.login(config.discord.token);
-    console.log(`✅ Logged in as ${client.user?.tag}`);
+    logger.log(`✅ Logged in as ${client.user?.tag}`);
 
     if (shouldInitialize) {
-      console.log(
+      logger.log(
         '🚀 Initializing guides channel (will post all guides fresh)...'
       );
       await initializeGuidesChannel(client, config.channelIds.guides);
     } else {
-      console.log('🔄 Synchronizing guides...');
+      logger.log('🔄 Synchronizing guides...');
       await syncGuidesToChannel(client, config.channelIds.guides);
     }
 
-    console.log('✅ Guide synchronization completed successfully');
+    logger.log('✅ Guide synchronization completed successfully');
   } catch (error) {
-    console.error('❌ Guide synchronization failed:', error);
+    logger.error('❌ Guide synchronization failed:', error);
     process.exit(1);
   } finally {
     await client.destroy();
-    console.log('👋 Discord client disconnected');
+    logger.log('👋 Discord client disconnected');
   }
 }
 
 main().catch((error) => {
-  console.error('❌ Unexpected error:', error);
+  logger.error('❌ Unexpected error:', error);
   process.exit(1);
 });

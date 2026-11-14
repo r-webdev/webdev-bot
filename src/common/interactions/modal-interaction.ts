@@ -1,5 +1,8 @@
 import type { ModalSubmitInteraction as ModalInteraction } from 'discord.js';
 import { parseCustomId } from '@/util/custom-id.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('interactions');
 
 export type ModalSubmitInteraction = {
   commandName: string;
@@ -14,7 +17,7 @@ export const modalSubmitInteractions = new Map<
 export const registerModalSubmitInteraction = (
   interaction: ModalSubmitInteraction
 ) => {
-  console.log(
+  logger.log(
     `Registering modal submit interaction: ${interaction.commandName}`
   );
   modalSubmitInteractions.set(interaction.commandName, interaction);

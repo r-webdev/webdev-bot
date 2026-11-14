@@ -4,6 +4,9 @@ import { DAY, HOUR, SECOND } from '../../constants/time.js';
 import { defaultLogFunction, type LogFunction } from './logs.js';
 import { finishModeration, startModeration } from './moderation-state.js';
 import type { Rule } from './rules-config.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('spam-detection');
 
 type ActionConfig = {
   reason: string;
@@ -79,7 +82,7 @@ const handleAction = (config: ActionConfig) => {
             muted = true;
           }
         } catch (error) {
-          console.error('Failed to mute user:', error);
+          logger.error('Failed to mute user:', error);
         }
       }
 

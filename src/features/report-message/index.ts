@@ -1,6 +1,9 @@
 import { createMessageContextMenuCommand } from '@/common/commands/create-commands.js';
 import { SERVER_CHANNELS } from '@/constants/channels.js';
 import { Colors, EmbedBuilder, MessageFlags } from 'discord.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('report-message');
 
 export const reportMessage = createMessageContextMenuCommand({
   data: {
@@ -52,7 +55,7 @@ export const reportMessage = createMessageContextMenuCommand({
         content: 'Thanks. The message was reported to moderators.',
       });
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       await interaction.editReply({
         content: 'Failed to report the message.',
       });
