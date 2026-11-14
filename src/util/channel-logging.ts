@@ -4,6 +4,9 @@ import type {
   SendableChannels,
   TextBasedChannel,
 } from 'discord.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('channel-logging');
 
 export type SimpleLogContent = {
   type: 'simple';
@@ -58,7 +61,7 @@ const sendMessage = async (
     await channel.send(options);
     return true;
   } catch (error) {
-    console.error('Failed to send log message:', error);
+    logger.error('Failed to send log message:', error);
     return false;
   }
 };
@@ -78,7 +81,7 @@ export const logToChannel = async (
     return true;
   } catch (error) {
     if (!options.silent) {
-      console.error('Logging error:', error);
+      logger.error('Logging error:', error);
     }
     if (options.fallbackChannelId && options.channel?.client) {
       const fallbackChannel = await options.channel.client.channels.fetch(
@@ -88,7 +91,7 @@ export const logToChannel = async (
         return sendMessage(fallbackChannel, options.content);
       } else {
         if (!options.silent) {
-          console.error(
+          logger.error(
             'Fallback channel is not a text-based channel or could not be fetched'
           );
         }

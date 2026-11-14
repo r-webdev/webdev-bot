@@ -20,6 +20,9 @@ import {
   type Post,
   ShowcaseDigestValidationError,
 } from './util.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('showcase-digest');
 
 const postProcessor = async (posts: Collection<string, ForumThreadChannel>) => {
   const postsUnordered: Post[] = await convertPosts(posts, REACT_EMOJI);
@@ -107,13 +110,13 @@ export const digestHandler = async (
     await createShowcaseDigest();
   } catch (error: unknown) {
     if (error instanceof ShowcaseDigestValidationError) {
-      console.error(error.message);
+      logger.error(error.message);
       await interaction.reply({
         flags: MessageFlags.Ephemeral,
         content: error.getExternalMessage(),
       });
     } else {
-      console.error('An unexpected error caught:', error);
+      logger.error('An unexpected error caught:', error);
       await interaction.reply({
         flags: MessageFlags.Ephemeral,
         content: 'Something went wrong, please try again.',

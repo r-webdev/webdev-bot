@@ -23,6 +23,9 @@ import {
   resolveTagNames,
 } from './util.js';
 import { SERVER_CHANNELS } from '@/constants/channels.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('showcase');
 
 export const editShowcaseInteraction: ButtonSubmitInteraction = {
   commandName: 'edit_showcase',
@@ -99,7 +102,7 @@ export const editShowcaseInteraction: ButtonSubmitInteraction = {
 
       await interaction.showModal(modal);
     } catch (error) {
-      console.error('Error editing showcase:', error);
+      logger.error('Error editing showcase:', error);
       await interaction.reply({
         content: '❌ An error occurred while trying to edit the showcase.',
         flags: MessageFlags.Ephemeral,
@@ -306,7 +309,7 @@ const modalHandler: ModalSubmitInteraction = {
             allowedMentions: { parse: [] },
           });
         } catch (error) {
-          console.error('Failed to log showcase edit:', error);
+          logger.error('Failed to log showcase edit:', error);
         }
       }
 
@@ -314,7 +317,7 @@ const modalHandler: ModalSubmitInteraction = {
         content: '✅ Showcase updated successfully!',
       });
     } catch (error) {
-      console.error('Error updating showcase:', error);
+      logger.error('Error updating showcase:', error);
       await interaction.reply({
         content: '❌ An error occurred while trying to update the showcase.',
         flags: MessageFlags.Ephemeral,

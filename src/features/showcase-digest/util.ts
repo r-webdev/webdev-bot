@@ -1,5 +1,8 @@
 import { DAY } from '@/constants/time.js';
 import { Collection, ForumThreadChannel, MessageReaction } from 'discord.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('showcase-digest');
 
 export type Post = { id: string; messageCount: number; likes: number };
 
@@ -38,9 +41,9 @@ export const convertPosts = async (
   return settled.flatMap((result) => {
     if (result.status === 'rejected') {
       if (result.reason instanceof ShowcaseDigestValidationError) {
-        console.error(result.reason.message);
+        logger.error(result.reason.message);
       } else {
-        console.error(
+        logger.error(
           'Unexpected error in scheduled showcase digest:',
           result.reason
         );
@@ -59,7 +62,7 @@ export const filterPostsByCreationTime = (
   return posts.filter((post) => {
     const creationTime = post.createdAt?.getTime();
     if (!creationTime) {
-      console.error('Creation time is missing from post on showcase-digest');
+      logger.error('Creation time is missing from post on showcase-digest');
       return false;
     }
     return creationTime > now - DAY * lookbackN;

@@ -1,5 +1,8 @@
 import type { Guild } from 'discord.js';
 import { config } from '@/env.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('server-guard');
 
 /**
  * Checks if a guild is the allowed server
@@ -14,12 +17,12 @@ export function isAllowedServer(guildId: string): boolean {
  */
 export async function leaveIfNotAllowedServer(guild: Guild): Promise<boolean> {
   if (!isAllowedServer(guild.id)) {
-    console.log(
+    logger.log(
       `⚠️ Bot added to unauthorized server: ${guild.name} (${guild.id})`
     );
-    console.log(`🚪 Leaving server...`);
+    logger.log(`🚪 Leaving server...`);
     await guild.leave();
-    console.log(`✅ Left unauthorized server: ${guild.name}`);
+    logger.log(`✅ Left unauthorized server: ${guild.name}`);
     return true;
   }
   return false;

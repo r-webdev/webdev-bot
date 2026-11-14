@@ -22,6 +22,9 @@ import { customId, parseCustomId } from '@/util/custom-id.js';
 import { isValidTagName, getTagPrimaryAlias } from '@/util/tags.js';
 import { getCommandUser } from '@/util/member.js';
 import { canAccessTags } from './permissions.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('tags');
 
 const BASE_NAME = 'tags-edit';
 
@@ -141,7 +144,7 @@ const modalHandler: ModalSubmitInteraction = {
         flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
       });
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === 'P2002'

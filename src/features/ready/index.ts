@@ -9,6 +9,13 @@ import { syncGuidesToChannel } from '@/util/post-guides.js';
 import { leaveIfNotAllowedServer } from '@/util/server-guard.js';
 import { syncArchiveCategoryChannels } from '../archive-channels/util.js';
 import { UserBotMessagesService } from '@/services/user-bot-messages/user-bot-messages-service.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('ready');
+const guidesLogger = createLogger('guides');
+const adventOfCodeLogger = createLogger('advent-of-code');
+const showcaseDigestLogger = createLogger('showcase-digest');
+const archiveChannelsLogger = createLogger('archive-channels');
 
 export const readyEvent = createEvent(
   {
@@ -16,20 +23,20 @@ export const readyEvent = createEvent(
     once: true,
   },
   async (client) => {
-    console.log(`Ready! Logged in as ${client.user.tag}`);
+    logger.log(`Ready! Logged in as ${client.user.tag}`);
 
     // Check all guilds and leave any unauthorized ones
-    console.log(`🔍 Checking ${client.guilds.cache.size} guild(s)...`);
+    logger.log(`🔍 Checking ${client.guilds.cache.size} guild(s)...`);
     for (const guild of client.guilds.cache.values()) {
       await leaveIfNotAllowedServer(guild);
     }
 
     const guild = client.guilds.cache.get(config.discord.serverId);
     if (!guild) {
-      console.error(
+      logger.error(
         `❌ Bot is not in the configured server with ID ${config.discord.serverId}`
       );
-      console.error('Please check your .env file or CI/CD configuration');
+      logger.error('Please check your .env file or CI/CD configuration');
       process.exit(1);
     }
 
@@ -40,7 +47,7 @@ export const readyEvent = createEvent(
     }
     // Sync guides to channel
     try {
-      console.log(
+      guidesLogger.log(
         `🔄 Starting guide sync to channel ${config.channelIds.guides}...`
       );
       await syncGuidesToChannel(client, config.channelIds.guides);
@@ -48,34 +55,40 @@ export const readyEvent = createEvent(
       if (error && typeof error === 'object' && 'code' in error) {
         const discordError = error as { code: number; message?: string };
         if (discordError.code === 50001) {
-          console.warn(
+          guidesLogger.warn(
             '⚠️ Bot does not have access to the guides channel. Please check bot permissions and channel ID.'
           );
         } else {
-          console.error('❌ Failed to sync guides:', error);
+          guidesLogger.error('❌ Failed to sync guides:', error);
         }
       } else {
-        console.error('❌ Failed to sync guides:', error);
+        guidesLogger.error('❌ Failed to sync guides:', error);
       }
     }
 
     try {
       initializeAdventScheduler(client, config.channelIds.adventOfCode);
     } catch (error) {
-      console.error('❌ Failed to initialize Advent of Code scheduler:', error);
+      adventOfCodeLogger.error(
+        '❌ Failed to initialize Advent of Code scheduler:',
+        error
+      );
     }
 
     try {
       initializeShowcaseDigestScheduler();
     } catch (error) {
-      console.error('Failed to initialize showcase digest scheduler:', error);
+      showcaseDigestLogger.error(
+        'Failed to initialize showcase digest scheduler:',
+        error
+      );
     }
 
     // Make sure all channels in the archived category are properly archived on startup
     try {
       await syncArchiveCategoryChannels();
     } catch (error) {
-      console.error(
+      archiveChannelsLogger.error(
         '❌ Failed to ensure archived channels are properly archived:',
         error
       );

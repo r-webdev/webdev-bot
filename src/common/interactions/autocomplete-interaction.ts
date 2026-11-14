@@ -1,4 +1,7 @@
 import type { AutocompleteInteraction } from 'discord.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('interactions');
 
 export type AutoCompleteSubmitInteraction = {
   commandName: string;
@@ -13,7 +16,7 @@ export const autoCompleteInteractions = new Map<
 export const registerAutocompleteInteraction = (
   interaction: AutoCompleteSubmitInteraction
 ) => {
-  console.log(
+  logger.log(
     `Registering autocomplete interaction: ${interaction.commandName}`
   );
   autoCompleteInteractions.set(interaction.commandName, interaction);

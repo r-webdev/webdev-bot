@@ -1,5 +1,13 @@
 import type { Message } from 'discord.js';
 import { MAX_RULE_TIMEFRAME } from '@/features/spam-detection/constants.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('spam-detection');
+
+function throwLoggedError(message: string): never {
+  logger.error(message);
+  throw new Error(message);
+}
 
 // O(1) Priority Queue implementation for LRU eviction
 class MinHeap {
@@ -123,10 +131,10 @@ export class MessageCache {
 
   constructor(maxSize: number = 1000, cleanupInterval: number = 100) {
     if (maxSize <= 0) {
-      throw new Error('maxSize must be positive');
+      throwLoggedError('maxSize must be positive');
     }
     if (cleanupInterval <= 0) {
-      throw new Error('cleanupInterval must be positive');
+      throwLoggedError('cleanupInterval must be positive');
     }
     this.maxSize = maxSize;
     this.cleanupInterval = cleanupInterval;
@@ -134,7 +142,7 @@ export class MessageCache {
 
   add(message: Message): void {
     if (!message || !message.id || !message.author || !message.channelId) {
-      throw new Error(
+      throwLoggedError(
         'Invalid message: must be a valid Discord.js Message object'
       );
     }
@@ -219,7 +227,7 @@ export class MessageCache {
 
     // Bulk delete old messages
     if (messagesToDelete.length > 0) {
-      console.log(
+      logger.log(
         `Cleaning up ${messagesToDelete.length} old messages from cache (older than ${maxRuleTimeframe}ms)`
       );
       this.bulkDeleteByIds(messagesToDelete);
@@ -233,14 +241,14 @@ export class MessageCache {
       maxRuleTimeframe <= 0 ||
       Number.isNaN(maxRuleTimeframe)
     ) {
-      throw new Error('Invalid maxRuleTimeframe: must be a positive number');
+      throwLoggedError('Invalid maxRuleTimeframe: must be a positive number');
     }
     this.cleanupOldMessages(maxRuleTimeframe);
   }
 
   get(messageId: string): Message | undefined {
     if (!messageId || typeof messageId !== 'string') {
-      throw new Error('Invalid messageId: must be a non-empty string');
+      throwLoggedError('Invalid messageId: must be a non-empty string');
     }
 
     // Update LRU on access - O(log n) for heap operations
@@ -255,14 +263,14 @@ export class MessageCache {
 
   has(messageId: string): boolean {
     if (!messageId || typeof messageId !== 'string') {
-      throw new Error('Invalid messageId: must be a non-empty string');
+      throwLoggedError('Invalid messageId: must be a non-empty string');
     }
     return this.cache.has(messageId);
   }
 
   delete(messageId: string): boolean {
     if (!messageId || typeof messageId !== 'string') {
-      throw new Error('Invalid messageId: must be a non-empty string');
+      throwLoggedError('Invalid messageId: must be a non-empty string');
     }
 
     if (!this.cache.has(messageId)) {
@@ -312,7 +320,7 @@ export class MessageCache {
   // O(1) user message lookup using secondary index
   getUserMessages(userId: string): Message[] {
     if (!userId || typeof userId !== 'string') {
-      throw new Error('Invalid userId: must be a non-empty string');
+      throwLoggedError('Invalid userId: must be a non-empty string');
     }
 
     const messageIds = this.userMessages.get(userId);
@@ -328,7 +336,7 @@ export class MessageCache {
   // O(1) channel message lookup using secondary index
   getChannelMessages(channelId: string): Message[] {
     if (!channelId || typeof channelId !== 'string') {
-      throw new Error('Invalid channelId: must be a non-empty string');
+      throwLoggedError('Invalid channelId: must be a non-empty string');
     }
 
     const messageIds = this.channelMessages.get(channelId);
@@ -348,19 +356,19 @@ export class MessageCache {
     endTime?: number
   ): Message[] {
     if (!userId || typeof userId !== 'string') {
-      throw new Error('Invalid userId: must be a non-empty string');
+      throwLoggedError('Invalid userId: must be a non-empty string');
     }
     if (typeof startTime !== 'number' || Number.isNaN(startTime)) {
-      throw new Error('Invalid startTime: must be a valid number');
+      throwLoggedError('Invalid startTime: must be a valid number');
     }
     if (
       endTime !== undefined &&
       (typeof endTime !== 'number' || Number.isNaN(endTime))
     ) {
-      throw new Error('Invalid endTime: must be a valid number or undefined');
+      throwLoggedError('Invalid endTime: must be a valid number or undefined');
     }
     if (endTime !== undefined && endTime < startTime) {
-      throw new Error(
+      throwLoggedError(
         'Invalid time range: endTime must be greater than or equal to startTime'
       );
     }
@@ -382,12 +390,12 @@ export class MessageCache {
 
   bulkDeleteByIds(messageIds: string[]): void {
     if (!Array.isArray(messageIds)) {
-      throw new Error('Invalid messageIds: must be an array');
+      throwLoggedError('Invalid messageIds: must be an array');
     }
 
     for (const id of messageIds) {
       if (typeof id !== 'string' || !id) {
-        throw new Error(
+        throwLoggedError(
           'Invalid messageId in array: must be non-empty strings'
         );
       }

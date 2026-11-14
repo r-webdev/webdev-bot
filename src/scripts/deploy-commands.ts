@@ -6,9 +6,12 @@ import {
 import { commands } from '@/common/commands/index.js';
 import { config } from '@/env.js';
 import { pathToFileURL } from 'node:url';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('deploy-commands');
 
 export async function deployCommands() {
-  console.log('Deploying commands...');
+  logger.log('Deploying commands...');
   const commandData = [...commands.values()].map((command) => command.data);
 
   const rest = new REST({ version: '10' }).setToken(config.discord.token);
@@ -23,11 +26,11 @@ export async function deployCommands() {
         body: commandData,
       }
     )) as RESTPutAPIApplicationCommandsResult;
-    console.log(
+    logger.log(
       `✅ Successfully deployed ${result.length} commands to guild ${config.discord.serverId}`
     );
   } catch (error) {
-    console.error('❌ Error deploying commands:', error);
+    logger.error('❌ Error deploying commands:', error);
   }
 }
 
