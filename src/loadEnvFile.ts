@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { createLogger } from '@/util/logger.js';
+import { createLogger } from './util/logger.js';
 
 const logger = createLogger('env');
 

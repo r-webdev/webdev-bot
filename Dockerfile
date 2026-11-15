@@ -41,6 +41,7 @@ FROM deps-dev AS build
 # when only application source code changes.
 COPY prisma ./prisma
 COPY prisma.config.ts tsconfig.json ./
+COPY src/util/logger.ts ./src/util/logger.ts
 COPY src/loadEnvFile.ts ./src/loadEnvFile.ts
 
 ENV DATABASE_URL="file:/tmp/build.db"
