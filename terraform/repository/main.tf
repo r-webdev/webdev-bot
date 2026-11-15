@@ -90,9 +90,10 @@ module "repository" {
         required_approving_review_count = 1
       }
 
-      # Require branches to be up to date before merging; no hardcoded check names.
+      # Require branches to be up to date and the listed checks to pass before merging.
       required_status_checks = {
-        strict = true
+        strict   = true
+        contexts = ["Docker image builds"]
       }
     }
   }
