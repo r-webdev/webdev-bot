@@ -27,6 +27,16 @@ export const filterByReaction = (
   return reaction.emoji.identifier === reactEmoji;
 };
 
+// Excludes bot authors and the starter message (which shares the thread id).
+export const countHumanMessages = async (
+  post: ForumThreadChannel
+): Promise<number> => {
+  const messages = await post.messages.fetch();
+  return messages.filter(
+    (message) => !message.author.bot && message.id !== post.id
+  ).size;
+};
+
 export const convertPosts = async (
   posts: Collection<string, ForumThreadChannel>,
   reactEmoji: string
@@ -46,7 +56,7 @@ export const convertPosts = async (
         })?.count ?? 0;
       return {
         id: post.id,
-        messageCount: post.messageCount ?? 0,
+        messageCount: await countHumanMessages(post),
         likes,
       };
     })
