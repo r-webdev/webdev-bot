@@ -1,5 +1,8 @@
 import type { ButtonInteraction } from 'discord.js';
 import { parseCustomId } from '@/util/custom-id.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('interactions');
 
 export type ButtonSubmitInteraction = {
   commandName: string;
@@ -14,7 +17,7 @@ export const buttonSubmitInteractions = new Map<
 export const registerButtonSubmitInteraction = (
   interaction: ButtonSubmitInteraction
 ) => {
-  console.log(
+  logger.log(
     `Registering button submit interaction: ${interaction.commandName}`
   );
   buttonSubmitInteractions.set(interaction.commandName, interaction);

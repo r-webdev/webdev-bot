@@ -4,6 +4,9 @@ import { isStaff } from '@/util/permissions.js';
 import { DAY } from '@/constants/time.js';
 import { getBotOption } from '@/options.js';
 import { OptionKey } from '@/generated/prisma/enums.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('user-bot-messages');
 
 export const UserBotMessagesService = {
   async deleteUserBotMessage({
@@ -60,7 +63,7 @@ export const UserBotMessagesService = {
         where: { expiresAt: { lte: new Date() } },
       });
       if (count > 0) {
-        console.log(`Cleaned up ${count} expired user bot messages.`);
+        logger.log(`Cleaned up ${count} expired user bot messages.`);
       }
     };
 

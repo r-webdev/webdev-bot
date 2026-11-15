@@ -10,6 +10,9 @@ import {
   initializeGuidesChannel,
   syncGuidesToChannel,
 } from '@/util/post-guides.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('guides');
 
 export const publicGuidesCommand = createSlashCommand({
   data: {
@@ -49,7 +52,7 @@ export const publicGuidesCommand = createSlashCommand({
         '✅ Guides have been synchronized successfully.'
       );
     } catch (error) {
-      console.error('Error synchronizing guides:', error);
+      logger.error('Error synchronizing guides:', error);
       await interaction.editReply(
         '❌ An error occurred while synchronizing guides. Please check the logs for details.'
       );

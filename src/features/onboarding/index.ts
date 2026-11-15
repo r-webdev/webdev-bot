@@ -3,6 +3,9 @@ import { createSlashCommand } from '../../common/commands/create-commands.js';
 import { config } from '../../env.js';
 import { addRoleToUser } from '../../util/add-role-to-user.js';
 import { containerComponent } from './component.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('onboarding');
 
 export const onboardingCommand = createSlashCommand({
   data: {
@@ -64,7 +67,7 @@ export const onboardingCommand = createSlashCommand({
             content: `Failed to add role. Please contact an administrator.`,
             flags: MessageFlags.Ephemeral,
           });
-          console.error('Error adding role:\n', error);
+          logger.error('Error adding role:\n', error);
         }
       }
     });

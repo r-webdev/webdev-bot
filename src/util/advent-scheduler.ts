@@ -2,6 +2,9 @@ import { promises as fs } from 'node:fs';
 import { ChannelType, type Client } from 'discord.js';
 import * as cron from 'node-cron';
 import { config } from '@/env.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('advent-of-code');
 
 const TRACKER_FILE = config.adventOfCodeTrackerPath;
 
@@ -54,12 +57,12 @@ async function createAdventPost(
     const channel = await client.channels.fetch(channelId);
 
     if (!channel) {
-      console.error(`❌ Advent of Code channel not found: ${channelId}`);
+      logger.error(`❌ Advent of Code channel not found: ${channelId}`);
       return false;
     }
 
     if (channel.type !== ChannelType.GuildForum) {
-      console.error(
+      logger.error(
         `❌ Advent of Code channel is not a forum channel. Type: ${channel.type}`
       );
       return false;
@@ -76,10 +79,10 @@ async function createAdventPost(
       },
     });
 
-    console.log(`✅ Created Advent of Code post: ${title}`);
+    logger.log(`✅ Created Advent of Code post: ${title}`);
     return true;
   } catch (error) {
-    console.error(
+    logger.error(
       `❌ Failed to create Advent of Code post for day ${day}:`,
       error
     );
@@ -106,7 +109,7 @@ async function checkAndCreateTodaysPost(
 
   const alreadyPosted = await isDayPosted(year, day);
   if (alreadyPosted) {
-    console.log(`ℹ️ Advent of Code post for ${year} day ${day} already exists`);
+    logger.log(`ℹ️ Advent of Code post for ${year} day ${day} already exists`);
     return;
   }
 
@@ -125,10 +128,10 @@ export function initializeAdventScheduler(
   client: Client,
   channelId: string
 ): void {
-  console.log('🎄 Initializing Advent of Code scheduler...');
+  logger.log('🎄 Initializing Advent of Code scheduler...');
 
   checkAndCreateTodaysPost(client, channelId).catch((error) => {
-    console.error(
+    logger.error(
       '❌ Error checking for Advent of Code post on startup:',
       error
     );
@@ -137,13 +140,13 @@ export function initializeAdventScheduler(
   // Schedule to run every day at midnight UTC-5
   // https://github.com/node-cron/node-cron?tab=readme-ov-file#cron-syntax
   cron.schedule('0 5 * * *', () => {
-    console.log('⏰ Running scheduled Advent of Code check...');
+    logger.log('⏰ Running scheduled Advent of Code check...');
     checkAndCreateTodaysPost(client, channelId).catch((error) => {
-      console.error('❌ Error in scheduled Advent of Code check:', error);
+      logger.error('❌ Error in scheduled Advent of Code check:', error);
     });
   });
 
-  console.log(
+  logger.log(
     '✅ Advent of Code scheduler initialized (runs daily at midnight UTC)'
   );
 }

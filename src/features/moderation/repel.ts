@@ -22,6 +22,9 @@ import { buildCommandString } from '../../util/build-command-string.js';
 import { getPublicChannels } from '../../util/channel.js';
 import { logToChannel } from '../../util/channel-logging.js';
 import { SERVER_CHANNELS } from '@/constants/channels.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('moderation');
 
 const DEFAULT_LOOK_BACK_MS = 10 * MINUTE;
 const DEFAULT_TIMEOUT_DURATION_MS = 1 * HOUR;
@@ -149,7 +152,7 @@ const getTargetFromInteraction = async (
   try {
     target = await interaction.guild.members.fetch(targetFromOption.id);
   } catch (error) {
-    console.error('Error fetching target as guild member:', error);
+    logger.error('Error fetching target as guild member:', error);
     target = targetFromOption;
   }
   return target;
@@ -173,14 +176,14 @@ const handleTimeout = async ({
     await target.timeout(durationInMilliseconds, 'Repel command executed');
     return durationInMilliseconds;
   } catch (error) {
-    console.error('Error applying timeout to user:', error);
+    logger.error('Error applying timeout to user:', error);
     return 0;
   }
 };
 
 const getTextChannels = (interaction: ChatInputCommandInteraction) => {
   if (!interaction.inGuild() || !interaction.guild) {
-    console.error('Interaction is not in a guild');
+    logger.error('Interaction is not in a guild');
     return [];
   }
   const channels = Array.from(getPublicChannels(interaction.guild).values());
@@ -254,7 +257,7 @@ const handleDeleteMessages = async ({
         await channel.bulkDelete(messagesToDelete, true);
         deleted += messagesToDelete.length;
       } catch (error) {
-        console.error(
+        logger.error(
           `Error deleting messages in channel ${channel.name}:`,
           error
         );
@@ -264,7 +267,7 @@ const handleDeleteMessages = async ({
     })
   );
   if (failedChannels.length > 0) {
-    console.error(
+    logger.error(
       `Failed to delete messages in ${failedChannels.length} channel(s).`
     );
   }
@@ -565,7 +568,7 @@ export const repelCommand = createSlashCommand({
         content: `Deleted ${deleted} message(s).`,
       });
     } catch (error) {
-      console.error('Error executing repel command:', error);
+      logger.error('Error executing repel command:', error);
     }
   },
 });

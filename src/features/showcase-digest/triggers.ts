@@ -7,6 +7,9 @@ import {
   createShowcaseDigest,
   processShowcaseDigestResults,
 } from './handlers.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('showcase-digest');
 
 export const createDigestCommand = createSlashCommand({
   data: {
@@ -33,26 +36,26 @@ const SHOWCASE_DIGEST_CRONS = ['0 16 * * 5#1', '0 16 * * 5#3'];
 const SHOWCASE_DIGEST_RESULTS_CRON = '0 16 * * 1';
 
 const runScheduledShowcaseDigest = async (): Promise<void> => {
-  console.log('Running scheduled showcase digest...');
+  logger.log('Running scheduled showcase digest...');
   try {
     await createShowcaseDigest();
-    console.log(`Successfully displayed showcase digest!`);
+    logger.log(`Successfully displayed showcase digest!`);
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   }
 };
 
 const runScheduledShowcaseDigestResults = async (): Promise<void> => {
-  console.log('Running scheduled showcase digest results...');
+  logger.log('Running scheduled showcase digest results...');
   try {
     await processShowcaseDigestResults();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   }
 };
 
 export function initializeShowcaseDigestScheduler(): void {
-  console.log('Initializing showcase digest scheduler...');
+  logger.log('Initializing showcase digest scheduler...');
 
   SHOWCASE_DIGEST_CRONS.forEach((expression) => {
     cron.schedule(expression, runScheduledShowcaseDigest, { timezone: 'UTC' });
@@ -64,7 +67,7 @@ export function initializeShowcaseDigestScheduler(): void {
     { timezone: 'UTC' }
   );
 
-  console.log(
+  logger.log(
     'Showcase digest scheduler initialized (digests on 1st and 3rd Fridays at 16:00 UTC, results on Mondays at 16:00 UTC)'
   );
 }

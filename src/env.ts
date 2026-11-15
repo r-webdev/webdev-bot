@@ -1,5 +1,8 @@
 // oxlint-disable id-length
 import '@/loadEnvFile.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('env');
 
 function optionalEnv(key: string): string | undefined {
   return process.env[key];
@@ -8,8 +11,8 @@ function optionalEnv(key: string): string | undefined {
 function requireEnv(key: string): string {
   const value = process.env[key];
   if (!value) {
-    console.error(`❌ Required environment variable ${key} is not set`);
-    console.error('Please check your .env file or CI/CD configuration');
+    logger.error(`❌ Required environment variable ${key} is not set`);
+    logger.error('Please check your .env file or CI/CD configuration');
     process.exit(1);
   }
   return value;
@@ -57,10 +60,10 @@ export const config = {
 
 export type Config = typeof config;
 
-console.log('✅ Configuration loaded successfully');
-console.log(
+logger.log('✅ Configuration loaded successfully');
+logger.log(
   `📋 Client ID: ${config.discord.clientId ? config.discord.clientId : '❌ missing'}`
 );
-console.log(
+logger.log(
   `🔑 Token: ${config.discord.token ? '***configured***' : '❌ missing'}`
 );

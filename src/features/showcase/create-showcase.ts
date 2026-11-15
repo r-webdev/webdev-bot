@@ -24,6 +24,9 @@ import { deleteShowcase, deleteShowcaseModal } from './delete-showcase.js';
 import { editShowcaseInteraction } from './edit-showcase.js';
 import { buildShowcaseModal, createShowcaseMessageContent } from './util.js';
 import { SERVER_CHANNELS } from '@/constants/channels.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('showcase');
 
 export const showModal = async (
   interaction: ButtonInteraction | ChatInputCommandInteraction
@@ -36,7 +39,7 @@ export const showModal = async (
 
     await interaction.showModal(modal);
   } catch (error) {
-    console.error('Error showing showcase modal:', error);
+    logger.error('Error showing showcase modal:', error);
     await interaction.reply({
       content:
         'There was an error showing the showcase modal. Please try again later.',
@@ -140,14 +143,14 @@ const modalHandler: ModalSubmitInteraction = {
           silent: true,
         });
       } catch (error) {
-        console.error('Failed to log showcase creation:', error);
+        logger.error('Failed to log showcase creation:', error);
       }
 
       await interaction.editReply({
         content: `Your project has been showcased successfully! You can view it here: ${thread.url}`,
       });
     } catch (error) {
-      console.error('Error creating showcase thread:', error);
+      logger.error('Error creating showcase thread:', error);
       await interaction.editReply({
         content:
           'There was an error showcasing your project. Please try again later.',

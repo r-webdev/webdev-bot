@@ -2,6 +2,9 @@ import { Client, Events, type Message } from 'discord.js';
 import { createEvent } from '@/common/events/create-event.js';
 import { UserBotMessagesService } from '@/services/user-bot-messages/user-bot-messages-service.js';
 import { createQuoteEmbed } from './embed.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('quote');
 
 export const quoteEvent = createEvent(
   {
@@ -91,7 +94,7 @@ export const quoteEvent = createEvent(
 
     for (const result of results) {
       if (result.status === 'rejected') {
-        console.error('Failed to send quote message:', result.reason);
+        logger.error('Failed to send quote message:', result.reason);
       }
     }
 

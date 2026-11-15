@@ -8,8 +8,6 @@ import {
   StringSelectMenuOptionBuilder,
   TextInputBuilder,
   TextInputStyle,
-  ActionRowBuilder,
-  type ModalActionRowComponentBuilder,
 } from 'discord.js';
 
 export type ShowcaseMessageData = {

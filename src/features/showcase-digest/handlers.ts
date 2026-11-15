@@ -35,6 +35,9 @@ import {
   type VoteResult,
   ShowcaseDigestValidationError,
 } from './util.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('showcase-digest');
 
 const postProcessor = async (posts: Collection<string, ForumThreadChannel>) => {
   const postsUnordered: Post[] = await convertPosts(posts, REACT_EMOJI);
@@ -132,7 +135,7 @@ export const processShowcaseDigestResults = async (
       ageMs >= RESULTS_AFTER_DAYS * DAY &&
       ageMs < (RESULTS_AFTER_DAYS + 1) * DAY;
     if (!isDue) {
-      console.log(
+      logger.log(
         'Most recent showcase digest is not within the results window, skipping.'
       );
       return;
@@ -145,7 +148,7 @@ export const processShowcaseDigestResults = async (
         message.createdTimestamp > digestMessage.createdTimestamp
     );
     if (alreadyAnnounced) {
-      console.log('Showcase digest results have already been announced.');
+      logger.log('Showcase digest results have already been announced.');
       return;
     }
   }
@@ -231,10 +234,10 @@ export const digestHandler = async (
     await createShowcaseDigest();
   } catch (error: unknown) {
     if (error instanceof ShowcaseDigestValidationError) {
-      console.error(error.message);
+      logger.error(error.message);
       await interaction.editReply({ content: error.getExternalMessage() });
     } else {
-      console.error('An unexpected error caught:', error);
+      logger.error('An unexpected error caught:', error);
       await interaction.editReply({
         content: 'Something went wrong, please try again.',
       });
@@ -272,10 +275,10 @@ export const digestResultsHandler = async (
     await processShowcaseDigestResults({ force: true });
   } catch (error: unknown) {
     if (error instanceof ShowcaseDigestValidationError) {
-      console.error(error.message);
+      logger.error(error.message);
       await interaction.editReply({ content: error.getExternalMessage() });
     } else {
-      console.error('An unexpected error caught:', error);
+      logger.error('An unexpected error caught:', error);
       await interaction.editReply({
         content: 'Something went wrong, please try again.',
       });

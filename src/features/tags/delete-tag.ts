@@ -8,6 +8,9 @@ import {
 import { getTagPrimaryAlias } from '@/util/tags.js';
 import { getCommandUser } from '@/util/member.js';
 import { canAccessTags } from './permissions.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('tags');
 
 export const deleteTagCommandHandler = async (
   interaction: ChatInputCommandInteraction
@@ -43,7 +46,7 @@ export const deleteTagCommandHandler = async (
       flags: MessageFlags.IsComponentsV2,
     });
   } catch (error) {
-    console.error('Error deleting tag:', error);
+    logger.error('Error deleting tag:', error);
     if (!interaction.replied) {
       await interaction.editReply({
         components: [

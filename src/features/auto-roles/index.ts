@@ -5,6 +5,9 @@ import { Events } from 'discord.js';
 import { createEvent } from '@/common/events/create-event.js';
 import { config } from '@/env.js';
 import { hasAllRoles } from '@/util/member.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('auto-roles');
 
 export const autoRoleEvent = createEvent(
   {
@@ -22,7 +25,7 @@ export const autoRoleEvent = createEvent(
         try {
           await newMember.roles.add(config.roleIds.c);
         } catch (error) {
-          console.error(`Failed to add roleC to ${newMember.user.tag}:`, error);
+          logger.error(`Failed to add roleC to ${newMember.user.tag}:`, error);
         }
       }
     }

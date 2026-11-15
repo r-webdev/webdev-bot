@@ -1,5 +1,8 @@
 import type { Guild } from 'discord.js';
 import { getPublicChannels } from './channel.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('cache-messages');
 
 const PER_CHANNEL_CACHE_LIMIT = 100;
 const cachedChannelsMap = new Set<string>();
@@ -20,13 +23,13 @@ export const fetchAndCachePublicChannelsMessages = async (
           const messages = await channel.messages.fetch({
             limit: PER_CHANNEL_CACHE_LIMIT,
           });
-          console.log(
+          logger.log(
             `Fetched and cached ${messages.size} messages from channel ${channel.name} (${channel.id})`
           );
           cachedChannelsMap.add(channel.id);
           cachedChannels++;
         } catch (error) {
-          console.error(
+          logger.error(
             `Failed to fetch messages from channel ${channel.name} (${channel.id}):`,
             error
           );

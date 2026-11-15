@@ -2,6 +2,9 @@ import { type CommandInteraction, MessageFlags } from 'discord.js';
 import { logToChannel } from '@/util/channel-logging.js';
 import type { FeatureData } from './baseline.js';
 import type { ProviderConfig } from './types.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('docs');
 
 export const SEARCH_TERM = '%SEARCH%';
 export const TERM = '%TERM%';
@@ -31,7 +34,7 @@ export const executeDocCommand = async (
   try {
     await interaction.deferReply({ flags: MessageFlags.Ephemeral });
   } catch (error) {
-    console.error(`deferReply FAILED:`, error);
+    logger.error(`deferReply FAILED:`, error);
     return;
   }
 
@@ -90,12 +93,12 @@ export const executeDocCommand = async (
           },
         });
       } else if (componentInteraction.isButton()) {
-        console.log('Documentation command cancelled by user.');
+        logger.log('Documentation command cancelled by user.');
         await interaction.deleteReply();
       }
     });
   } catch (error) {
-    console.error(`executeDocCommand FAILED:`, error);
+    logger.error(`executeDocCommand FAILED:`, error);
     await interaction.editReply({ content: `Error: ${String(error)}` });
   }
 };

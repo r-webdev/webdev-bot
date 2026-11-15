@@ -9,6 +9,9 @@ import {
 } from 'discord.js';
 import { config } from '@/env.js';
 import { parseMarkdown } from './markdown.js';
+import { createLogger } from '@/util/logger.js';
+
+const logger = createLogger('guides');
 
 export type GuideInfo = {
   name: string;
@@ -52,7 +55,7 @@ const loadTracker = async (): Promise<GuideTracker> => {
     const content = await readFile(TRACKER_FILE, 'utf8');
     return JSON.parse(content);
   } catch {
-    console.log('No existing tracker file found, starting fresh');
+    logger.log('No existing tracker file found, starting fresh');
     return {};
   }
 };
@@ -98,7 +101,7 @@ const postGuideToChannel = async (
     embeds: [createGuideEmbed(guide)],
   });
 
-  console.log(`✅ Posted guide "${guide.name}" (${guide.filename})`);
+  logger.log(`✅ Posted guide "${guide.name}" (${guide.filename})`);
   return message.id;
 };
 
@@ -113,9 +116,9 @@ const editGuideMessage = async (
       embeds: [createGuideEmbed(guide)],
     });
 
-    console.log(`📝 Updated guide "${guide.name}" (${guide.filename})`);
+    logger.log(`📝 Updated guide "${guide.name}" (${guide.filename})`);
   } catch (error) {
-    console.error(
+    logger.error(
       `Failed to edit message ${messageId} for guide "${guide.name}":`,
       error
     );
@@ -132,9 +135,9 @@ const deleteGuideMessage = async (
     const message = await channel.messages.fetch(messageId);
     await message.delete();
 
-    console.log(`🗑️ Deleted guide "${guideName}"`);
+    logger.log(`🗑️ Deleted guide "${guideName}"`);
   } catch (error) {
-    console.error(
+    logger.error(
       `Failed to delete message ${messageId} for guide "${guideName}":`,
       error
     );
@@ -145,7 +148,7 @@ export const syncGuidesToChannel = async (
   client: Client,
   channelId: string
 ): Promise<void> => {
-  console.log('🔄 Starting guide synchronization...');
+  logger.log('🔄 Starting guide synchronization...');
 
   try {
     const channel = await client.channels.fetch(channelId);
@@ -180,7 +183,7 @@ export const syncGuidesToChannel = async (
       );
     });
 
-    console.log(
+    logger.log(
       `📊 Found: ${newFiles.length} new, ${modifiedFiles.length} modified, ${deletedFiles.length} deleted`
     );
 
@@ -225,14 +228,14 @@ export const syncGuidesToChannel = async (
     const totalChanges =
       newFiles.length + modifiedFiles.length + deletedFiles.length;
     if (totalChanges === 0) {
-      console.log('✨ All guides are up to date!');
+      logger.log('✨ All guides are up to date!');
     } else {
-      console.log(
+      logger.log(
         `✅ Guide synchronization complete! Made ${totalChanges} changes.`
       );
     }
   } catch (error) {
-    console.error('❌ Guide synchronization failed:', error);
+    logger.error('❌ Guide synchronization failed:', error);
     throw error;
   }
 };
@@ -241,7 +244,7 @@ export const initializeGuidesChannel = async (
   client: Client,
   channelId: string
 ): Promise<void> => {
-  console.log('🚀 Initializing guides channel...');
+  logger.log('🚀 Initializing guides channel...');
 
   // Clear existing tracker
   await saveTracker({});
