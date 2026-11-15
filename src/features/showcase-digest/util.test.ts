@@ -32,19 +32,41 @@ function reactionCache(
   return cache;
 }
 
+type MockMessage = { id: string; bot?: boolean };
+
 type MockPostOptions = {
   id: string;
-  messageCount?: number;
+  messages?: MockMessage[];
   createdAt?: Date | null;
   reactions?: { identifier: string; count: number }[];
   noStarter?: boolean;
   starterRejects?: boolean;
 };
 
+function messageCache(
+  postId: string,
+  messages: MockMessage[]
+): Collection<string, Message> {
+  const cache = new Collection<string, Message>();
+  cache.set(postId, {
+    id: postId,
+    author: { bot: false },
+  } as unknown as Message);
+  messages.forEach((message) =>
+    cache.set(message.id, {
+      id: message.id,
+      author: { bot: message.bot ?? false },
+    } as unknown as Message)
+  );
+  return cache;
+}
+
 function mockPost(options: MockPostOptions): ForumThreadChannel {
   return {
     id: options.id,
-    messageCount: options.messageCount ?? 0,
+    messages: {
+      fetch: async () => messageCache(options.id, options.messages ?? []),
+    },
     createdAt: options.createdAt === undefined ? new Date() : options.createdAt,
     fetchStarterMessage: async () => {
       if (options.starterRejects) {
@@ -74,7 +96,7 @@ void describe('showcase-digest/util', () => {
       const posts = collectionOf([
         mockPost({
           id: 'a',
-          messageCount: 5,
+          messages: [{ id: 'm1' }, { id: 'm2' }, { id: 'm3' }],
           reactions: [
             { identifier: REACT_IDENTIFIER_A, count: 3 },
             { identifier: REACT_IDENTIFIER_B, count: 99 },
@@ -84,7 +106,25 @@ void describe('showcase-digest/util', () => {
 
       const result = await convertPosts(posts, REACT_IDENTIFIER_A);
 
-      assert.deepEqual(result, [{ id: 'a', messageCount: 5, likes: 3 }]);
+      assert.deepEqual(result, [{ id: 'a', messageCount: 3, likes: 3 }]);
+    });
+
+    void it('excludes bot messages from the message count', async () => {
+      const posts = collectionOf([
+        mockPost({
+          id: 'a',
+          messages: [
+            { id: 'm1' },
+            { id: 'm2', bot: true },
+            { id: 'm3' },
+            { id: 'm4', bot: true },
+          ],
+        }),
+      ]);
+
+      const [post] = await convertPosts(posts, REACT_IDENTIFIER_A);
+
+      assert.equal(post.messageCount, 2);
     });
 
     void it('defaults likes to 0 when the react emoji is absent', async () => {
@@ -134,10 +174,8 @@ void describe('showcase-digest/util', () => {
       );
     });
 
-    void it('defaults a missing messageCount to 0', async () => {
-      const posts = collectionOf([
-        mockPost({ id: 'a', messageCount: undefined }),
-      ]);
+    void it('counts zero when a post has no member messages', async () => {
+      const posts = collectionOf([mockPost({ id: 'a', messages: [] })]);
 
       const [post] = await convertPosts(posts, REACT_IDENTIFIER_A);
 
