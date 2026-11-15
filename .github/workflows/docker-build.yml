@@ -1,0 +1,27 @@
+name: Docker Build
+
+on:
+  pull_request:
+    branches: ['**']
+    paths-ignore:
+      - 'docs/**'
+      - '.gitignore'
+      - 'LICENSE'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  docker-build:
+    name: Docker image builds
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read Node version
+        run: echo "NODE_VERSION=$(tr -d 'v' < .nvmrc)" >> "$GITHUB_ENV"
+
+      - name: Build production image (not pushed)
+        run: docker build --target production --build-arg NODE_VERSION="$NODE_VERSION" .
