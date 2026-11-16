@@ -135,7 +135,7 @@ export const processShowcaseDigestResults = async (
       ageMs >= RESULTS_AFTER_DAYS * DAY &&
       ageMs < (RESULTS_AFTER_DAYS + 1) * DAY;
     if (!isDue) {
-      logger.log(
+      logger.info(
         'Most recent showcase digest is not within the results window, skipping.'
       );
       return;
@@ -148,7 +148,7 @@ export const processShowcaseDigestResults = async (
         message.createdTimestamp > digestMessage.createdTimestamp
     );
     if (alreadyAnnounced) {
-      logger.log('Showcase digest results have already been announced.');
+      logger.info('Showcase digest results have already been announced.');
       return;
     }
   }

@@ -23,7 +23,7 @@ export const fetchAndCachePublicChannelsMessages = async (
           const messages = await channel.messages.fetch({
             limit: PER_CHANNEL_CACHE_LIMIT,
           });
-          logger.log(
+          logger.info(
             `Fetched and cached ${messages.size} messages from channel ${channel.name} (${channel.id})`
           );
           cachedChannelsMap.add(channel.id);

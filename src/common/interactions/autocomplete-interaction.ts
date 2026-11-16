@@ -16,7 +16,7 @@ export const autoCompleteInteractions = new Map<
 export const registerAutocompleteInteraction = (
   interaction: AutoCompleteSubmitInteraction
 ) => {
-  logger.log(
+  logger.info(
     `Registering autocomplete interaction: ${interaction.commandName}`
   );
   autoCompleteInteractions.set(interaction.commandName, interaction);

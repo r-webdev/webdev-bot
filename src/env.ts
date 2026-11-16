@@ -60,10 +60,10 @@ export const config = {
 
 export type Config = typeof config;
 
-logger.log('✅ Configuration loaded successfully');
-logger.log(
+logger.info('✅ Configuration loaded successfully');
+logger.info(
   `📋 Client ID: ${config.discord.clientId ? config.discord.clientId : '❌ missing'}`
 );
-logger.log(
+logger.info(
   `🔑 Token: ${config.discord.token ? '***configured***' : '❌ missing'}`
 );

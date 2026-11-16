@@ -55,7 +55,7 @@ const loadTracker = async (): Promise<GuideTracker> => {
     const content = await readFile(TRACKER_FILE, 'utf8');
     return JSON.parse(content);
   } catch {
-    logger.log('No existing tracker file found, starting fresh');
+    logger.info('No existing tracker file found, starting fresh');
     return {};
   }
 };
@@ -101,7 +101,7 @@ const postGuideToChannel = async (
     embeds: [createGuideEmbed(guide)],
   });
 
-  logger.log(`✅ Posted guide "${guide.name}" (${guide.filename})`);
+  logger.info(`✅ Posted guide "${guide.name}" (${guide.filename})`);
   return message.id;
 };
 
@@ -116,7 +116,7 @@ const editGuideMessage = async (
       embeds: [createGuideEmbed(guide)],
     });
 
-    logger.log(`📝 Updated guide "${guide.name}" (${guide.filename})`);
+    logger.info(`📝 Updated guide "${guide.name}" (${guide.filename})`);
   } catch (error) {
     logger.error(
       `Failed to edit message ${messageId} for guide "${guide.name}":`,
@@ -135,7 +135,7 @@ const deleteGuideMessage = async (
     const message = await channel.messages.fetch(messageId);
     await message.delete();
 
-    logger.log(`🗑️ Deleted guide "${guideName}"`);
+    logger.info(`🗑️ Deleted guide "${guideName}"`);
   } catch (error) {
     logger.error(
       `Failed to delete message ${messageId} for guide "${guideName}":`,
@@ -148,7 +148,7 @@ export const syncGuidesToChannel = async (
   client: Client,
   channelId: string
 ): Promise<void> => {
-  logger.log('🔄 Starting guide synchronization...');
+  logger.info('🔄 Starting guide synchronization...');
 
   try {
     const channel = await client.channels.fetch(channelId);
@@ -183,7 +183,7 @@ export const syncGuidesToChannel = async (
       );
     });
 
-    logger.log(
+    logger.info(
       `📊 Found: ${newFiles.length} new, ${modifiedFiles.length} modified, ${deletedFiles.length} deleted`
     );
 
@@ -228,9 +228,9 @@ export const syncGuidesToChannel = async (
     const totalChanges =
       newFiles.length + modifiedFiles.length + deletedFiles.length;
     if (totalChanges === 0) {
-      logger.log('✨ All guides are up to date!');
+      logger.info('✨ All guides are up to date!');
     } else {
-      logger.log(
+      logger.info(
         `✅ Guide synchronization complete! Made ${totalChanges} changes.`
       );
     }
@@ -244,7 +244,7 @@ export const initializeGuidesChannel = async (
   client: Client,
   channelId: string
 ): Promise<void> => {
-  logger.log('🚀 Initializing guides channel...');
+  logger.info('🚀 Initializing guides channel...');
 
   // Clear existing tracker
   await saveTracker({});

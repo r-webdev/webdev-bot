@@ -16,7 +16,7 @@ export const interactionCreateEvent = createEvent(
   },
   async (interaction) => {
     if (!interaction.guildId || !isAllowedServer(interaction.guildId)) {
-      logger.log(
+      logger.info(
         `⚠️ Command blocked from unauthorized server: ${interaction.guildId}`
       );
       if (interaction.isRepliable()) {
@@ -28,7 +28,7 @@ export const interactionCreateEvent = createEvent(
       return;
     }
     if (interaction.isButton()) {
-      logger.log(
+      logger.info(
         `Received button interaction with custom ID: ${interaction.customId}`
       );
       await handleButtonInteraction(interaction);
@@ -36,7 +36,7 @@ export const interactionCreateEvent = createEvent(
     }
 
     if (interaction.isModalSubmit()) {
-      logger.log(
+      logger.info(
         `Received modal submit interaction with custom ID: ${interaction.customId}`
       );
       await handleModalInteraction(interaction);
@@ -44,7 +44,7 @@ export const interactionCreateEvent = createEvent(
     }
 
     if (interaction.isStringSelectMenu()) {
-      logger.log(
+      logger.info(
         `Received select menu interaction with custom ID: ${interaction.customId}`
       );
       await handleSelectMenuInteraction(interaction);
@@ -52,7 +52,7 @@ export const interactionCreateEvent = createEvent(
     }
 
     if (interaction.isAutocomplete()) {
-      logger.log(
+      logger.info(
         `Received autocomplete interaction with custom ID: ${interaction.commandName}`
       );
       await handleAutoCompleteInteraction(interaction);

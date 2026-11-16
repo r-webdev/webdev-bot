@@ -25,7 +25,7 @@ async function main() {
     process.exit(1);
   }
 
-  logger.log(`🤖 Starting Discord client for guide sync...`);
+  logger.info(`🤖 Starting Discord client for guide sync...`);
 
   const client = new Client({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
@@ -33,25 +33,25 @@ async function main() {
 
   try {
     await client.login(config.discord.token);
-    logger.log(`✅ Logged in as ${client.user?.tag}`);
+    logger.info(`✅ Logged in as ${client.user?.tag}`);
 
     if (shouldInitialize) {
-      logger.log(
+      logger.info(
         '🚀 Initializing guides channel (will post all guides fresh)...'
       );
       await initializeGuidesChannel(client, config.channelIds.guides);
     } else {
-      logger.log('🔄 Synchronizing guides...');
+      logger.info('🔄 Synchronizing guides...');
       await syncGuidesToChannel(client, config.channelIds.guides);
     }
 
-    logger.log('✅ Guide synchronization completed successfully');
+    logger.info('✅ Guide synchronization completed successfully');
   } catch (error) {
     logger.error('❌ Guide synchronization failed:', error);
     process.exit(1);
   } finally {
     await client.destroy();
-    logger.log('👋 Discord client disconnected');
+    logger.info('👋 Discord client disconnected');
   }
 }
 

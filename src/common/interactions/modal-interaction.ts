@@ -17,7 +17,7 @@ export const modalSubmitInteractions = new Map<
 export const registerModalSubmitInteraction = (
   interaction: ModalSubmitInteraction
 ) => {
-  logger.log(
+  logger.info(
     `Registering modal submit interaction: ${interaction.commandName}`
   );
   modalSubmitInteractions.set(interaction.commandName, interaction);

@@ -227,7 +227,7 @@ export class MessageCache {
 
     // Bulk delete old messages
     if (messagesToDelete.length > 0) {
-      logger.log(
+      logger.info(
         `Cleaning up ${messagesToDelete.length} old messages from cache (older than ${maxRuleTimeframe}ms)`
       );
       this.bulkDeleteByIds(messagesToDelete);

@@ -17,12 +17,12 @@ export function isAllowedServer(guildId: string): boolean {
  */
 export async function leaveIfNotAllowedServer(guild: Guild): Promise<boolean> {
   if (!isAllowedServer(guild.id)) {
-    logger.log(
+    logger.info(
       `⚠️ Bot added to unauthorized server: ${guild.name} (${guild.id})`
     );
-    logger.log(`🚪 Leaving server...`);
+    logger.info(`🚪 Leaving server...`);
     await guild.leave();
-    logger.log(`✅ Left unauthorized server: ${guild.name}`);
+    logger.info(`✅ Left unauthorized server: ${guild.name}`);
     return true;
   }
   return false;

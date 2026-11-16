@@ -79,7 +79,7 @@ async function createAdventPost(
       },
     });
 
-    logger.log(`✅ Created Advent of Code post: ${title}`);
+    logger.info(`✅ Created Advent of Code post: ${title}`);
     return true;
   } catch (error) {
     logger.error(
@@ -109,7 +109,7 @@ async function checkAndCreateTodaysPost(
 
   const alreadyPosted = await isDayPosted(year, day);
   if (alreadyPosted) {
-    logger.log(`ℹ️ Advent of Code post for ${year} day ${day} already exists`);
+    logger.info(`ℹ️ Advent of Code post for ${year} day ${day} already exists`);
     return;
   }
 
@@ -128,7 +128,7 @@ export function initializeAdventScheduler(
   client: Client,
   channelId: string
 ): void {
-  logger.log('🎄 Initializing Advent of Code scheduler...');
+  logger.info('🎄 Initializing Advent of Code scheduler...');
 
   checkAndCreateTodaysPost(client, channelId).catch((error) => {
     logger.error(
@@ -140,13 +140,13 @@ export function initializeAdventScheduler(
   // Schedule to run every day at midnight UTC-5
   // https://github.com/node-cron/node-cron?tab=readme-ov-file#cron-syntax
   cron.schedule('0 5 * * *', () => {
-    logger.log('⏰ Running scheduled Advent of Code check...');
+    logger.info('⏰ Running scheduled Advent of Code check...');
     checkAndCreateTodaysPost(client, channelId).catch((error) => {
       logger.error('❌ Error in scheduled Advent of Code check:', error);
     });
   });
 
-  logger.log(
+  logger.info(
     '✅ Advent of Code scheduler initialized (runs daily at midnight UTC)'
   );
 }
