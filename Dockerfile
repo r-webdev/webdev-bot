@@ -72,6 +72,7 @@ COPY --from=build /app/assets ./assets
 COPY --from=build /app/prisma ./prisma
 COPY --from=build /app/prisma.config.ts ./prisma.config.ts
 COPY --from=build /app/src/loadEnvFile.ts ./src/loadEnvFile.ts
+COPY --from=build /app/src/util/logger.ts ./src/util/logger.ts
 
 RUN mkdir -p /app/data && chown -R node:node /app/data
 
