@@ -93,7 +93,7 @@ export const executeDocCommand = async (
           },
         });
       } else if (componentInteraction.isButton()) {
-        logger.log('Documentation command cancelled by user.');
+        logger.info('Documentation command cancelled by user.');
         await interaction.deleteReply();
       }
     });

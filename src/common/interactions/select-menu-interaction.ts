@@ -17,7 +17,7 @@ export const selectMenuSubmitInteractions = new Map<
 export const registerSelectMenuSubmitInteraction = (
   interaction: SelectMenuSubmitInteraction
 ) => {
-  logger.log(
+  logger.info(
     `Registering select menu submit interaction: ${interaction.commandName}`
   );
   selectMenuSubmitInteractions.set(interaction.commandName, interaction);

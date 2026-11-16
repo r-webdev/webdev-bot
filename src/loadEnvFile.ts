@@ -27,7 +27,7 @@ function loadEnvFile(filePath: string) {
         }
       }
     }
-    logger.log(`✅ Loaded: ${filePath}`);
+    logger.info(`✅ Loaded: ${filePath}`);
   } catch (error) {
     logger.warn(`Warning: Could not load ${filePath}`);
     logger.warn(error);
@@ -35,7 +35,7 @@ function loadEnvFile(filePath: string) {
 }
 
 const nodeEnv = process.env.NODE_ENV || 'development';
-logger.log(`🌍 Environment: ${nodeEnv}`);
+logger.info(`🌍 Environment: ${nodeEnv}`);
 
 const ENV_FILES = {
   test: join(process.cwd(), '.env.test'),

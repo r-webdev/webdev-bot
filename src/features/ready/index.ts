@@ -23,10 +23,10 @@ export const readyEvent = createEvent(
     once: true,
   },
   async (client) => {
-    logger.log(`Ready! Logged in as ${client.user.tag}`);
+    logger.info(`Ready! Logged in as ${client.user.tag}`);
 
     // Check all guilds and leave any unauthorized ones
-    logger.log(`🔍 Checking ${client.guilds.cache.size} guild(s)...`);
+    logger.info(`🔍 Checking ${client.guilds.cache.size} guild(s)...`);
     for (const guild of client.guilds.cache.values()) {
       await leaveIfNotAllowedServer(guild);
     }
@@ -47,7 +47,7 @@ export const readyEvent = createEvent(
     }
     // Sync guides to channel
     try {
-      guidesLogger.log(
+      guidesLogger.info(
         `🔄 Starting guide sync to channel ${config.channelIds.guides}...`
       );
       await syncGuidesToChannel(client, config.channelIds.guides);

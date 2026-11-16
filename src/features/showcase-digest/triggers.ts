@@ -36,17 +36,17 @@ const SHOWCASE_DIGEST_CRONS = ['0 16 * * 5#1', '0 16 * * 5#3'];
 const SHOWCASE_DIGEST_RESULTS_CRON = '0 16 * * 1';
 
 const runScheduledShowcaseDigest = async (): Promise<void> => {
-  logger.log('Running scheduled showcase digest...');
+  logger.info('Running scheduled showcase digest...');
   try {
     await createShowcaseDigest();
-    logger.log(`Successfully displayed showcase digest!`);
+    logger.info(`Successfully displayed showcase digest!`);
   } catch (error) {
     logger.error(error);
   }
 };
 
 const runScheduledShowcaseDigestResults = async (): Promise<void> => {
-  logger.log('Running scheduled showcase digest results...');
+  logger.info('Running scheduled showcase digest results...');
   try {
     await processShowcaseDigestResults();
   } catch (error) {
@@ -55,7 +55,7 @@ const runScheduledShowcaseDigestResults = async (): Promise<void> => {
 };
 
 export function initializeShowcaseDigestScheduler(): void {
-  logger.log('Initializing showcase digest scheduler...');
+  logger.info('Initializing showcase digest scheduler...');
 
   SHOWCASE_DIGEST_CRONS.forEach((expression) => {
     cron.schedule(expression, runScheduledShowcaseDigest, { timezone: 'UTC' });
@@ -67,7 +67,7 @@ export function initializeShowcaseDigestScheduler(): void {
     { timezone: 'UTC' }
   );
 
-  logger.log(
+  logger.info(
     'Showcase digest scheduler initialized (digests on 1st and 3rd Fridays at 16:00 UTC, results on Mondays at 16:00 UTC)'
   );
 }

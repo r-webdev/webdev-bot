@@ -11,7 +11,7 @@ import { createLogger } from '@/util/logger.js';
 const logger = createLogger('deploy-commands');
 
 export async function deployCommands() {
-  logger.log('Deploying commands...');
+  logger.info('Deploying commands...');
   const commandData = [...commands.values()].map((command) => command.data);
 
   const rest = new REST({ version: '10' }).setToken(config.discord.token);
@@ -26,7 +26,7 @@ export async function deployCommands() {
         body: commandData,
       }
     )) as RESTPutAPIApplicationCommandsResult;
-    logger.log(
+    logger.info(
       `✅ Successfully deployed ${result.length} commands to guild ${config.discord.serverId}`
     );
   } catch (error) {

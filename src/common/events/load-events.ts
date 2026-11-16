@@ -6,7 +6,7 @@ const logger = createLogger('events');
 
 export const loadEvents = (client: Client) => {
   for (const event of events) {
-    logger.log(`Loading event: ${event.name}`);
+    logger.info(`Loading event: ${event.name}`);
     client[event.once ? 'once' : 'on'](event.name, async (...args) => {
       try {
         await event.execute(...args);

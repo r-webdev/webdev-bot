@@ -63,7 +63,7 @@ export const UserBotMessagesService = {
         where: { expiresAt: { lte: new Date() } },
       });
       if (count > 0) {
-        logger.log(`Cleaned up ${count} expired user bot messages.`);
+        logger.info(`Cleaned up ${count} expired user bot messages.`);
       }
     };
 

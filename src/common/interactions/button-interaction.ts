@@ -17,7 +17,7 @@ export const buttonSubmitInteractions = new Map<
 export const registerButtonSubmitInteraction = (
   interaction: ButtonSubmitInteraction
 ) => {
-  logger.log(
+  logger.info(
     `Registering button submit interaction: ${interaction.commandName}`
   );
   buttonSubmitInteractions.set(interaction.commandName, interaction);
